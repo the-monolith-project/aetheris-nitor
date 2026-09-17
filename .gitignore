@@ -1,0 +1,34 @@
+# Variables de entorno y datos sensibles
+.env
+.env.*
+!.env.example
+
+# Node.js y PNPM
+node_modules/
+.pnpm-store/
+pnpm-debug.log*
+
+# Astro y construcciones
+.astro/
+dist/
+test-results/
+playwright-report/
+
+# Logs
+*.log
+
+# graphify: índice de grafo de código, regenerable localmente, no se trackea
+graphify-out/
+
+# Configuración local de Claude Code (por desarrollador, no se versiona)
+.claude/
+
+# Archivos del sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Archivos de trabajo local para delegar tareas a agentes de código — no se
+# versionan. Convención: sufijo .local.md.
+*.local.md

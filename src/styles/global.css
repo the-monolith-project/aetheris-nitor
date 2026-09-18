@@ -17,6 +17,8 @@
   --color-deep: var(--color-deep);
   --color-deep-ink: var(--color-deep-ink);
   --color-deep-ink-muted: var(--color-deep-ink-muted);
+  --color-live: var(--color-live);
+  --color-live-ink: var(--color-live-ink);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
@@ -92,6 +94,128 @@
     var(--shadow-card-hover);
 }
 
+/* ---------------------------------------------------------------------------
+   Primitivas de interaccion compartidas (rediseno 2026-09).
+   Regla de la casa: el movimiento responde a una accion de la persona
+   (hover, foco, apertura). No hay reveals al hacer scroll ni entradas
+   escalonadas por seccion. El piso de prefers-reduced-motion vive al final
+   de este archivo y neutraliza todo lo de aqui sin excepciones.
+   --------------------------------------------------------------------------- */
+
+/* Superficie pulsable: solo para destinos navegables (tarjetas que son un
+   enlace). El contenido que NO se puede pulsar no lleva esta clase -- asi la
+   elevacion significa "esto te lleva a algun lado" en vez de ser decoracion. */
+.superficie-pulsable {
+  position: relative;
+  box-shadow: var(--shadow-card);
+  transition:
+    box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease;
+}
+.superficie-pulsable:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+.superficie-pulsable:active {
+  transform: translateY(0);
+  transition-duration: 80ms;
+}
+.superficie-pulsable:focus-visible {
+  box-shadow:
+    0 0 0 4px rgba(1, 30, 30, 0.55),
+    var(--shadow-card-hover);
+}
+
+/* Filete que se dibuja de izquierda a derecha al pasar el cursor. Es el
+   gesto de enlace de todo el sitio: sustituye al subrayado permanente en
+   listas largas (pie de pagina) y da una respuesta clara sin mover el texto
+   ni cambiar la altura de linea. */
+.enlace-filete {
+  position: relative;
+  display: inline-block;
+}
+.enlace-filete::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.enlace-filete:hover::after,
+.enlace-filete:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Punto de "esto es de ahora". Unico uso del coral de la marca. El halo
+   late despacio; con reduced-motion queda como punto fijo, que sigue
+   comunicando lo mismo. */
+.punto-vigente {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background-color: var(--color-live);
+  flex: none;
+}
+.punto-vigente::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--color-live);
+  animation: latido-vigente 2.4s ease-out infinite;
+}
+@keyframes latido-vigente {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+/* Trazo del mapa del hero: los 14 departamentos se dibujan una sola vez al
+   cargar. Es el unico movimiento del sitio que no responde a una accion, y
+   existe porque el mapa ES el objeto del proyecto presentandose. */
+@keyframes depto-entra {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Escala tipografica de titular. clamp() en vez de tres breakpoints: el
+   titular es la pieza de diseno del hero, no un h1 de documento. */
+.titular-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7.5vw, 5.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+.titular-seccion {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
 /* Sombras de desvanecimiento para contenedores con overflow-x-auto que
    recortan gráficos de ancho fijo en pantallas angostas -- sin esto no hay
    ninguna pista visual de que el contenido se puede desplazar horizontalmente
@@ -108,21 +232,13 @@
     20px 100%,
     10px 100%,
     10px 100%;
-  background-position:
-    left,
-    right,
-    left,
-    right;
+  background-position: left, right, left, right;
   background-attachment: local, local, scroll, scroll;
   background-image:
     linear-gradient(to right, var(--scroll-shadow-bg), transparent),
     linear-gradient(to left, var(--scroll-shadow-bg), transparent),
     radial-gradient(farthest-side at 0% 50%, rgba(4, 3, 22, 0.2), transparent),
-    radial-gradient(
-      farthest-side at 100% 50%,
-      rgba(4, 3, 22, 0.2),
-      transparent
-    );
+    radial-gradient(farthest-side at 100% 50%, rgba(4, 3, 22, 0.2), transparent);
 }
 .scroll-shadow-x.bg-bg {
   --scroll-shadow-bg: var(--color-bg);

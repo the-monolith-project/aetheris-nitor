@@ -8,14 +8,20 @@ node_modules/
 .pnpm-store/
 pnpm-debug.log*
 
-# Astro y construcciones
+# Astro y construcciones. .astro/ lo regenera `astro sync`, que corren tanto
+# `astro check` como `astro build`, asi que no hace falta versionarlo; ademas
+# .astro/settings.json guarda una marca de tiempo que cambia en cada arranque
+# del servidor de desarrollo y ensuciaba el arbol en cada sesion.
 .astro/
 dist/
 test-results/
 playwright-report/
+*.tsbuildinfo
 
 # Logs
 *.log
+npm-debug.log*
+yarn-error.log*
 
 # graphify: índice de grafo de código, regenerable localmente, no se trackea
 graphify-out/
@@ -27,8 +33,10 @@ CLAUDE.md
 # Archivos del sistema operativo y editores
 .DS_Store
 Thumbs.db
+desktop.ini
 .vscode/
 .idea/
+*.swp
 
 # Archivos de trabajo local para delegar tareas a agentes de código — no se
 # versionan. Convención: sufijo .local.md.

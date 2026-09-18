@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Icono from '../../components/Icono.astro';
 import {
   AVISO_HONESTIDAD_ALERTAS,
   AVISO_HONESTIDAD_ALERTAS_CLINICO,
@@ -15,7 +16,10 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
 ---
 
 <Layout title="EPI-Aetheris — Alertas de campo">
-  <main id="contenido-principal" class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
     <header class="mb-8 max-w-3xl">
       <p
         class="font-sans text-xs font-semibold uppercase tracking-wider text-accent"
@@ -111,8 +115,9 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
       <button
         type="button"
         data-imprimir
-        class="rounded-full border border-border bg-surface px-4 py-1.5 font-sans text-sm font-medium text-ink transition-colors hover:border-accent/40"
+        class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 font-sans text-sm font-medium text-ink transition-colors hover:border-accent/40"
       >
+        <Icono nombre="printer" class="h-4 w-4 text-accent" />
         Imprimir cartel
       </button>
     </div>

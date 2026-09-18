@@ -2,25 +2,20 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Layout from '../layouts/Layout.astro';
+import Icono from '../components/Icono.astro';
 
-// Landing de presentación (antes de entrar a la vista dengue en /dengue). No
-// repite el dashboard: explica qué es el proyecto, qué pregunta responde y
-// qué explícitamente NO hace, antes de que alguien vea un mapa sin contexto.
-// Mismo lenguaje de estatuto que el resto del sitio: descriptivo, no
-// predictivo, ayuda de priorización — nunca diagnóstico ni pronóstico.
+// Portada. Habla primero a la poblacion general, despues a quien evalua el
+// proyecto y al final a prensa. No repite el dashboard: presenta el sistema
+// y enruta. Los deslindes vinculantes viven en el pie de pagina y, con su
+// argumento entero, en la Biblioteca (RUTA_SENSIBILIDAD en src/lib/enlaces.ts).
 //
-// Contenedor a max-w-[1600px] (mismo ancho que el header/footer del Layout):
-// en pantallas anchas una versión angosta dejaba la mitad de la pantalla en
-// blanco.
+// Firma visual (rediseno 2026-09): el hero es el mapa de los 14 departamentos
+// a pantalla completa, proyectado en build desde el mismo geojson que consume
+// MapaDepartamentos.astro en /dengue, con el titular encima. Cada silueta es
+// un enlace real a su ficha. El mapa se traza departamento por departamento
+// al cargar; es el unico movimiento del sitio que no responde a una accion.
 //
-// Firma visual (revisión de diseño 2026-08-22): el hero ya NO usa el patrón
-// genérico "número grande + etiqueta + stats" — ese patrón describía el
-// proyecto desde afuera. En su lugar, la mitad derecha es el propio mapa
-// departamental (14 siluetas reales, del mismo geojson que consume
-// MapaDepartamentos.astro en /dengue), proyectado a SVG en build time. Es el
-// objeto central del proyecto mostrándose a sí mismo, no una cifra sobre él.
-// Las 4 cifras que antes eran una grilla de tarjetas ahora son una sola
-// línea de texto (ver <CIFRAS>) — información de pie, no la pieza visual.
+// Contenedor a max-w-[1600px] (mismo ancho que el header/footer del Layout).
 
 interface DepartamentoGeo {
   codigo: string;
@@ -128,263 +123,229 @@ const { paths: DEPARTAMENTOS_SVG, viewBox: MAPA_VIEWBOX } =
   construirSiluetaDepartamentos();
 
 // --- Contenido de la portada ----------------------------------------------
-// Redaccion (rediseno 2026-09): afirmativa. Cada bloque dice lo que el
-// sistema hace; no hay panel de "no hace esto". Los deslindes que si son
-// vinculantes viven en el pie de pagina y, con su argumento completo, en
-// RUTA_SENSIBILIDAD -- que es justamente para lo que existe ese export.
+// Redaccion para poblacion general: verbos llanos, nada de jerga tecnica en
+// la mitad superior. Lo que le habla a evaluadores (arquitectura, stack,
+// replicar) va al final, ya con su propio tono.
 
 const CIFRAS = [
-  { valor: '14', etiqueta: 'departamentos' },
-  { valor: '3', etiqueta: 'fuentes publicas' },
-  { valor: '2018–2024', etiqueta: 'serie historica' },
-  { valor: '$0', etiqueta: 'costo de replicar' },
+  { valor: 14, texto: '14', etiqueta: 'departamentos vigilados' },
+  { valor: 7, texto: '7', etiqueta: 'años de historia, 2018 a 2024' },
+  { valor: 3, texto: '3', etiqueta: 'fuentes públicas de datos' },
+  { valor: 4, texto: '4', etiqueta: 'preguntas por semana y departamento' },
+];
+
+// Secuencia real de tres pasos: por eso va numerada.
+const PASOS = [
+  {
+    titulo: 'Reúne lo que ya es público',
+    texto:
+      'Los casos semanales que publica el Ministerio de Salud, el historial de OpenDengue y el clima de Open-Meteo, para cada departamento.',
+  },
+  {
+    titulo: 'Compara cada departamento consigo mismo',
+    texto:
+      'Lo de esta semana se mide contra lo que ese mismo lugar vivió en años anteriores, no contra el promedio del país.',
+  },
+  {
+    titulo: 'Señala lo que se sale de lo normal',
+    texto:
+      'El mapa marca dónde el clima favorece al zancudo y dónde los casos suben más de lo habitual, para que la atención llegue antes.',
+  },
 ];
 
 const MODULOS = [
   {
     id: 'M1',
-    nombre: 'Idoneidad biofísica',
+    pregunta: '¿El clima le conviene al zancudo?',
     texto:
-      'Índice continuo de qué tan favorables son la temperatura, la precipitación y la humedad de cada departamento para el vector del dengue, semana a semana.',
+      'Temperatura, lluvia y humedad de la semana, resumidas en un índice de qué tan favorable es el momento para el mosquito.',
   },
   {
     id: 'M2',
-    nombre: 'Anomalía climática',
+    pregunta: '¿Es un clima raro para esta época?',
     texto:
-      'Sitúa la idoneidad de esta semana dentro de la historia climática del propio departamento, con registros desde 2014.',
+      'Compara esa semana con el historial climático del propio departamento, con registros desde 2014.',
   },
   {
     id: 'M3',
-    nombre: 'Presión epidemiológica relativa',
+    pregunta: '¿Hay más casos de lo habitual?',
     texto:
-      'Ubica los casos observados —probable y confirmado por separado— como percentil dentro de la serie histórica del departamento.',
+      'Sitúa los casos de la semana, probables y confirmados por separado, frente a los años anteriores del mismo departamento.',
   },
   {
     id: 'M4',
-    nombre: 'Integridad de la vigilancia',
+    pregunta: 'Integridad de la vigilancia',
     texto:
-      'Tres hechos verificables sobre la calidad del dato: completitud geográfica, cuadre del boletín y antigüedad de cada serie.',
+      'Tres hechos verificables sobre la calidad del dato: si informaron todos los departamentos, si el boletín cuadra y qué tan reciente es cada serie.',
   },
 ];
 
-const APORTES = [
-  {
-    titulo: 'Levanta entero en un comando',
-    texto:
-      'Base de datos, API y sitio en tres contenedores, con los datos reales ya cargados. Código abierto bajo GPL-3.0.',
-  },
-  {
-    titulo: 'Cada departamento, contra su propia historia',
-    texto:
-      'Catorce departamentos leídos contra sus propios años anteriores, que es donde se ven las diferencias regionales.',
-  },
-  {
-    titulo: 'Validado contra los brotes reales',
-    texto:
-      'Cada capa se contrasta con los años de brote documentados del país antes de entrar al sistema.',
-  },
-];
-
+// Logotipos de Simple Icons, en el orden en que se nombran en `tecnologia`.
 const STACK = [
   {
-    capa: 'Backend',
-    tecnologia: 'Python · FastAPI',
-    texto:
-      'API REST sobre PostgreSQL directo, sin ORM. Todas las capas del mapa se calculan por petición.',
-  },
-  {
-    capa: 'Base de datos',
+    capa: 'Datos',
     tecnologia: 'PostgreSQL 15',
+    logos: ['postgresql'],
     texto:
-      'Esquema agnóstico a enfermedad y región: catálogos en vez de columnas fijas, así dengue e IRA comparten tabla de casos.',
+      'Un esquema que no depende de la enfermedad ni de la región: dengue y respiratorio comparten la misma tabla de casos.',
   },
   {
-    capa: 'Frontend',
+    capa: 'Cálculo',
+    tecnologia: 'Python · FastAPI',
+    logos: ['python', 'fastapi'],
+    texto:
+      'Cada capa del mapa se calcula al momento de pedirla. La misma interfaz pública alimenta este sitio y está documentada.',
+  },
+  {
+    capa: 'Sitio',
     tecnologia: 'Astro · TypeScript · Leaflet',
+    logos: ['astro', 'typescript', 'leaflet'],
     texto:
-      'Sitio estático con mapa departamental interactivo, sobre la misma API pública que cualquiera puede llamar.',
+      'Páginas estáticas con el mapa interactivo encima. Se instala como aplicación y las alertas abren sin señal.',
   },
   {
-    capa: 'Infraestructura',
+    capa: 'Despliegue',
     tecnologia: 'Docker Compose',
+    logos: ['docker'],
     texto:
-      'Tres servicios orquestados juntos. Sin API de pago y sin suscripción obligatoria en ninguna capa.',
+      'Tres servicios que se levantan juntos con los datos reales cargados. Sin servicios de pago en ninguna capa.',
   },
 ];
 ---
 
-<Layout title="EPI-Aetheris">
+<Layout
+  title="EPI-Aetheris"
+  descripcion="Sistema de análisis y prevención de brotes de dengue en El Salvador. Cruza los casos que publica el Ministerio de Salud con el clima de cada departamento, sobre datos públicos y código abierto."
+>
   <main id="contenido-principal">
     {
       /* ---------------------------------------------------------------
-        Hero a sangre sobre --color-deep. El objeto del proyecto (los 14
-        departamentos, proyectados en build desde el mismo geojson que usa
-        MapaDepartamentos en /dengue) se presenta a si mismo y ademas es
-        navegable: cada silueta es un enlace real a su ficha imprimible.
+        Hero a pantalla completa. Orden del DOM: primero el texto y sus
+        botones, despues el mapa (14 enlaces), asi el teclado llega antes
+        a las llamadas a la accion. El mapa va detras (z-0), el velo
+        encima del mapa (z-10, sin eventos) y el texto arriba (z-20). El
+        contenedor de texto no recibe punteros, solo sus enlaces, para que
+        los departamentos bajo el titular sigan siendo pulsables.
         --------------------------------------------------------------- */
     }
-    <section class="bg-deep">
+    <section
+      class="relative isolate flex min-h-[calc(100svh-4.5rem)] items-center overflow-hidden bg-deep"
+      aria-labelledby="hero-titulo"
+    >
       <div
-        class="mx-auto max-w-[1600px] px-4 pb-10 pt-12 sm:px-8 sm:pb-12 sm:pt-16 lg:px-12"
+        class="hero-mapa absolute inset-y-0 left-0 right-0 z-0 opacity-70 sm:opacity-100 lg:left-auto lg:w-[68%]"
       >
-        {
-          /* El titular ocupa el ancho completo del contenedor en vez de media
-            reja: es la pieza de diseno del hero, y a media reja "Catorce
-            departamentos." se partia en dos lineas y perdia el ritmo de tres.
-            Debajo, el texto de apoyo y el mapa reparten el ancho. */
-        }
-        <h1 class="titular-hero max-w-[20ch] text-secondary lg:max-w-none">
-          Catorce departamentos.<br />
-          Siete años de dengue.<br />
-          Un comando.
-        </h1>
-
-        <div
-          class="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_0.8fr] lg:gap-16"
-        >
-          <div>
-            <p
-              class="max-w-xl font-sans text-base leading-relaxed text-deep-ink-muted sm:text-lg"
-            >
-              EPI-Aetheris cruza los casos que publica el MINSAL con el clima de
-              Open-Meteo y describe, semana a semana, qué tan inusual es lo que
-              ocurre en cada departamento frente a su propia historia.
-            </p>
-
-            <div class="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href="/dengue"
-                class="inline-flex min-h-[44px] items-center rounded-full bg-secondary px-6 font-sans text-sm font-semibold text-secondary-ink transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
-              >
-                Ver dengue
-              </a>
-              <a
-                href="https://github.com/the-monolith-project/EPI-Aetheris"
-                class="inline-flex min-h-[44px] items-center rounded-full border border-white/25 px-6 font-sans text-sm font-medium text-deep-ink transition-colors duration-200 hover:border-white/60 hover:bg-white/5"
-              >
-                Ver el código
-              </a>
-            </div>
-          </div>
-
-          <div class="w-full lg:justify-self-end lg:max-w-[30rem]">
-            <svg
-              viewBox={MAPA_VIEWBOX}
-              role="group"
-              aria-label="Mapa de los 14 departamentos de El Salvador. Cada uno abre su ficha departamental."
-              class="mapa-hero h-auto w-full"
-            >
-              {
-                DEPARTAMENTOS_SVG.map((d, i) => (
-                  <a
-                    href={`/analisis/ficha/${d.codigo}`}
-                    aria-label={`Ficha departamental de ${d.nombre}`}
-                    class="depto"
-                    style={`--retraso:${i * 40}ms`}
-                  >
-                    <title>{d.nombre}</title>
-                    <path d={d.d} class="depto-forma" />
-                    <text
-                      x={d.cx}
-                      y={d.cy}
-                      text-anchor="middle"
-                      dominant-baseline="middle"
-                      font-size="11"
-                      class="depto-nombre"
-                    >
-                      {d.nombre}
-                    </text>
-                  </a>
-                ))
-              }
-            </svg>
-            <p
-              class="mt-2 text-right font-sans text-xs leading-snug text-deep-ink-muted"
-            >
-              Cada departamento abre su ficha imprimible.
-            </p>
-          </div>
-        </div>
-
-        {
-          /* Cifras como pares valor/etiqueta con filete divisorio, no como una
-            cadena unida por puntos medios: el numero es el dato y la etiqueta
-            lo nombra. */
-        }
-        <dl
-          class="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-white/12 pt-8 sm:grid-cols-4"
+        <svg
+          viewBox={MAPA_VIEWBOX}
+          preserveAspectRatio="xMidYMid meet"
+          role="group"
+          aria-label="Mapa de los 14 departamentos de El Salvador. Cada uno abre su ficha departamental."
+          class="p-4 sm:p-8 lg:p-6"
         >
           {
-            CIFRAS.map((c) => (
-              <div>
-                <dt class="font-mono text-xl text-secondary sm:text-2xl">
-                  {c.valor}
-                </dt>
-                <dd class="mt-1 font-sans text-xs leading-snug text-deep-ink-muted">
-                  {c.etiqueta}
-                </dd>
-              </div>
+            DEPARTAMENTOS_SVG.map((d, i) => (
+              <a
+                href={`/analisis/ficha/${d.codigo}`}
+                aria-label={`Ficha departamental de ${d.nombre}`}
+                class="depto"
+                style={`--retraso:${i * 90}ms`}
+              >
+                <title>{d.nombre}</title>
+                <path d={d.d} pathLength="1" class="depto-forma" />
+                <text
+                  x={d.cx}
+                  y={d.cy}
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  font-size="11"
+                  class="depto-nombre"
+                >
+                  {d.nombre}
+                </text>
+              </a>
             ))
           }
-        </dl>
+        </svg>
+      </div>
+
+      {
+        /* Velo: en escritorio va de izquierda (opaco, bajo el texto) a
+          derecha (transparente, el mapa entero); en movil es vertical. */
+      }
+      <div
+        class="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,var(--color-deep)_0%,color-mix(in_srgb,var(--color-deep)_82%,transparent)_45%,color-mix(in_srgb,var(--color-deep)_55%,transparent)_100%)] lg:bg-[linear-gradient(90deg,var(--color-deep)_0%,var(--color-deep)_24%,color-mix(in_srgb,var(--color-deep)_55%,transparent)_46%,transparent_66%)]"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div
+        class="pointer-events-none relative z-20 mx-auto w-full max-w-[1600px] px-4 py-16 sm:px-8 sm:py-20 lg:px-12 [&_a]:pointer-events-auto"
+      >
+        <div class="max-w-[38rem] lg:max-w-[44rem]">
+          <h1
+            id="hero-titulo"
+            class="titular-hero text-secondary [text-wrap:balance]"
+          >
+            <span class="hero-entra block" style="--retraso:700ms"
+              >Sistema de análisis</span
+            >
+            <span class="hero-entra block" style="--retraso:820ms"
+              >y prevención de</span
+            >
+            <span class="hero-entra block" style="--retraso:940ms"
+              >brotes de dengue</span
+            >
+          </h1>
+          <p
+            class="hero-entra mt-7 max-w-[34rem] font-sans text-base leading-relaxed text-deep-ink-muted sm:text-lg"
+            style="--retraso:1120ms"
+          >
+            Cruza los casos que publica el Ministerio de Salud con el clima de
+            cada departamento y muestra, semana a semana, dónde está pasando
+            algo fuera de lo normal en El Salvador. Público y gratuito.
+          </p>
+
+          <div
+            class="hero-entra mt-9 flex flex-wrap items-center gap-3"
+            style="--retraso:1260ms"
+          >
+            <a
+              href="/dengue"
+              class="boton-principal inline-flex min-h-[48px] items-center rounded-full bg-secondary px-7 font-sans text-sm font-semibold text-secondary-ink"
+            >
+              Ver el mapa
+            </a>
+            <a
+              href="/alertas"
+              class="boton-secundario inline-flex min-h-[48px] items-center rounded-full border border-white/30 px-7 font-sans text-sm font-medium text-deep-ink"
+            >
+              Alertas de tu zona
+            </a>
+          </div>
+          <p
+            class="hero-entra mt-8 font-sans text-xs text-deep-ink-muted"
+            style="--retraso:1500ms"
+          >
+            Tocá un departamento del mapa para abrir su ficha.
+          </p>
+        </div>
       </div>
     </section>
 
-    <div class="mx-auto max-w-[1600px] px-4 py-14 sm:px-8 sm:py-16 lg:px-12">
-      {
-        /* Enfoque dual (ADR 0014). Dos puertas, no un modo con estado: son
-          enlaces normales, asi que un enlace compartido funciona igual para
-          cualquiera y no hay dos arquitecturas que mantener sincronizadas. */
-      }
-      <section aria-labelledby="puertas-titulo">
-        <h2 id="puertas-titulo" class="sr-only">Por dónde entrar</h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <a
-            href="/alertas"
-            data-puerta="consulta"
-            class="superficie-pulsable group flex flex-col rounded-2xl border border-border bg-surface p-6 sm:p-8"
-          >
-            <h3 class="titular-seccion text-ink">Qué hay vigente</h3>
-            <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-              Alertas de campo redactadas por el equipo de vigilancia, con las
-              indicaciones para la unidad. Sirve en consulta, se imprime y queda
-              disponible sin señal.
-            </p>
-            <span class="mt-6 font-sans text-sm font-semibold text-accent">
-              <span class="enlace-filete">Ver alertas de campo</span>
-            </span>
-          </a>
-
-          <a
-            href="/analisis"
-            data-puerta="analisis"
-            class="superficie-pulsable group flex flex-col rounded-2xl border border-border bg-surface p-6 sm:p-8"
-          >
-            <h3 class="titular-seccion text-ink">Explorar las series</h3>
-            <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-              Dengue, neumonías e IRA por departamento, cada uno contra su
-              propia historia. Los mismos datos que expone la API pública.
-            </p>
-            <span class="mt-6 font-sans text-sm font-semibold text-accent">
-              <span class="enlace-filete">Abrir herramientas de análisis</span>
-            </span>
-          </a>
-        </div>
-      </section>
-
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12">
       {
         /* Tira de alertas vigentes: el unico estado que cambia en la portada,
           y el unico lugar donde aparece el coral de la marca. Si el backend
           no responde, la seccion entera se queda oculta. */
       }
-      <section data-tira-alertas hidden class="mt-4">
-        <div class="rounded-2xl border border-live/30 bg-surface p-6 sm:p-8">
+      <section data-tira-alertas hidden class="mt-6">
+        <div class="rounded-2xl border border-live/40 bg-surface p-6 sm:p-8">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h2
               class="flex items-center gap-2.5 font-sans text-sm font-semibold text-ink"
             >
               <span class="punto-vigente" aria-hidden="true"></span>
-              Alertas de campo vigentes
+              Alertas vigentes ahora
             </h2>
             <a
               href="/alertas"
@@ -398,50 +359,125 @@ const STACK = [
       </section>
 
       {
-        /* Aportes: la afirmacion mas fuerte del proyecto, sobre el verde
-          primario. Columnas con filete, sin tarjetas -- no son destinos. */
+        /* Enfoque dual (ADR 0014). Dos puertas, no un modo con estado: son
+          enlaces normales, asi que un enlace compartido funciona igual para
+          cualquiera y no hay dos arquitecturas que mantener sincronizadas. */
       }
-      <section
-        class="mt-14 rounded-2xl bg-accent p-8 sm:p-10 lg:p-12"
-        aria-labelledby="aportes-titulo"
-      >
-        <h2 id="aportes-titulo" class="titular-seccion max-w-2xl text-white">
-          Ingeniería reproducible sobre datos que ya son públicos
-        </h2>
-        <div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10">
-          {
-            APORTES.map((a, i) => (
-              <div
-                class:list={[
-                  i > 0 && 'sm:border-l sm:border-white/15 sm:pl-10',
-                ]}
-              >
-                <h3 class="font-sans text-sm font-semibold text-white">
-                  {a.titulo}
-                </h3>
-                <p class="mt-2 font-sans text-sm leading-relaxed text-white/75">
-                  {a.texto}
-                </p>
-              </div>
-            ))
-          }
+      <section class="aparece mt-14 sm:mt-16" aria-labelledby="puertas-titulo">
+        <h2 id="puertas-titulo" class="sr-only">Por dónde entrar</h2>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <a
+            href="/alertas"
+            data-puerta="consulta"
+            class="superficie-pulsable flex flex-col rounded-2xl border border-border bg-surface p-6 sm:p-8"
+          >
+            <span
+              class="insignia-icono mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-secondary-ink"
+            >
+              <Icono nombre="bell" class="h-6 w-6" />
+            </span>
+            <h3 class="titular-seccion text-ink">Alertas de tu zona</h3>
+            <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+              Avisos redactados por el equipo de vigilancia, con lo que conviene
+              hacer en cada lugar. Se leen desde el teléfono, se imprimen y
+              funcionan sin señal.
+            </p>
+            <span class="mt-6 font-sans text-sm font-semibold text-accent">
+              <span class="enlace-filete">Ver alertas</span>
+            </span>
+          </a>
+
+          <a
+            href="/analisis"
+            data-puerta="analisis"
+            class="superficie-pulsable flex flex-col rounded-2xl border border-border bg-surface p-6 sm:p-8"
+          >
+            <span
+              class="insignia-icono mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-secondary-ink"
+            >
+              <Icono nombre="chart-line" class="h-6 w-6" />
+            </span>
+            <h3 class="titular-seccion text-ink">Explorá los datos</h3>
+            <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+              Dengue, neumonías e infecciones respiratorias por departamento,
+              cada uno comparado con sus propios años anteriores, y una ficha
+              imprimible por departamento.
+            </p>
+            <span class="mt-6 font-sans text-sm font-semibold text-accent">
+              <span class="enlace-filete">Abrir análisis</span>
+            </span>
+          </a>
         </div>
       </section>
 
       {
-        /* Modulos: cuatro preguntas paralelas. Filetes verticales en vez de
-          cuatro tarjetas identicas -- no son pulsables, asi que no llevan la
+        /* Cifras que cuentan hacia arriba al entrar en pantalla. El valor
+          final ya esta en el HTML; data-cifra solo lo repite en numero. */
+      }
+      <section
+        class="aparece mt-16 border-y border-border py-10 sm:mt-20"
+        aria-label="El sistema en cifras"
+      >
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+          {
+            CIFRAS.map((c) => (
+              <div>
+                <dt class="font-display text-5xl font-semibold tracking-tight text-accent sm:text-6xl">
+                  <span data-cifra={c.valor}>{c.texto}</span>
+                </dt>
+                <dd class="mt-2 max-w-[14rem] font-sans text-sm leading-snug text-ink-muted">
+                  {c.etiqueta}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      {/* Como funciona: tres pasos en secuencia real, por eso numerados. */}
+      <section class="aparece mt-16 sm:mt-20" aria-labelledby="pasos-titulo">
+        <h2 id="pasos-titulo" class="titular-seccion max-w-2xl text-ink">
+          Cómo funciona
+        </h2>
+        <ol class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10">
+          {
+            PASOS.map((paso, i) => (
+              <li class="relative pl-14">
+                <span
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-accent font-display text-lg font-semibold text-accent-ink"
+                  aria-hidden="true"
+                >
+                  {i + 1}
+                </span>
+                <h3 class="font-sans text-base font-semibold text-ink">
+                  {paso.titulo}
+                </h3>
+                <p class="mt-2 font-sans text-sm leading-relaxed text-ink-muted">
+                  {paso.texto}
+                </p>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      {
+        /* Modulos: cuatro preguntas paralelas. Filetes en vez de cuatro
+          tarjetas identicas: no son pulsables, asi que no llevan la
           superficie elevada. */
       }
-      <section class="mt-16" aria-labelledby="modulos-titulo">
-        <h2 id="modulos-titulo" class="titular-seccion text-ink">
-          Cuatro preguntas, cuatro módulos
+      <section
+        class="aparece mt-16 rounded-2xl bg-accent p-8 sm:mt-20 sm:p-10 lg:p-12"
+        aria-labelledby="modulos-titulo"
+      >
+        <h2 id="modulos-titulo" class="titular-seccion max-w-2xl text-white">
+          Cuatro preguntas para cada departamento, cada semana
         </h2>
         <p
-          class="mt-3 max-w-2xl font-sans text-base leading-relaxed text-ink-muted"
+          class="mt-3 max-w-2xl font-sans text-base leading-relaxed text-white/75"
         >
-          En vez de «¿va a haber un brote?», cada módulo responde una pregunta
-          más chica y comprobable contra la propia historia del departamento.
+          En vez de una sola predicción, el sistema responde cuatro preguntas
+          concretas que cualquiera puede comprobar contra la historia del lugar.
         </p>
         <div
           class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10"
@@ -450,18 +486,17 @@ const STACK = [
             MODULOS.map((m, i) => (
               <div
                 class:list={[
-                  'border-t-2 border-accent pt-4',
-                  i > 0 &&
-                    'lg:border-l lg:border-l-border lg:pl-10 lg:border-t-2',
+                  'border-t border-white/25 pt-4',
+                  i > 0 && 'lg:border-l lg:border-l-white/15 lg:pl-8',
                 ]}
               >
-                <p class="font-mono text-xs font-semibold text-accent">
+                <p class="font-mono text-xs font-semibold text-secondary">
                   {m.id}
                 </p>
-                <h3 class="mt-2 font-sans text-base font-semibold text-ink">
-                  {m.nombre}
+                <h3 class="mt-2 font-sans text-base font-semibold text-white">
+                  {m.pregunta}
                 </h3>
-                <p class="mt-2 font-sans text-sm leading-relaxed text-ink-muted">
+                <p class="mt-2 font-sans text-sm leading-relaxed text-white/75">
                   {m.texto}
                 </p>
               </div>
@@ -471,50 +506,83 @@ const STACK = [
       </section>
 
       {
-        /* Stack: hoja de especificaciones, no tarjetas. El contenido es una
-          tabla de capa/tecnologia/nota y se lee mejor como tal. */
+        /* Para quien evalua o quiere replicar: aqui si cabe el vocabulario
+          tecnico, con una hoja de especificaciones en vez de tarjetas. */
       }
-      <section class="mt-16" aria-labelledby="stack-titulo">
-        <h2 id="stack-titulo" class="titular-seccion text-ink">
-          Con qué está construido
-        </h2>
-        <p
-          class="mt-3 max-w-2xl font-sans text-base leading-relaxed text-ink-muted"
-        >
-          El aporte del proyecto es de ingeniería de software, así que el stack
-          importa tanto como los módulos.
-        </p>
-        <dl class="mt-8 border-t border-border">
-          {
-            STACK.map((s) => (
-              <div class="grid grid-cols-1 gap-1 border-b border-border py-5 sm:grid-cols-[10rem_14rem_1fr] sm:items-baseline sm:gap-6">
-                <dt class="font-sans text-sm font-semibold text-ink">
-                  {s.capa}
-                </dt>
-                <dd class="font-mono text-sm text-accent">{s.tecnologia}</dd>
-                <dd class="font-sans text-sm leading-relaxed text-ink-muted">
-                  {s.texto}
-                </dd>
-              </div>
-            ))
-          }
-        </dl>
+      <section class="aparece mt-16 sm:mt-20" aria-labelledby="abierto-titulo">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+          <div>
+            <h2 id="abierto-titulo" class="titular-seccion text-ink">
+              Abierto de punta a punta
+            </h2>
+            <p class="mt-4 font-sans text-base leading-relaxed text-ink-muted">
+              El código, los datos y el método están publicados. Cualquier
+              persona puede revisarlos, levantar el sistema completo en su
+              propia computadora con un solo paso, o consultar la misma interfaz
+              de datos que alimenta este sitio.
+            </p>
+            <p class="mt-4 font-sans text-base leading-relaxed text-ink-muted">
+              Cada capa se contrastó con los años de brote documentados del país
+              antes de entrar al sistema, y cada decisión de diseño tiene su
+              registro en la Biblioteca.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a
+                href="https://github.com/the-monolith-project/EPI-Aetheris"
+                class="boton-principal inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 font-sans text-sm font-semibold text-accent-ink"
+              >
+                Ver el código
+              </a>
+              <a
+                href="/biblioteca"
+                class="boton-secundario inline-flex min-h-[44px] items-center rounded-full border border-accent/40 px-6 font-sans text-sm font-medium text-accent"
+              >
+                Leer la Biblioteca
+              </a>
+            </div>
+          </div>
+          <dl class="border-t border-border">
+            {
+              STACK.map((s) => (
+                <div class="grid grid-cols-1 gap-1 border-b border-border py-5 sm:grid-cols-[7rem_13rem_1fr] sm:items-baseline sm:gap-6">
+                  <dt class="font-sans text-sm font-semibold text-ink">
+                    {s.capa}
+                  </dt>
+                  <dd class="flex items-center gap-2.5 font-mono text-sm text-accent">
+                    <span class="flex items-center gap-1.5" aria-hidden="true">
+                      {s.logos.map((logo) => (
+                        <Icono
+                          nombre={logo}
+                          coleccion="simple-icons"
+                          class="h-4 w-4"
+                        />
+                      ))}
+                    </span>
+                    {s.tecnologia}
+                  </dd>
+                  <dd class="font-sans text-sm leading-relaxed text-ink-muted">
+                    {s.texto}
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
       </section>
 
+      {/* Cierre: prensa e investigacion en una linea, y la vuelta al mapa. */}
       <section
-        class="mt-16 flex flex-col items-start gap-6 rounded-2xl bg-deep p-8 sm:flex-row sm:items-center sm:justify-between lg:p-12"
-        aria-labelledby="replicar-titulo"
+        class="aparece mt-16 flex flex-col items-start gap-6 rounded-2xl bg-deep p-8 sm:mt-20 sm:flex-row sm:items-center sm:justify-between lg:p-12"
+        aria-labelledby="cierre-titulo"
       >
         <div class="max-w-2xl">
-          <h2 id="replicar-titulo" class="titular-seccion text-secondary">
-            Levantalo vos mismo
+          <h2 id="cierre-titulo" class="titular-seccion text-secondary">
+            Datos públicos, citables y al alcance de cualquiera
           </h2>
           <p class="mt-3 font-sans text-sm leading-relaxed text-deep-ink-muted">
-            <code
-              class="rounded bg-white/10 px-1.5 py-0.5 font-mono text-deep-ink"
-              >docker compose up</code
-            > deja el sistema completo corriendo con datos reales. El porqué de cada
-            decisión está en la <a
+            Para prensa, docencia e investigación: las series se pueden
+            descargar, la interfaz de datos es pública y el método está
+            documentado paso a paso en la <a
               href="/biblioteca"
               class="font-semibold text-deep-ink"
               ><span class="enlace-filete">Biblioteca</span></a
@@ -523,9 +591,9 @@ const STACK = [
         </div>
         <a
           href="/dengue"
-          class="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-secondary px-6 font-sans text-sm font-semibold text-secondary-ink transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0"
+          class="boton-principal inline-flex min-h-[48px] shrink-0 items-center rounded-full bg-secondary px-7 font-sans text-sm font-semibold text-secondary-ink"
         >
-          Entrar a dengue
+          Ver el mapa
         </a>
       </section>
     </div>
@@ -538,6 +606,9 @@ const STACK = [
     ETIQUETAS_TIPO,
     type PayloadAlertas,
   } from '../lib/vista-alertas';
+  import { iniciarMovimiento } from '../lib/movimiento';
+
+  iniciarMovimiento();
 
   const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
   const seccion = document.querySelector<HTMLElement>('[data-tira-alertas]');
@@ -580,56 +651,3 @@ const STACK = [
       });
   }
 </script>
-
-<style>
-  /* Entrada del mapa: los 14 departamentos se dibujan una sola vez al cargar,
-     escalonados por --retraso. Es el unico movimiento no disparado por la
-     persona en todo el sitio. El piso global de prefers-reduced-motion
-     (global.css) lo acorta a ~0ms, asi que el mapa aparece ya dibujado. */
-  .depto-forma {
-    fill: color-mix(in srgb, var(--color-secondary) 90%, transparent);
-    stroke: var(--color-deep);
-    stroke-width: 1.5;
-    transition:
-      fill 180ms ease,
-      stroke 180ms ease;
-    animation: depto-entra 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: var(--retraso, 0ms);
-  }
-
-  /* El nombre solo aparece cuando la persona apunta o enfoca ese
-     departamento: el mapa se mantiene limpio y el rotulo es la respuesta al
-     gesto, no un adorno permanente. */
-  .depto-nombre {
-    fill: var(--color-deep);
-    font-family: var(--font-sans);
-    font-weight: 600;
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
-    transition: opacity 180ms ease;
-  }
-
-  .depto {
-    cursor: pointer;
-  }
-  .depto:hover .depto-forma,
-  .depto:focus-visible .depto-forma {
-    fill: #ffffff;
-    stroke: var(--color-live);
-    stroke-width: 2;
-  }
-  .depto:hover .depto-nombre,
-  .depto:focus-visible .depto-nombre {
-    opacity: 1;
-  }
-  .depto:focus-visible {
-    outline: none;
-  }
-
-  /* Al apuntar el mapa entero, los departamentos que no estan bajo el cursor
-     bajan de intensidad: el que se va a abrir queda claramente destacado. */
-  .mapa-hero:hover .depto:not(:hover) .depto-forma {
-    fill: color-mix(in srgb, var(--color-secondary) 45%, transparent);
-  }
-</style>

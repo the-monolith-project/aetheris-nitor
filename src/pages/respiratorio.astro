@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icono from '../components/Icono.astro';
 import CurvaIRADepartamental from '../components/CurvaIRADepartamental.astro';
 import HeatmapNeumonias from '../components/HeatmapNeumonias.astro';
 import MapaIRA from '../components/MapaIRA.astro';
@@ -8,7 +9,10 @@ import PanelVirus from '../components/PanelVirus.astro';
 ---
 
 <Layout title="EPI-Aetheris — Observatorio respiratorio">
-  <main id="contenido-principal" class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
     <header class="mb-8 max-w-3xl">
       <p
         class="font-sans text-xs font-semibold uppercase tracking-wider text-accent"
@@ -65,7 +69,10 @@ import PanelVirus from '../components/PanelVirus.astro';
     </section>
 
     <section id="ira" class="mb-10 grid grid-cols-1 gap-6">
-      <h2 class="font-display text-xl font-semibold text-ink">
+      <h2
+        class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+      >
+        <Icono nombre="lungs" class="h-6 w-6 text-accent" />
         IRA — conteo notificado departamental
       </h2>
       <div class="rounded-[28px] bg-deep p-2 sm:p-3">
@@ -75,7 +82,10 @@ import PanelVirus from '../components/PanelVirus.astro';
     </section>
 
     <section id="neumonias" class="mb-10 grid grid-cols-1 gap-6">
-      <h2 class="font-display text-xl font-semibold text-ink">
+      <h2
+        class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+      >
+        <Icono nombre="lungs" class="h-6 w-6 text-accent" />
         Neumonías — conteo notificado departamental
       </h2>
       <div class="rounded-[28px] bg-deep p-2 sm:p-3">
@@ -86,7 +96,10 @@ import PanelVirus from '../components/PanelVirus.astro';
     </section>
 
     <section id="virus" class="mb-10 grid grid-cols-1 gap-6">
-      <h2 class="font-display text-xl font-semibold text-ink">
+      <h2
+        class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+      >
+        <Icono nombre="virus" class="h-6 w-6 text-accent" />
         Influenza, VSR y SARS-CoV-2 — laboratorio nacional
       </h2>
       <PanelVirus />

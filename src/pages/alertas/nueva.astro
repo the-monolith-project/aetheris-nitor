@@ -1,9 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Icono from '../../components/Icono.astro';
 ---
 
 <Layout title="EPI-Aetheris — Nueva alerta">
-  <main id="contenido-principal" class="mx-auto max-w-3xl px-4 py-8 sm:px-8 sm:py-10">
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-3xl px-4 py-8 sm:px-8 sm:py-10"
+  >
     <header class="mb-6">
       <p
         class="font-sans text-xs font-semibold uppercase tracking-wider text-accent"
@@ -31,14 +35,20 @@ import Layout from '../../layouts/Layout.astro';
     </header>
 
     <p class="mb-2 font-sans text-xs text-ink-muted">
-      Los campos marcados con <span aria-hidden="true">*</span
-      ><span class="sr-only"> (obligatorio)</span> son obligatorios.
+      Los campos marcados con <span aria-hidden="true">*</span><span
+        class="sr-only"
+      >
+        (obligatorio)</span
+      > son obligatorios.
     </p>
     <form data-form-alerta class="flex flex-col gap-4 font-sans text-sm">
       <fieldset class="rounded-2xl border border-border bg-surface p-4">
         <legend class="px-1 font-semibold">Autenticación</legend>
         <label class="mt-2 flex flex-col gap-1">
-          <span>Token de escritura (ALERTAS_TOKEN) <span aria-hidden="true">*</span></span>
+          <span
+            >Token de escritura (ALERTAS_TOKEN) <span aria-hidden="true">*</span
+            ></span
+          >
           <input
             type="password"
             name="token"
@@ -59,14 +69,16 @@ import Layout from '../../layouts/Layout.astro';
         <button
           type="button"
           data-alerta-cerrar-sesion
-          class="mt-3 rounded-full border border-border px-3 py-1.5"
+          class="mt-3 inline-flex items-center gap-2 rounded-full border border-border px-3 py-1.5"
         >
+          <Icono nombre="logout" class="h-4 w-4" />
           Cerrar sesión (olvidar token)
         </button>
       </fieldset>
 
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Tipo <span aria-hidden="true">*</span></span>
+        <span class="font-semibold">Tipo <span aria-hidden="true">*</span></span
+        >
         <select
           name="tipo"
           required
@@ -78,7 +90,9 @@ import Layout from '../../layouts/Layout.astro';
         </select>
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Nivel <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Nivel <span aria-hidden="true">*</span></span
+        >
         <select
           name="nivel"
           required
@@ -103,7 +117,9 @@ import Layout from '../../layouts/Layout.astro';
         </select>
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Título <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Título <span aria-hidden="true">*</span></span
+        >
         <input
           name="titulo"
           required
@@ -112,7 +128,9 @@ import Layout from '../../layouts/Layout.astro';
         />
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Contexto <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Contexto <span aria-hidden="true">*</span></span
+        >
         <textarea
           name="contexto"
           required
@@ -122,7 +140,9 @@ import Layout from '../../layouts/Layout.astro';
         ></textarea>
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Indicaciones <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Indicaciones <span aria-hidden="true">*</span></span
+        >
         <textarea
           name="indicaciones"
           required
@@ -132,7 +152,9 @@ import Layout from '../../layouts/Layout.astro';
         ></textarea>
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Fuente (obligatoria) <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Fuente (obligatoria) <span aria-hidden="true">*</span></span
+        >
         <input
           name="fuente"
           required
@@ -141,7 +163,9 @@ import Layout from '../../layouts/Layout.astro';
         />
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Autor <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Autor <span aria-hidden="true">*</span></span
+        >
         <input
           name="autor"
           required
@@ -150,7 +174,9 @@ import Layout from '../../layouts/Layout.astro';
         />
       </label>
       <label class="flex flex-col gap-1">
-        <span class="font-semibold">Vigente desde <span aria-hidden="true">*</span></span>
+        <span class="font-semibold"
+          >Vigente desde <span aria-hidden="true">*</span></span
+        >
         <input
           type="date"
           name="vigente_desde"
@@ -210,8 +236,9 @@ import Layout from '../../layouts/Layout.astro';
 
       <button
         type="submit"
-        class="rounded-full bg-accent px-5 py-2 font-semibold text-accent-ink"
+        class="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2 font-semibold text-accent-ink"
       >
+        <Icono nombre="send" class="h-4 w-4" />
         Publicar alerta
       </button>
       <p

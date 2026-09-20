@@ -52,6 +52,13 @@
 
 <script>
   import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoTraza,
+    renderSinDato,
+  } from '../estado-async';
+  import {
     obtenerSerieIdoneidad,
     obtenerSeriePresion,
   } from '../../lib/analisis-api';
@@ -286,17 +293,20 @@
   function pintar(
     nodo: HTMLElement | null,
     grafica: Grafica | null,
-    etiquetaVacia: string,
+    esError: boolean,
+    mensaje: string,
   ): void {
     if (!nodo) return;
+    nodo.setAttribute('aria-busy', 'false');
     if (grafica) {
       nodo.replaceChildren(grafica);
       return;
     }
-    const vacio = document.createElement('p');
-    vacio.className = 'font-sans text-xs text-ink-muted';
-    vacio.textContent = etiquetaVacia;
-    nodo.replaceChildren(vacio);
+    if (esError) {
+      renderErrorFuente(nodo, () => void renderizar(filtrosActuales), mensaje);
+    } else {
+      renderSinDato(nodo, mensaje);
+    }
   }
 
   async function renderizar(filtros: FiltrosAnalisis): Promise<void> {
@@ -314,6 +324,19 @@
     marco.hidden = false;
     resumen.textContent = 'Cargando series del departamento…';
 
+    if (nodoPresion) {
+      nodoPresion.setAttribute('aria-busy', 'true');
+      renderEsqueletoTraza(nodoPresion);
+    }
+    if (nodoIdoneidad) {
+      nodoIdoneidad.setAttribute('aria-busy', 'true');
+      renderEsqueletoTraza(nodoIdoneidad);
+    }
+    if (nodoAnomalia) {
+      nodoAnomalia.setAttribute('aria-busy', 'true');
+      renderEsqueletoTraza(nodoAnomalia);
+    }
+
     if (!Plot) Plot = await import('@observablehq/plot');
     if (idRevision !== revision || !Plot) return;
     const P = Plot;
@@ -325,31 +348,78 @@
     if (idRevision !== revision) return;
 
     const ancho = Math.max(marco.clientWidth || 0, 320);
-    const presion = resPresion.status === 'fulfilled' ? resPresion.value : null;
+    const presion =
+      resPresion.status === 'fulfilled' && !esNoDisponible(resPresion.value)
+        ? resPresion.value
+        : null;
     const idoneidad =
-      resIdoneidad.status === 'fulfilled' ? resIdoneidad.value : null;
+      resIdoneidad.status === 'fulfilled' && !esNoDisponible(resIdoneidad.value)
+        ? resIdoneidad.value
+        : null;
 
-    pintar(
-      nodoPresion,
-      presion ? graficaPresion(P, presion.semanas, filtros, ancho) : null,
-      resPresion.status === 'rejected'
-        ? 'No fue posible cargar la presión epidemiológica.'
-        : 'Sin presión epidemiológica para este año (los casos MINSAL se detienen en 2023).',
-    );
-    pintar(
-      nodoIdoneidad,
-      idoneidad ? graficaIdoneidad(P, idoneidad.semanas, filtros, ancho) : null,
-      resIdoneidad.status === 'rejected'
-        ? 'No fue posible cargar la idoneidad biofísica.'
-        : 'Sin idoneidad biofísica para este departamento y año.',
-    );
-    pintar(
-      nodoAnomalia,
-      idoneidad ? graficaAnomalia(P, idoneidad.semanas, filtros, ancho) : null,
-      resIdoneidad.status === 'rejected'
-        ? 'No fue posible cargar la anomalía climática.'
-        : 'Sin anomalía climática para este departamento y año.',
-    );
+    if (resPresion.status === 'rejected') {
+      pintar(
+        nodoPresion,
+        null,
+        true,
+        'No fue posible cargar la presión epidemiológica.',
+      );
+    } else if (
+      resPresion.status === 'fulfilled' &&
+      esNoDisponible(resPresion.value)
+    ) {
+      pintar(nodoPresion, null, false, motivoNoDisponible(resPresion.value));
+    } else {
+      pintar(
+        nodoPresion,
+        presion ? graficaPresion(P, presion.semanas, filtros, ancho) : null,
+        false,
+        'Sin presión epidemiológica para este año (los casos MINSAL se detienen en 2023).',
+      );
+    }
+
+    if (resIdoneidad.status === 'rejected') {
+      pintar(
+        nodoIdoneidad,
+        null,
+        true,
+        'No fue posible cargar la idoneidad biofísica.',
+      );
+      pintar(
+        nodoAnomalia,
+        null,
+        true,
+        'No fue posible cargar la anomalía climática.',
+      );
+    } else if (
+      resIdoneidad.status === 'fulfilled' &&
+      esNoDisponible(resIdoneidad.value)
+    ) {
+      pintar(
+        nodoIdoneidad,
+        null,
+        false,
+        motivoNoDisponible(resIdoneidad.value),
+      );
+      pintar(nodoAnomalia, null, false, motivoNoDisponible(resIdoneidad.value));
+    } else {
+      pintar(
+        nodoIdoneidad,
+        idoneidad
+          ? graficaIdoneidad(P, idoneidad.semanas, filtros, ancho)
+          : null,
+        false,
+        'Sin idoneidad biofísica para este departamento y año.',
+      );
+      pintar(
+        nodoAnomalia,
+        idoneidad
+          ? graficaAnomalia(P, idoneidad.semanas, filtros, ancho)
+          : null,
+        false,
+        'Sin anomalía climática para este departamento y año.',
+      );
+    }
 
     const nombre =
       idoneidad?.departamento_nombre ??

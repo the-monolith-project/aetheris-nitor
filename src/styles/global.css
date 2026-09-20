@@ -467,6 +467,85 @@ html[data-animar] .aparece.visto {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Primitivas del workspace de análisis (rediseño 2026-09).
+   La forma codifica el tipo de contenido: visor, matriz, traza o registro.
+   --------------------------------------------------------------------------- */
+
+.panel-visor {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-traza);
+  overflow: hidden;
+}
+
+.panel-matriz {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-matriz);
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel-matriz {
+    padding: 1.5rem;
+  }
+}
+
+.panel-traza {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: var(--filete-traza) solid var(--color-accent);
+  border-radius: var(--radio-traza);
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel-traza {
+    padding: 1.5rem;
+  }
+}
+
+.panel-registro {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-matriz);
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel-registro {
+    padding: 1.5rem;
+  }
+}
+
+.panel-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-titulo {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.panel-descripcion {
+  margin-top: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+  max-width: 68ch;
+}
+
+.cifra {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Piso global de "reduced motion" -- va al final, DESPUÉS de las excepciones
    intencionales de arriba (.skeleton::after ya se apaga con animation:none,
    que este bloque no revierte). Neutraliza cualquier animación/transición

@@ -249,6 +249,7 @@ import Icono from './Icono.astro';
     esAnioAnalisisDengue,
     type AnioAnalisisDengue,
   } from '../lib/tipos-analisis';
+  import { renderErrorFuente } from './estado-async';
   import { escapeHtml } from '../utils/security';
 
   // ---------------------------------------------------------------------
@@ -1351,6 +1352,7 @@ import Icono from './Icono.astro';
         '<div class="skeleton h-4 w-40"></div><div class="skeleton h-4 w-24"></div><div class="skeleton h-4 w-24"></div>' +
         '</div>';
       contenedorNoDisponible!.classList.add('hidden');
+      contenedorNoDisponible!.replaceChildren();
 
       let valores = cacheValoresPorCapa.get(id);
       if (valores === undefined) {
@@ -1374,6 +1376,11 @@ import Icono from './Icono.astro';
       if (!valores) {
         contenedorNoDisponible!.classList.remove('hidden');
         contenedorLeyenda!.innerHTML = '';
+        renderErrorFuente(
+          contenedorNoDisponible!,
+          () => void activarCapa(id),
+          'No fue posible cargar esta capa. El mapa se muestra en gris hasta que los datos vuelvan a estar disponibles.',
+        );
         pintarTablaValores(capa, null);
         // Se sigue dibujando el contorno departamental, todo en "sin dato",
         // para que el mapa no se sienta roto.

@@ -25,6 +25,18 @@
       role="region"
       aria-label="Heatmap de disponibilidad de observaciones por departamento y semana"
     >
+      <div
+        class="flex h-full min-h-[390px] w-full min-w-[900px] flex-col justify-between gap-2.5 p-2"
+        aria-hidden="true"
+      >
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+      </div>
     </div>
   </div>
   <p
@@ -41,12 +53,20 @@
   // que el panel entra en viewport (ver PanelAnalisis.astro y el
   // `await import('leaflet')` de MapaDepartamentos.astro).
   let Plot: typeof import('@observablehq/plot') | null = null;
+  import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoMatriz,
+    renderSinDato,
+  } from '../estado-async';
   import { obtenerDatasetAnalitico } from '../../lib/analisis-api';
   import {
     actualizarFiltrosAnalisis,
     obtenerFiltrosAnalisis,
     suscribirFiltrosAnalisis,
   } from '../../lib/analisis-state';
+  import { COLOR_DATO_DISPONIBLE, COLOR_SIN_DATO } from '../../lib/colores';
   import { vincularMarcasPlot } from '../../lib/plot-interacciones';
   import {
     esAnioAnalisisDengue,
@@ -79,15 +99,21 @@
     const idRevision = ++revision;
     if (resumen) resumen.textContent = 'Cargando cobertura semanal…';
     if (!esAnioAnalisisDengue(filtros.anio)) {
-      contenedor.replaceChildren();
+      renderSinDato(contenedor, notaAnioSoloClima(filtros.anio));
       if (resumen) resumen.textContent = notaAnioSoloClima(filtros.anio);
+      contenedor.setAttribute('aria-busy', 'false');
       return;
     }
 
     contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoMatriz(contenedor, 7);
     try {
       const dataset = await obtenerDatasetAnalitico(filtros.anio);
       if (idRevision !== revision) return;
+      if (esNoDisponible(dataset)) {
+        renderSinDato(contenedor, motivoNoDisponible(dataset));
+        return;
+      }
       const celdas: CeldaDisponibilidad[] = dataset.departamentos.flatMap(
         (departamento) =>
           departamento.semanas
@@ -132,7 +158,7 @@
             x: 'semana',
             y: 'departamento',
             fill: (celda: CeldaDisponibilidad) =>
-              celda.casos === null ? '#e4e4e7' : '#256abf',
+              celda.casos === null ? COLOR_SIN_DATO : COLOR_DATO_DISPONIBLE,
             inset: 0.75,
             title: (celda: CeldaDisponibilidad) =>
               etiqueta(celda, filtros.serie),
@@ -170,7 +196,7 @@
       }
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
         resumen.textContent =
           'No fue posible cargar la disponibilidad de datos.';

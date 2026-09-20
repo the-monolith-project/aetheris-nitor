@@ -27,10 +27,20 @@
 
 <script>
   import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoRegistro,
+    renderSinDato,
+  } from '../estado-async';
+  import {
     obtenerDatasetAnalitico,
     obtenerProcedenciaAnalitica,
   } from '../../lib/analisis-api';
-  import { suscribirFiltrosAnalisis } from '../../lib/analisis-state';
+  import {
+    obtenerFiltrosAnalisis,
+    suscribirFiltrosAnalisis,
+  } from '../../lib/analisis-state';
   import {
     esAnioAnalisisDengue,
     notaAnioSoloClima,
@@ -42,6 +52,7 @@
   const contenedor = document.getElementById('perfil-calidad-contenido');
   const estado = document.getElementById('perfil-calidad-estado');
   let revision = 0;
+  let filtrosActuales = obtenerFiltrosAnalisis();
 
   function elemento<K extends keyof HTMLElementTagNameMap>(
     etiqueta: K,
@@ -208,21 +219,33 @@
     if (!filtros.departamento) {
       contenedor.replaceChildren();
       estado.textContent =
-        'Seleccione un departamento en los filtros, el mapa o una gráfica.';
+        'Seleccione un departamento para revisar una observación.';
       return;
     }
     estado.textContent = 'Cargando perfil y procedencia…';
     if (!esAnioAnalisisDengue(filtros.anio)) {
-      contenedor.replaceChildren();
+      renderSinDato(contenedor, notaAnioSoloClima(filtros.anio));
       estado.textContent = notaAnioSoloClima(filtros.anio);
+      contenedor.setAttribute('aria-busy', 'false');
       return;
     }
+
+    contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoRegistro(contenedor);
     try {
       const [dataset, procedencia] = await Promise.all([
         obtenerDatasetAnalitico(filtros.anio),
         obtenerProcedenciaAnalitica(filtros),
       ]);
       if (idRevision !== revision) return;
+      if (esNoDisponible(dataset)) {
+        renderSinDato(contenedor, motivoNoDisponible(dataset));
+        return;
+      }
+      if (esNoDisponible(procedencia)) {
+        renderSinDato(contenedor, motivoNoDisponible(procedencia));
+        return;
+      }
       const departamento = dataset.departamentos.find(
         (fila) => fila.codigo === filtros.departamento,
       );
@@ -264,10 +287,15 @@
       estado.textContent = `${departamento.nombre} · ${filtros.anio} · SE${String(filtros.semana).padStart(2, '0')} · serie ${filtros.serie}.`;
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       estado.textContent = 'No fue posible cargar el perfil de calidad.';
+    } finally {
+      contenedor.setAttribute('aria-busy', 'false');
     }
   }
 
-  suscribirFiltrosAnalisis((filtros) => void renderizar(filtros));
+  suscribirFiltrosAnalisis((filtros) => {
+    filtrosActuales = filtros;
+    void renderizar(filtros);
+  });
 </script>

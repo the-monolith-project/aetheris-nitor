@@ -34,6 +34,13 @@
 
 <script>
   import * as Plot from '@observablehq/plot';
+  import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoTraza,
+    renderSinDato,
+  } from '../estado-async';
   import { obtenerDatasetAnalitico } from '../../lib/analisis-api';
   import {
     actualizarFiltrosAnalisis,
@@ -77,14 +84,21 @@
     if (resumen) resumen.textContent = 'Cargando comparación departamental…';
 
     if (!esAnioAnalisisDengue(filtros.anio)) {
-      if (marcoGrafica) marcoGrafica.hidden = true;
+      renderSinDato(contenedor, notaAnioSoloClima(filtros.anio));
       if (resumen) resumen.textContent = notaAnioSoloClima(filtros.anio);
+      contenedor.setAttribute('aria-busy', 'false');
       return;
     }
 
+    contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoTraza(contenedor);
     try {
       const dataset = await obtenerDatasetAnalitico(filtros.anio);
       if (idRevision !== revision) return;
+      if (esNoDisponible(dataset)) {
+        renderSinDato(contenedor, motivoNoDisponible(dataset));
+        return;
+      }
       const orden = new Map(
         filtros.comparar.map((codigo, indice) => [codigo, indice]),
       );
@@ -177,11 +191,13 @@
       }
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
-      if (marcoGrafica) marcoGrafica.hidden = true;
+      if (marcoGrafica) marcoGrafica.hidden = false;
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
         resumen.textContent =
           'No fue posible cargar la comparación departamental.';
+    } finally {
+      contenedor.setAttribute('aria-busy', 'false');
     }
   }
 

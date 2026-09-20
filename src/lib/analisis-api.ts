@@ -1,3 +1,4 @@
+import { esNoDisponible } from '../components/estado-async';
 import type {
   AnioAnalisisDengue,
   CasoNacionalSemanal,
@@ -35,6 +36,9 @@ function cargarDataset(
         );
       }
       const datos: unknown = await respuesta.json();
+      if (esNoDisponible(datos)) {
+        return datos as any;
+      }
       if (
         !datos ||
         typeof datos !== 'object' ||
@@ -71,6 +75,9 @@ export function obtenerCasosNacionales(): Promise<CasoNacionalSemanal[]> {
           );
         }
         const datos: unknown = await respuesta.json();
+        if (esNoDisponible(datos)) {
+          return datos as any;
+        }
         if (!Array.isArray(datos)) {
           throw new Error('La serie nacional no tiene el contrato esperado.');
         }
@@ -94,6 +101,9 @@ export function obtenerIntegridadVigilancia(): Promise<IntegridadVigilancia> {
           );
         }
         const datos: unknown = await respuesta.json();
+        if (esNoDisponible(datos)) {
+          return datos as any;
+        }
         if (
           !datos ||
           typeof datos !== 'object' ||
@@ -172,6 +182,9 @@ export function obtenerSerieIdoneidad(
           );
         }
         const datos: unknown = await respuesta.json();
+        if (esNoDisponible(datos)) {
+          return datos as any;
+        }
         if (!tieneSemanas(datos)) {
           throw new Error(
             'La serie de idoneidad no tiene el contrato esperado.',
@@ -207,6 +220,9 @@ export function obtenerSeriePresion(
           );
         }
         const datos: unknown = await respuesta.json();
+        if (esNoDisponible(datos)) {
+          return datos as any;
+        }
         if (!tieneSemanas(datos)) {
           throw new Error('La serie de presión no tiene el contrato esperado.');
         }
@@ -252,7 +268,11 @@ export function obtenerProcedenciaAnalitica(
             `No se pudo cargar la procedencia (${respuesta.status}).`,
           );
         }
-        return (await respuesta.json()) as ProcedenciaAnalitica;
+        const datos: unknown = await respuesta.json();
+        if (esNoDisponible(datos)) {
+          return datos as any;
+        }
+        return datos as ProcedenciaAnalitica;
       })
       .catch((error) => {
         cacheProcedencia.delete(clave);

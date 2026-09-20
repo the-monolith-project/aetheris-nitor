@@ -18,6 +18,14 @@
       role="region"
       aria-label="Scatter de anomalía climática y percentil de presión epidemiológica por departamento"
     >
+      <div
+        class="flex h-full min-h-[340px] w-full min-w-[720px] flex-col justify-around gap-4 p-4"
+        aria-hidden="true"
+      >
+        <div class="skeleton h-5 w-full rounded"></div>
+        <div class="skeleton h-5 w-full rounded"></div>
+        <div class="skeleton h-5 w-full rounded"></div>
+      </div>
     </div>
   </div>
   <p
@@ -34,6 +42,13 @@
   // que el panel entra en viewport (ver PanelAnalisis.astro y el
   // `await import('leaflet')` de MapaDepartamentos.astro).
   let Plot: typeof import('@observablehq/plot') | null = null;
+  import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoTraza,
+    renderSinDato,
+  } from '../estado-async';
   import { obtenerDatasetAnalitico } from '../../lib/analisis-api';
   import {
     actualizarFiltrosAnalisis,
@@ -82,15 +97,21 @@
       resumen.textContent = `Cargando ${filtros.anio}, SE${String(filtros.semana).padStart(2, '0')}…`;
 
     if (!esAnioAnalisisDengue(filtros.anio)) {
-      contenedor.replaceChildren();
+      renderSinDato(contenedor, notaAnioSoloClima(filtros.anio));
       if (resumen) resumen.textContent = notaAnioSoloClima(filtros.anio);
+      contenedor.setAttribute('aria-busy', 'false');
       return;
     }
 
     contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoTraza(contenedor);
     try {
       const datos = await obtenerDatasetAnalitico(filtros.anio);
       if (idRevision !== revision) return;
+      if (esNoDisponible(datos)) {
+        renderSinDato(contenedor, motivoNoDisponible(datos));
+        return;
+      }
       const puntos: PuntoScatter[] = datos.departamentos.flatMap(
         (departamento) => {
           const semana = departamento.semanas.find(
@@ -185,7 +206,7 @@
       }
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
         resumen.textContent =
           'No fue posible cargar la relación clima-presión.';

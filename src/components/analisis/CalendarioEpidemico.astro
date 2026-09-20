@@ -19,6 +19,17 @@
       role="region"
       aria-label="Calendario de casos nacionales por año y semana epidemiológica"
     >
+      <div
+        class="flex h-full min-h-[300px] w-full min-w-[760px] flex-col justify-between gap-2.5 p-2"
+        aria-hidden="true"
+      >
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+      </div>
     </div>
   </div>
 
@@ -56,6 +67,13 @@
   // panel entra en viewport -- mismo criterio que el `await import('leaflet')`
   // de MapaDepartamentos.astro.
   let Plot: typeof import('@observablehq/plot') | null = null;
+  import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoMatriz,
+    renderSinDato,
+  } from '../estado-async';
   import { obtenerCasosNacionales } from '../../lib/analisis-api';
   import {
     actualizarFiltrosAnalisis,
@@ -90,9 +108,14 @@
     if (resumen) resumen.textContent = 'Cargando serie nacional…';
 
     contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoMatriz(contenedor, 6);
     try {
       const filas = await obtenerCasosNacionales();
       if (idRevision !== revision) return;
+      if (esNoDisponible(filas)) {
+        renderSinDato(contenedor, motivoNoDisponible(filas));
+        return;
+      }
       const anios = [...new Set(filas.map((fila) => fila.anio))].sort(
         (a, b) => a - b,
       );
@@ -181,7 +204,7 @@
       }
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
         resumen.textContent = 'No fue posible cargar el calendario epidémico.';
     } finally {

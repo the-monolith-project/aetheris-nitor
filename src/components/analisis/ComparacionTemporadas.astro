@@ -35,6 +35,13 @@
 
 <script>
   import * as Plot from '@observablehq/plot';
+  import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoTraza,
+    renderSinDato,
+  } from '../estado-async';
   import { obtenerDatasetAnalitico } from '../../lib/analisis-api';
   import {
     actualizarFiltrosAnalisis,
@@ -79,11 +86,17 @@
     if (resumen) resumen.textContent = 'Cargando temporadas históricas…';
 
     contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoTraza(contenedor);
     try {
       const datasets = await Promise.all(
         ANIOS_ANALISIS_DENGUE.map((anio) => obtenerDatasetAnalitico(anio)),
       );
       if (idRevision !== revision) return;
+      const noDisp = datasets.find((d) => esNoDisponible(d));
+      if (noDisp && esNoDisponible(noDisp)) {
+        renderSinDato(contenedor, motivoNoDisponible(noDisp));
+        return;
+      }
 
       const puntos: PuntoTemporada[] = datasets.flatMap((dataset) => {
         const departamento = dataset.departamentos.find(
@@ -193,8 +206,8 @@
       }
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
-      if (marcoGrafica) marcoGrafica.hidden = true;
+      if (marcoGrafica) marcoGrafica.hidden = false;
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
         resumen.textContent =
           'No fue posible cargar la comparación de temporadas.';

@@ -19,6 +19,18 @@
       role="region"
       aria-label="Heatmap de presión epidemiológica relativa por departamento y semana"
     >
+      <div
+        class="flex h-full min-h-[420px] w-full min-w-[760px] flex-col justify-between gap-2.5 p-2"
+        aria-hidden="true"
+      >
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+        <div class="skeleton h-7 w-full rounded"></div>
+      </div>
     </div>
   </div>
 
@@ -51,6 +63,13 @@
 
 <script>
   import * as Plot from '@observablehq/plot';
+  import {
+    esNoDisponible,
+    motivoNoDisponible,
+    renderErrorFuente,
+    renderEsqueletoMatriz,
+    renderSinDato,
+  } from '../estado-async';
   import { obtenerDatasetAnalitico } from '../../lib/analisis-api';
   import {
     actualizarFiltrosAnalisis,
@@ -101,15 +120,21 @@
       resumen.textContent = `Cargando ${filtros.anio}, serie ${filtros.serie}…`;
 
     if (!esAnioAnalisisDengue(filtros.anio)) {
-      contenedor.replaceChildren();
+      renderSinDato(contenedor, notaAnioSoloClima(filtros.anio));
       if (resumen) resumen.textContent = notaAnioSoloClima(filtros.anio);
+      contenedor.setAttribute('aria-busy', 'false');
       return;
     }
 
     contenedor.setAttribute('aria-busy', 'true');
+    renderEsqueletoMatriz(contenedor);
     try {
       const datos = await obtenerDatasetAnalitico(filtros.anio);
       if (idRevision !== revision) return;
+      if (esNoDisponible(datos)) {
+        renderSinDato(contenedor, motivoNoDisponible(datos));
+        return;
+      }
       const celdas: CeldaHeatmap[] = datos.departamentos.flatMap(
         (departamento) =>
           departamento.semanas
@@ -208,7 +233,7 @@
       }
     } catch {
       if (idRevision !== revision) return;
-      contenedor.replaceChildren();
+      renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
         resumen.textContent = 'No fue posible cargar el heatmap departamental.';
     } finally {

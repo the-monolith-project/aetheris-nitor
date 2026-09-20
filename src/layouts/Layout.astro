@@ -6,6 +6,9 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   descripcion?: string;
+  /** Imagen de vista previa al compartir. Absoluta en la salida -- una
+   *  og:image relativa la ignoran casi todos los rastreadores. */
+  imagen?: string;
   /** Saca la página del índice de los buscadores. Se usa en las rutas que no
    *  son contenido público: el formulario de operadores y la 404. */
   noindex?: boolean;
@@ -14,6 +17,7 @@ interface Props {
 const {
   title = 'EPI-Aetheris',
   descripcion = 'Vigilancia epidemiológica descriptiva de dengue e IRA en El Salvador, sobre datos públicos de MINSAL, OpenDengue y Open-Meteo. Licencia GPL-3.0.',
+  imagen = '/og/og-default.png',
   noindex = false,
 } = Astro.props;
 
@@ -26,6 +30,9 @@ const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
 const ruta = Astro.url.pathname;
 // URL absoluta de esta página -- Astro.site viene de astro.config.mjs.
 const urlCanonica = new URL(ruta, Astro.site);
+// Misma razón para la imagen de vista previa: WhatsApp, Slack, Telegram y
+// los rastreadores de redes descartan una og:image relativa.
+const urlImagen = new URL(imagen, Astro.site);
 // Nav de dos caras (ADR 0014). No es un "modo" con estado: son secciones, y
 // ninguna esconde a la otra. Arriba queda lo que sirve en consulta
 // (Alertas); las dos herramientas descriptivas se agrupan bajo /analisis en
@@ -58,7 +65,15 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={descripcion} />
+    {
+      /* El SVG lo prefieren los navegadores modernos; el PNG de 32 es el
+    respaldo para los que no lo soportan y para la barra de favoritos, y el
+    apple-touch-icon es el que usa iOS al añadir el sitio a la pantalla de
+    inicio (no lee el manifest para eso). */
+    }
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="canonical" href={urlCanonica} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {
@@ -82,9 +97,18 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <meta property="og:title" content={title} />
     <meta property="og:description" content={descripcion} />
     <meta property="og:site_name" content="EPI-Aetheris" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:locale" content="es_SV" />
+    <meta property="og:image" content={urlImagen} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="EPI-Aetheris — vigilancia epidemiológica de dengue y enfermedad respiratoria en El Salvador"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={urlImagen} />
   </head>
   <body class="min-h-screen bg-bg text-ink">
     <a

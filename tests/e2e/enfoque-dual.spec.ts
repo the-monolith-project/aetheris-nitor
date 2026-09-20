@@ -292,7 +292,7 @@ test('/alertas abre sin conexión desde el cache del service worker', async ({
   await context.unroute('**/api/alertas*');
 });
 
-test('el footer reestructurado expone las cuatro secciones y el aviso de sensibilidad', async ({
+test('el footer reestructurado expone las cinco secciones y el aviso de sensibilidad', async ({
   page,
 }) => {
   await page.goto('/');
@@ -306,6 +306,9 @@ test('el footer reestructurado expone las cuatro secciones y el aviso de sensibi
     'href',
     '/biblioteca/01-que-es',
   );
+  await expect(
+    navFooter.getByRole('link', { name: 'Acerca de' }),
+  ).toHaveAttribute('href', '/acerca-de');
   await expect(
     navFooter.getByRole('link', { name: 'Aviso de sensibilidad' }),
   ).toHaveAttribute('href', '/biblioteca/05-sensibilidad-y-honestidad');
@@ -343,6 +346,15 @@ test('el footer reestructurado expone las cuatro secciones y el aviso de sensibi
   await expect(
     navFooter.getByRole('link', { name: 'Sugerencias (GitHub Issues)' }),
   ).toHaveAttribute('href', '/sugerencias');
+
+  // Tramo 5: Legal y contacto. Tiene su propia cobertura en legal.spec.ts;
+  // aquí basta con fijar que el tramo existe dentro del nav del pie.
+  await expect(
+    navFooter.getByRole('link', { name: 'Privacidad' }),
+  ).toHaveAttribute('href', '/legal/privacidad');
+  await expect(
+    navFooter.getByRole('link', { name: 'Aviso legal' }),
+  ).toHaveAttribute('href', '/legal/aviso-legal');
 
   // Tira inferior de deslinde
   const footer = page.locator('footer');

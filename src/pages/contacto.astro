@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icono from '../components/Icono.astro';
+
+const CANALES = [
+  {
+    titulo: 'Consultas generales y derechos de privacidad',
+    descripcion:
+      'Para consultas académicas, dudas sobre el uso de datos agregados o para ejercer derechos de acceso, rectificación o supresión de datos técnicos.',
+    detalle: 'Plazo estimado de respuesta: 5 días hábiles (proyecto de investigación académica).',
+    enlace: 'mailto:«CORREO_CONTACTO»',
+    cta: '«CORREO_CONTACTO»',
+    icono: 'mail',
+    externo: false,
+  },
+  {
+    titulo: 'Reporte de errores y sugerencias técnicas',
+    descripcion:
+      'Si encuentras un error en la interfaz, un cálculo que no cuadra o quieres proponer una mejora en las herramientas de análisis. Todo se gestiona de forma pública y colaborativa.',
+    detalle: 'Canal abierto y trazable para auditoría comunitaria en GitHub.',
+    enlace: '/sugerencias',
+    cta: 'Ver canales en Sugerencias',
+    icono: 'brand-github',
+    externo: false,
+  },
+  {
+    titulo: 'Seguridad y divulgación responsable',
+    descripcion:
+      'Para notificar vulnerabilidades de software, fallos en la infraestructura o incidentes de seguridad que requieran atención confidencial previa a su divulgación.',
+    detalle: 'Consulte nuestra política formal en /.well-known/security.txt',
+    enlace: 'mailto:«CORREO_SEGURIDAD»',
+    cta: '«CORREO_SEGURIDAD»',
+    icono: 'shield',
+    externo: false,
+  },
+];
+---
+
+<Layout
+  title="EPI-Aetheris — Contacto"
+  descripcion="Canales directos de comunicación para consultas generales, reporte de problemas y divulgación responsable."
+>
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
+    <header class="mb-8 max-w-3xl">
+      <p class="font-mono text-xs font-semibold uppercase tracking-wider text-accent">
+        Canales directos
+      </p>
+      <h1
+        class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]"
+      >
+        Contacto y comunicación
+      </h1>
+      <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+        EPI-Aetheris no utiliza formularios web en este sitio: recopilar texto libre en un servidor
+        obligaría a retener información de terceros que contradice nuestra política de minimización de datos.
+        En su lugar, disponemos de canales directos y transparentes según el propósito de su comunicación.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        CANALES.map((canal) => (
+          <div class="card-elevated flex flex-col justify-between gap-4 rounded-2xl border border-border bg-surface p-6">
+            <div>
+              <div class="flex items-center gap-2.5">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-secondary-ink">
+                  <Icono nombre={canal.icono} class="h-4 w-4" />
+                </span>
+                <h2 class="font-sans text-base font-semibold leading-snug text-ink">
+                  {canal.titulo}
+                </h2>
+              </div>
+              <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+                {canal.descripcion}
+              </p>
+              <p class="mt-2 font-mono text-xs text-ink-muted">
+                {canal.detalle}
+              </p>
+            </div>
+            <div class="border-t border-border pt-4">
+              <a
+                href={canal.enlace}
+                class="inline-flex items-center gap-1.5 font-sans text-sm font-medium text-accent hover:underline"
+              >
+                <span>{canal.cta}</span>
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <section class="mt-10 max-w-3xl rounded-2xl border border-border bg-surface-raised p-6">
+      <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-ink">
+        Política de seguridad de la información
+      </h2>
+      <p class="mt-2 font-sans text-xs leading-relaxed text-ink-muted">
+        Agradecemos el trabajo de los investigadores de seguridad que nos ayudan a proteger la integridad
+        de nuestros servicios. Nuestro archivo de divulgación responsable sigue el estándar RFC 9116 y
+        está disponible públicamente en <a href="/.well-known/security.txt" class="text-accent underline font-mono">/.well-known/security.txt</a>.
+      </p>
+    </section>
+  </main>
+</Layout>

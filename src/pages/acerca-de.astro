@@ -1,0 +1,92 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icono from '../components/Icono.astro';
+
+const REPO_URL = 'https://github.com/the-monolith-project/aetheris-nitor';
+---
+
+<Layout
+  title="EPI-Aetheris — Acerca del proyecto"
+  descripcion="Propósito, desarrollo académico, sostenibilidad y reproducibilidad técnica de EPI-Aetheris."
+>
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
+    <article class="card-elevated rounded-2xl border border-border bg-surface p-6 sm:p-10 doc-md">
+      <header class="border-b border-border pb-6">
+        <p class="font-mono text-xs font-semibold uppercase tracking-wider text-accent">
+          Iniciativa abierta
+        </p>
+        <h1 class="mt-2 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          Acerca de EPI-Aetheris
+        </h1>
+        <p class="mt-2 text-sm text-ink-muted">
+          Origen académico, reproducibilidad técnica y sostenibilidad del sistema de vigilancia epidemiológica descriptiva.
+        </p>
+      </header>
+
+      <section>
+        <h2>Propósito y contexto</h2>
+        <p>
+          EPI-Aetheris surge como un proyecto de investigación académica y desarrollo tecnológico aplicado a la salud pública
+          en El Salvador. Su objetivo no es suplantar la rectoría ni los boletines oficiales del Ministerio de Salud (MINSAL),
+          sino aportar herramientas analíticas descriptivas y comprensibles que permitan a profesionales de la salud,
+          investigadores y ciudadanos explorar los patrones territoriales del dengue y las enfermedades respiratorias agudas.
+        </p>
+        <p>
+          En lugar de reiterar aquí la memoria conceptual completa del proyecto, le invitamos a consultar los ensayos monográficos
+          documentados en la Biblioteca:
+        </p>
+        <ul>
+          <li><a href="/biblioteca/01-que-es">¿Qué es EPI-Aetheris?</a> — Fundamentos del diseño y enfoque descriptivo.</li>
+          <li><a href="/biblioteca/02-historia">Decisiones y trayectoria</a> — Registro de decisiones arquitectónicas (ADRs) y evolución del sistema.</li>
+          <li><a href="/biblioteca/05-sensibilidad-y-honestidad">Aviso de sensibilidad y honestidad metodológica</a> — Los límites de lo que los datos pueden y no pueden afirmar.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Reproducibilidad técnica</h2>
+        <p>
+          Creemos que el software destinado al interés público debe ser completamente transparente y auditable.
+          Todo el código fuente está publicado bajo licencia <strong>GPL-3.0</strong>. La arquitectura del sistema está concebida
+          para ser levantada en cualquier equipo local o servidor institucional ejecutando:
+        </p>
+        <pre><code>git clone {REPO_URL}.git
+cd aetheris-nitor
+docker compose up</code></pre>
+        <p>
+          Consulte la guía técnica en <a href="/biblioteca/06-arquitectura-y-reproducibilidad">Arquitectura y reproducibilidad</a> para conocer la estructura de contenedores, contratos de datos y tuberías de procesamiento.
+        </p>
+      </section>
+
+      <section>
+        <h2>Sostenibilidad y recursos</h2>
+        <p>
+          La plataforma opera bajo un modelo de costos conscientes y máxima eficiencia computacional.
+          El despliegue de producción se sostiene íntegramente sobre una infraestructura ligera en la nube de Render
+          (CDN estática para el frontend web, contenedor FastAPI para la API pública y una base de datos PostgreSQL gestionada),
+          con un costo operativo de aproximadamente <strong>14 USD mensuales</strong>.
+        </p>
+        <p>
+          Este enfoque demuestra que la vigilancia epidemiológica rigurosa, moderna y de alta disponibilidad no demanda
+          presupuestos prohibitivos ni licencias propietarias cerradas para prestar servicio comunitario continuo.
+        </p>
+      </section>
+
+      <footer class="mt-8 border-t border-border pt-6 font-sans text-xs text-ink-muted">
+        <p class="font-semibold text-ink">Navegación y contacto:</p>
+        <div class="mt-2 flex flex-wrap items-center gap-4">
+          <a href="/biblioteca" class="enlace-filete text-accent hover:underline">Explorar la Biblioteca</a>
+          <span aria-hidden="true">·</span>
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer" class="enlace-filete text-accent hover:underline inline-flex items-center gap-1">
+            <Icono nombre="brand-github" class="h-3.5 w-3.5" />
+            <span>Repositorio en GitHub</span>
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="/contacto" class="enlace-filete text-accent hover:underline">Canales de contacto</a>
+        </div>
+      </footer>
+    </article>
+  </main>
+</Layout>

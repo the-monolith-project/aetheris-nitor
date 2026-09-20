@@ -1,0 +1,160 @@
+---
+/**
+ * Términos de uso. Los deslindes epidemiológicos NO se reescriben aquí: el
+ * documento canónico es el aviso de sensibilidad de la Biblioteca
+ * (src/lib/enlaces.ts, RUTA_SENSIBILIDAD) y esta página enlaza a él.
+ * Lo propio de este documento es el uso de la API, la propiedad intelectual y
+ * la ausencia de garantías.
+ */
+import DocumentoTexto from '../../components/DocumentoTexto.astro';
+import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
+---
+
+<DocumentoTexto
+  seccion="Documento legal"
+  titulo="Términos de uso"
+  descripcion="Qué es y qué no es esta herramienta, qué se puede hacer con la API y los datos, y con qué garantías se ofrece."
+  actualizado="20 de septiembre de 2026"
+>
+  <h2>Qué es este servicio</h2>
+  <p>
+    EPI-Aetheris es una herramienta de vigilancia epidemiológica{' '}
+    <strong>descriptiva</strong>, de acceso libre y gratuito, construida sobre
+    datos públicos. Describe cada departamento contra su propia historia: no
+    diagnostica, no clasifica riesgo de brote y no sustituye los lineamientos
+    del MINSAL ni el criterio clínico de un profesional. Los límites del sistema
+    están argumentados a fondo en el{' '}
+    <a href={RUTA_SENSIBILIDAD}>aviso de sensibilidad y honestidad</a>, que
+    forma parte de estos términos.
+  </p>
+  <p>
+    Usar el sitio implica aceptar estos términos. Si no estás de acuerdo con
+    ellos, no lo uses.
+  </p>
+
+  <h2>Uso de la API pública</h2>
+  <p>
+    La API que alimenta este sitio es pública y está documentada. Puedes
+    consultarla, reutilizar sus salidas y construir sobre ella, con dos
+    condiciones:
+  </p>
+  <ul>
+    <li>
+      <strong>Respetar el límite de peticiones.</strong> Los endpoints de análisis
+      están limitados a 30 consultas por minuto y por cliente. El límite protege la
+      capacidad del servicio para el resto de personas.
+    </li>
+    <li>
+      <strong>Citar la procedencia.</strong> Al republicar cifras o gráficos, indicar
+      EPI-Aetheris y la fuente original del dato (MINSAL, OpenDengue, Open-Meteo),
+      según se detalla en{' '}
+      <a href="/biblioteca/04-fuentes-de-datos">de dónde salen los datos</a>.
+    </li>
+  </ul>
+
+  <h2>Conductas prohibidas</h2>
+  <ul>
+    <li>
+      Eludir el límite de peticiones, por ejemplo rotando direcciones o
+      paralelizando clientes para superarlo.
+    </li>
+    <li>
+      Extraer contenido de forma masiva o automatizada de un modo que degrade el
+      servicio para otros.
+    </li>
+    <li>
+      Realizar pruebas de intrusión, escaneos agresivos o ataques de denegación
+      de servicio. Si encuentras una vulnerabilidad, avísanos antes de
+      publicarla: el canal formal está en{' '}
+      <a href="/.well-known/security.txt">/.well-known/security.txt</a>.
+    </li>
+    <li>
+      Suplantar al proyecto, al MINSAL o a cualquier emisor de alertas, o
+      presentar contenido propio como si viniera de ellos.
+    </li>
+    <li>
+      Republicar alertas de campo alteradas, fuera de contexto o sin su ventana
+      de vigencia, de forma que induzcan a una decisión sanitaria equivocada.
+    </li>
+  </ul>
+
+  <h2>Propiedad intelectual y licencias</h2>
+  <ul>
+    <li>
+      <strong>El código</strong> se publica bajo licencia GPL-3.0. Puedes usarlo,
+      estudiarlo, modificarlo y redistribuirlo en los términos de esa licencia, cuyo
+      texto completo acompaña al repositorio.
+    </li>
+    <li>
+      <strong>Los datos</strong> conservan la licencia de su fuente: Open-Meteo bajo
+      CC BY 4.0, y los conjuntos de MINSAL y OpenDengue según sus respectivos términos.
+      Reutilizarlos obliga a respetar esas licencias.
+    </li>
+    <li>
+      <strong>Los documentos y textos</strong> del sitio pueden citarse indicando
+      la fuente y el enlace.
+    </li>
+  </ul>
+
+  <h2>Cuentas y credenciales</h2>
+  <p>
+    No existen cuentas de usuario: todo el contenido es de consulta abierta. El
+    token de escritura de alertas es una credencial operativa del equipo, no una
+    cuenta personal; compartirlo o usarlo sin autorización entra dentro de las
+    conductas prohibidas.
+  </p>
+
+  <h2>Ausencia de garantías</h2>
+  <p>
+    El servicio se ofrece <strong>«tal cual»</strong>, sin garantía de ningún
+    tipo, expresa o implícita, incluidas las de adecuación a un propósito
+    concreto, exactitud o disponibilidad, en los mismos términos de las
+    secciones 15 a 17 de la licencia GPL-3.0. Los datos proceden de fuentes de
+    terceros y pueden contener retrasos, vacíos de cobertura o correcciones
+    posteriores; el propio sitio señala esas limitaciones cuando las conoce.
+  </p>
+
+  <h2>Limitación de responsabilidad</h2>
+  <p>
+    En la medida en que lo permita la ley aplicable, el responsable del sitio no
+    responde por daños directos o indirectos derivados del uso o de la
+    imposibilidad de uso del servicio, incluidas las decisiones que se tomen a
+    partir de lo publicado aquí. Cualquier decisión sanitaria corresponde al
+    criterio profesional y a los lineamientos oficiales.
+  </p>
+
+  <h2>Disponibilidad</h2>
+  <p>
+    No hay compromiso de nivel de servicio ni garantía de continuidad. El
+    proyecto es académico y puede interrumpirse, cambiar de alcance o dejar de
+    actualizarse.
+  </p>
+
+  <h2>Enlaces a sitios de terceros</h2>
+  <p>
+    El sitio enlaza a repositorios, fuentes de datos y documentación externa. No
+    se controla su contenido ni sus políticas; al seguir uno de esos enlaces se
+    aplican sus propios términos.
+  </p>
+
+  <h2>Cambios en estos términos</h2>
+  <p>
+    Pueden modificarse para reflejar cambios en el servicio o en la normativa.
+    La fecha de última actualización aparece al principio y el historial queda
+    en el repositorio público.
+  </p>
+
+  <h2>Ley aplicable</h2>
+  <p>
+    Estos términos se rigen por la legislación de <strong>«JURISDICCION»</strong
+    >, sin perjuicio de los derechos que la normativa de protección de datos
+    reconozca a la persona usuaria en su lugar de residencia.
+  </p>
+
+  <hr />
+  <p>
+    Ver también: <a href="/legal/privacidad">política de privacidad</a> ·
+    <a href="/legal/aviso-legal">aviso legal</a> ·
+    <a href="/contacto">contacto</a>.
+  </p>
+</DocumentoTexto>

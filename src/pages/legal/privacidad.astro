@@ -1,0 +1,206 @@
+---
+/**
+ * Política de privacidad. El contenido no es una plantilla: enumera las
+ * cinco superficies por las que realmente pasan datos de quien visita, todas
+ * verificables en el código (teselas de OSM en los mapas, registros de
+ * Render, IP como clave del límite de peticiones del backend, tipografías
+ * auto-hospedadas en build y el formulario de operadores).
+ *
+ * Los marcadores «RESPONSABLE» y «CORREO_CONTACTO» son deliberados: no se
+ * publica una identidad ni un buzón inventados. Antes de desplegar hay que
+ * rellenarlos; `grep -rn "«" dist/` los caza en el build.
+ */
+import DocumentoTexto from '../../components/DocumentoTexto.astro';
+---
+
+<DocumentoTexto
+  seccion="Documento legal"
+  titulo="Política de privacidad"
+  descripcion="Qué datos se tratan al usar EPI-Aetheris, con qué finalidad, quién más interviene y cómo ejercer tus derechos."
+  actualizado="20 de septiembre de 2026"
+>
+  <h2>Quién trata los datos</h2>
+  <p>
+    El responsable de este sitio es <strong>«RESPONSABLE»</strong>, con correo
+    de contacto <strong>«CORREO_CONTACTO»</strong>. Los datos de identificación
+    completos están en el <a href="/legal/aviso-legal">aviso legal</a>.
+  </p>
+
+  <h2>Qué no hace este sitio</h2>
+  <p>
+    EPI-Aetheris es un sitio estático de consulta pública. No tiene cuentas de
+    usuario ni registro, no cobra ni procesa pagos, no usa herramientas de
+    analítica ni píxeles de seguimiento, no incrusta reproductores ni widgets de
+    redes sociales, no elabora perfiles y no vende ni cede datos a nadie.
+    Tampoco existe un panel de usuario: como no hay cuentas, no hay perfil que
+    exportar ni que dar de baja.
+  </p>
+
+  <h2>Qué se trata igualmente</h2>
+  <p>
+    Aun sin cuentas ni analítica, hay cinco puntos en los que circulan datos
+    técnicos. Se enumeran todos, incluidos los que no se ven.
+  </p>
+
+  <h3>1. Mapas: teselas de OpenStreetMap</h3>
+  <p>
+    Las vistas con mapa (portada, dengue, respiratorio y las fichas
+    departamentales) piden las imágenes de fondo a los servidores de
+    OpenStreetMap. Esa petición la hace tu navegador directamente, así que{' '}
+    <strong
+      >tu dirección IP y tu user-agent llegan a la OpenStreetMap Foundation</strong
+    >{' '}
+    cada vez que se dibuja un mapa. Es la única transferencia sustantiva a un tercero
+    que ocurre al navegar. Su política:{' '}
+    <a
+      href="https://wiki.osmfoundation.org/wiki/Privacy_Policy"
+      target="_blank"
+      rel="noopener noreferrer">privacy policy de la OSMF</a
+    >.
+  </p>
+
+  <h3>2. Registros del servidor</h3>
+  <p>
+    El sitio y la API están alojados en Render. Como cualquier servidor web, su
+    infraestructura guarda registros de acceso con dirección IP, user-agent,
+    fecha y recurso solicitado. Finalidad: operar el servicio y detectar abusos.
+    Base: interés legítimo. La retención la fija el proveedor.
+  </p>
+
+  <h3>3. Límite de peticiones de la API</h3>
+  <p>
+    La API pública limita cuántas consultas puede hacer un mismo cliente por
+    minuto. Para contarlas usa la dirección IP como clave, en memoria del
+    proceso: <strong>no se guarda en la base de datos</strong> ni se asocia a ninguna
+    otra información. Finalidad: evitar que una automatización deje el servicio sin
+    capacidad para el resto.
+  </p>
+
+  <h3>4. Tipografías</h3>
+  <p>
+    Las tres familias tipográficas se descargan cuando se compila el sitio y se
+    sirven desde este mismo dominio. <strong
+      >Ninguna petición llega a Google ni a otro proveedor de fuentes cuando
+      abres una página.</strong
+    >
+  </p>
+
+  <h3>5. Formulario de emisión de alertas</h3>
+  <p>
+    La ruta de operadores para publicar una alerta de campo es el único punto
+    del sitio donde se envían datos. Pide un token de escritura del equipo y un
+    campo de autoría con texto libre. Lo que se escriba ahí, incluida la
+    autoría, <strong>se publica junto a la alerta</strong> y es visible para cualquiera.
+    No está enlazada en la navegación y no es una ruta de uso público.
+  </p>
+
+  <h2>Terceros que intervienen</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Quién</th>
+        <th>Papel</th>
+        <th>Qué recibe</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Render Services, Inc. (EE. UU.)</td>
+        <td>Hospedaje del sitio, de la API y de la base de datos</td>
+        <td>Registros de acceso: IP, user-agent, fecha</td>
+      </tr>
+      <tr>
+        <td>OpenStreetMap Foundation</td>
+        <td>Imágenes de fondo de los mapas</td>
+        <td>IP y user-agent al cargar cada tesela</td>
+      </tr>
+      <tr>
+        <td>GitHub, Inc.</td>
+        <td>Destino de los enlaces de código y sugerencias</td>
+        <td>Nada, salvo que sigas uno de esos enlaces</td>
+      </tr>
+      <tr>
+        <td>MINSAL, OpenDengue, Open-Meteo</td>
+        <td>Fuentes de los datos epidemiológicos y climáticos</td>
+        <td>Nada: son orígenes de datos agregados, no reciben nada de ti</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Almacenamiento local y cookies</h2>
+  <p>
+    <strong>Este sitio no usa cookies</strong>, ni propias ni de terceros. Por
+    eso no verás un banner de consentimiento: no hay nada que consentir. Lo que
+    sí se guarda en tu navegador es:
+  </p>
+  <ul>
+    <li>
+      <strong>Una clave de almacenamiento local</strong> con el token de escritura
+      de alertas, solo si un operador marca expresamente la casilla «Recordar el token
+      en este navegador». Se borra con el botón de cerrar sesión de esa misma página.
+    </li>
+    <li>
+      <strong>La caché del service worker</strong>, que guarda copias de las
+      páginas y de la última lista de alertas para que la vista de alertas abra
+      sin conexión. Solo contiene información pública y se vacía borrando los
+      datos del sitio en tu navegador.
+    </li>
+  </ul>
+  <p>
+    Si en el futuro se añadiera analítica o cualquier medición que rastree al
+    visitante, haría falta un mecanismo de consentimiento previo y esta sección
+    tendría que reescribirse.
+  </p>
+
+  <h2>Datos de salud</h2>
+  <p>
+    Todo lo que publica EPI-Aetheris son <strong
+      >agregados por departamento y semana epidemiológica</strong
+    > procedentes de fuentes públicas. No entra al sistema ningún registro individual
+    de paciente, ninguna identidad y ningún dato de localización de personas. El detalle
+    de cada fuente está en{' '}
+    <a href="/biblioteca/04-fuentes-de-datos">de dónde salen los datos</a>.
+  </p>
+
+  <h2>Tus derechos</h2>
+  <p>
+    Puedes solicitar acceso, rectificación, supresión, limitación u oposición
+    escribiendo a <strong>«CORREO_CONTACTO»</strong>. Conviene ser claro sobre
+    el alcance real: como no hay cuentas, lo único que podría asociarse a una
+    persona son los registros de acceso del proveedor de hospedaje y el campo de
+    autoría de una alerta publicada. Sobre lo primero, la solicitud se traslada
+    al proveedor; sobre lo segundo, se corrige o retira la alerta.
+  </p>
+  <p>
+    El plazo de respuesta previsto está en la <a href="/contacto"
+      >página de contacto</a
+    >.
+  </p>
+
+  <h2>Menores</h2>
+  <p>
+    El sitio no se dirige a menores de edad ni recoge datos de ellos a
+    sabiendas.
+  </p>
+
+  <h2>Transferencias internacionales</h2>
+  <p>
+    La infraestructura de hospedaje está en Estados Unidos y las teselas de los
+    mapas se sirven desde la infraestructura de la OpenStreetMap Foundation.
+    Navegar este sitio implica que esos datos técnicos salgan del país.
+  </p>
+
+  <h2>Cambios en esta política</h2>
+  <p>
+    La fecha de última actualización aparece al principio. Como el código del
+    sitio es público, el historial completo de cambios de este documento se
+    puede consultar en el repositorio.
+  </p>
+
+  <hr />
+  <p>
+    Ver también: <a href="/legal/terminos">términos de uso</a> ·
+    <a href="/legal/aviso-legal">aviso legal</a> ·
+    <a href="/contacto">contacto</a>.
+  </p>
+</DocumentoTexto>

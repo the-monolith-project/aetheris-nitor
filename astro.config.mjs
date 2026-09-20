@@ -1,6 +1,7 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
+import sitemap from '@astrojs/sitemap';
 
 // Configuración principal del framework Astro
 export default defineConfig({
@@ -63,7 +64,13 @@ export default defineConfig({
   // Iconos: Tabler (MIT) y Simple Icons (CC0, logotipos) via astro-icon. El SVG se inserta inline en build,
   // solo los iconos usados, sin JavaScript ni fuente de iconos en cliente.
   // Se usan a traves de src/components/Icono.astro, no de <Icon> directo.
-  integrations: [icon({ include: { tabler: ['*'], 'simple-icons': ['*'] } })],
+  integrations: [
+    icon({ include: { tabler: ['*'], 'simple-icons': ['*'] } }),
+    sitemap({
+      filter: (page) =>
+        !page.includes('/alertas/nueva') && !page.includes('/panel'),
+    }),
+  ],
   server: {
     // Permite que el servidor sea accesible desde fuera del contenedor Docker
     host: true,

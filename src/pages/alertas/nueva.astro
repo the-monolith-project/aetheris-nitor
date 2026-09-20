@@ -3,7 +3,12 @@ import Layout from '../../layouts/Layout.astro';
 import Icono from '../../components/Icono.astro';
 ---
 
-<Layout title="EPI-Aetheris — Nueva alerta">
+{
+  /* noindex: es la ruta de operadores, no contenido público. Tampoco entra
+al sitemap (filtro en astro.config.mjs) ni se lista en robots.txt, que la
+anunciaría. */
+}
+<Layout title="EPI-Aetheris — Nueva alerta" noindex>
   <main
     id="contenido-principal"
     class="mx-auto max-w-3xl px-4 py-8 sm:px-8 sm:py-10"

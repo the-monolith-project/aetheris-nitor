@@ -6,11 +6,15 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   descripcion?: string;
+  /** Saca la página del índice de los buscadores. Se usa en las rutas que no
+   *  son contenido público: el formulario de operadores y la 404. */
+  noindex?: boolean;
 }
 
 const {
   title = 'EPI-Aetheris',
   descripcion = 'Vigilancia epidemiológica descriptiva de dengue e IRA en El Salvador, sobre datos públicos de MINSAL, OpenDengue y Open-Meteo. Licencia GPL-3.0.',
+  noindex = false,
 } = Astro.props;
 
 // API pública real -- FastAPI genera /docs (Swagger UI) gratis a partir de
@@ -56,6 +60,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <meta name="description" content={descripcion} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={urlCanonica} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     {
       /* PWA (ADR 0014): permite instalar el sitio y, sobre todo, que /alertas
       abra sin señal en zona rural. El service worker vive en public/sw.js. */

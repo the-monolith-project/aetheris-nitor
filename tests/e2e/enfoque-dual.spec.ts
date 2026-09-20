@@ -292,7 +292,7 @@ test('/alertas abre sin conexión desde el cache del service worker', async ({
   await context.unroute('**/api/alertas*');
 });
 
-test('el footer reestructurado expone las cuatro secciones y el aviso de sensibilidad', async ({
+test('el footer reestructurado expone las cinco secciones y el aviso de sensibilidad', async ({
   page,
 }) => {
   await page.goto('/');
@@ -306,6 +306,9 @@ test('el footer reestructurado expone las cuatro secciones y el aviso de sensibi
     'href',
     '/biblioteca/01-que-es',
   );
+  await expect(
+    navFooter.getByRole('link', { name: 'Acerca de' }),
+  ).toHaveAttribute('href', '/acerca-de');
   await expect(
     navFooter.getByRole('link', { name: 'Aviso de sensibilidad' }),
   ).toHaveAttribute('href', '/biblioteca/05-sensibilidad-y-honestidad');
@@ -329,6 +332,9 @@ test('el footer reestructurado expone las cuatro secciones y el aviso de sensibi
   await expect(
     navFooter.getByRole('link', { name: 'Licencias de datos' }),
   ).toHaveAttribute('href', 'https://open-meteo.com/en/license');
+  await expect(
+    navFooter.getByRole('link', { name: 'Estado del servicio' }),
+  ).toHaveAttribute('href', '/estado');
 
   // Tramo 4: Vigilancia
   await expect(
@@ -343,6 +349,20 @@ test('el footer reestructurado expone las cuatro secciones y el aviso de sensibi
   await expect(
     navFooter.getByRole('link', { name: 'Sugerencias (GitHub Issues)' }),
   ).toHaveAttribute('href', '/sugerencias');
+
+  // Tramo 5: Legal y contacto
+  await expect(
+    navFooter.getByRole('link', { name: 'Privacidad' }),
+  ).toHaveAttribute('href', '/legal/privacidad');
+  await expect(
+    navFooter.getByRole('link', { name: 'Términos' }),
+  ).toHaveAttribute('href', '/legal/terminos');
+  await expect(
+    navFooter.getByRole('link', { name: 'Aviso legal' }),
+  ).toHaveAttribute('href', '/legal/aviso-legal');
+  await expect(
+    navFooter.getByRole('link', { name: 'Contacto' }),
+  ).toHaveAttribute('href', '/contacto');
 
   // Tira inferior de deslinde
   const footer = page.locator('footer');

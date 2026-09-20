@@ -1,0 +1,160 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="EPI-Aetheris — Términos y Condiciones"
+  descripcion="Condiciones de uso de la plataforma, API pública, licencias y deslindes de EPI-Aetheris."
+>
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
+    <article class="card-elevated rounded-2xl border border-border bg-surface p-6 sm:p-10 doc-md">
+      <header class="border-b border-border pb-6">
+        <p class="font-mono text-xs text-ink-muted">
+          Última actualización: 20 de septiembre de 2026
+        </p>
+        <h1 class="mt-2 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          Términos y Condiciones de Uso
+        </h1>
+        <p class="mt-2 text-sm text-ink-muted">
+          Condiciones que rigen el acceso al portal web, el consumo de la API pública y el régimen de licencias de código abierto.
+        </p>
+      </header>
+
+      <section>
+        <h2>1. Objeto y naturaleza del servicio</h2>
+        <p>
+          EPI-Aetheris es una plataforma de visualización y vigilancia epidemiológica descriptiva, de acceso libre
+          y gratuito, desarrollada con carácter estrictamente académico y de investigación bajo la titularidad de
+          <strong>«RESPONSABLE»</strong>.
+        </p>
+        <p>
+          El sistema sintetiza series históricas agregadas a nivel departamental sobre dengue y enfermedades respiratorias agudas en El Salvador.
+          <strong>EPI-Aetheris no diagnostica, no pronostica ni asigna de forma automatizada un nivel de riesgo o alarma de brote.</strong>
+          Para una explicación pormenorizada sobre los límites metodológicos y la prudencia algorítmica adoptada, consulte el documento canónico:
+          <a href="/biblioteca/05-sensibilidad-y-honestidad">Aviso de sensibilidad y honestidad metodológica</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. No sustitución de lineamientos oficiales ni criterio clínico</h2>
+        <p>
+          Esta plataforma actúa exclusivamente como una herramienta analítica y de ayuda para la priorización basada en datos públicos agregados
+          de MINSAL, OpenDengue y Open-Meteo. <strong>No reemplaza bajo ninguna circunstancia los boletines, lineamientos, directrices o protocolos oficiales
+          del Ministerio de Salud de El Salvador (MINSAL), ni sustituye el criterio diagnóstico o asistencial de los profesionales de la salud.</strong>
+          Las medidas preventivas, diagnósticas o de intervención comunitaria deben fundamentarse siempre en las directivas de las autoridades sanitarias competentes.
+        </p>
+      </section>
+
+      <section>
+        <h2>3. Uso de la API pública</h2>
+        <p>
+          EPI-Aetheris expone una interfaz de programación de aplicaciones (API) pública y documentada bajo estándar OpenAPI / Swagger
+          en la ruta <code>/docs</code>. Su utilización es libre y no requiere pago ni suscripción, sujeta al cumplimiento de las siguientes pautas:
+        </p>
+        <ul>
+          <li><strong>Límites de frecuencia (Rate Limits):</strong> Los endpoints analíticos de alta intensidad computacional imponen un límite de <code>30 peticiones por minuto</code> por dirección IP cliente.</li>
+          <li><strong>Atribución y cita:</strong> Si reutiliza o republica datos, transformaciones o visualizaciones derivadas de la API, debe citar a <em>EPI-Aetheris</em> y a las fuentes primarias respectivas (MINSAL, OpenDengue, Open-Meteo).</li>
+          <li><strong>Uso responsable:</strong> Las aplicaciones cliente deben almacenar en caché las respuestas cuando proceda y evitar reintentos continuos en caso de indisponibilidad temporal.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>4. Conductas prohibidas</h2>
+        <p>
+          Queda expresamente prohibido:
+        </p>
+        <ul>
+          <li>Evadir, alterar o intentar deshabilitar los límites de peticiones (rate limiting) de la API mediante técnicas de rotación no autorizada de encabezados o ataques distribuidos.</li>
+          <li>Efectuar actividades de extracción masiva desmedida (scraping volumétrico agresivo) que degraden la velocidad o disponibilidad de los servicios para la comunidad.</li>
+          <li>Llevar a cabo pruebas de penetración, análisis de vulnerabilidades o auditorías de intrusión no coordinadas previamente. Para divulgación responsable de fallos de seguridad, consulte <a href="/.well-known/security.txt"><code>/.well-known/security.txt</code></a> y comuníquese a <a href="mailto:«CORREO_SEGURIDAD»">«CORREO_SEGURIDAD»</a>.</li>
+          <li>Suplantar la identidad del proyecto, del Ministerio de Salud (MINSAL) o de cualquier emisor institucional mediante el uso indebido de los logotipos, alertas o nombres del sistema.</li>
+          <li>Republicar o redistribuir alertas de campo alteradas, manipuladas o fuera de su vigencia temporal de manera que induzcan a confusión a la población o al personal sanitario.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. Propiedad intelectual y licencias</h2>
+        <ul>
+          <li>
+            <strong>Código fuente:</strong> Todo el código fuente de EPI-Aetheris se distribuye bajo la licencia
+            <strong>GNU General Public License v3.0 (GPL-3.0)</strong>. El texto íntegro de la licencia está disponible en el archivo <code>LICENSE</code> en la raíz del repositorio.
+          </li>
+          <li>
+            <strong>Textos y documentación:</strong> Los artículos de la Biblioteca y la documentación propia del sistema pertenecen al proyecto y se ponen a disposición pública con fines formativos y de transparencia científica.
+          </li>
+          <li>
+            <strong>Datos de terceros:</strong> Los conjuntos de datos reutilizados operan bajo sus licencias originarias:
+            Open-Meteo (licencia CC BY 4.0), OpenDengue y boletines del MINSAL. Para el desglose pormenorizado de fuentes y atribuciones, consulte
+            <a href="/biblioteca/04-fuentes-de-datos">Fuentes de datos</a>.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>6. Cuentas y credenciales operativas</h2>
+        <p>
+          El portal público no ofrece registros de usuario individual ni paneles autenticados para la ciudadanía.
+          El mecanismo de tokens de acceso existente en <code>/alertas/nueva</code> corresponde exclusivamente a una credencial
+          operativa interna para colaboradores designados. El intento de fuerza bruta, extracción o explotación de credenciales
+          operativas constituye una infracción grave a estos términos.
+        </p>
+      </section>
+
+      <section>
+        <h2>7. Exclusión de garantías y limitación de responsabilidad</h2>
+        <p>
+          Conforme a las secciones 15, 16 y 17 de la licencia GPL-3.0:
+        </p>
+        <blockquote>
+          <p>
+            EL SOFTWARE Y LOS SERVICIOS SE OFRECEN «TAL CUAL» Y «SEGÚN DISPONIBILIDAD», SIN GARANTÍA DE NINGUNA CLASE, EXPRESA O IMPLÍCITA,
+            INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS DE COMERCIABILIDAD, ADECUACIÓN A UN PROPÓSITO PARTICULAR O NO INFRACCIÓN.
+          </p>
+        </blockquote>
+        <p>
+          Al tratarse de un proyecto académico y abierto, no existe compromiso de acuerdo de nivel de servicio (SLA), ni garantía de disponibilidad
+          continua o permanencia en el tiempo. Los autores y colaboradores no responderán ante ningún usuario por daños directos, indirectos,
+          incidentales o derivados que pudieran suscitarse del uso, interpretación o imposibilidad de acceso al sitio o a su API.
+        </p>
+      </section>
+
+      <section>
+        <h2>8. Enlaces a terceros</h2>
+        <p>
+          El sitio incorpora enlaces hacia recursos externos (tales como OpenStreetMap, repositorios en GitHub o portales de datos).
+          EPI-Aetheris no asume responsabilidad alguna por el contenido, políticas de privacidad o disponibilidad técnica de dichos servicios independientes.
+        </p>
+      </section>
+
+      <section>
+        <h2>9. Modificación de los términos</h2>
+        <p>
+          Estos términos podrán ser modificados en función de la evolución técnica de la plataforma o de adecuaciones regulatorias.
+          La versión vigente será siempre la publicada en esta ruta con su correspondiente fecha de actualización.
+        </p>
+      </section>
+
+      <section>
+        <h2>10. Legislación aplicable y jurisdicción</h2>
+        <p>
+          Los presentes términos se rigen por las leyes de <strong>«JURISDICCION»</strong>. Cualquier consulta legal o notificación formal
+          debe canalizarse a través del buzón: <a href="mailto:«CORREO_CONTACTO»">«CORREO_CONTACTO»</a>.
+        </p>
+      </section>
+
+      <footer class="mt-8 border-t border-border pt-6 font-sans text-xs text-ink-muted">
+        <p class="font-semibold text-ink">Documentos relacionados:</p>
+        <div class="mt-2 flex flex-wrap gap-4">
+          <a href="/legal/privacidad" class="enlace-filete text-accent hover:underline">Política de Privacidad</a>
+          <span aria-hidden="true">·</span>
+          <a href="/legal/aviso-legal" class="enlace-filete text-accent hover:underline">Aviso Legal</a>
+          <span aria-hidden="true">·</span>
+          <a href="/contacto" class="enlace-filete text-accent hover:underline">Canales de Contacto</a>
+        </div>
+      </footer>
+    </article>
+  </main>
+</Layout>

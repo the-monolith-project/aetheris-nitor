@@ -1,0 +1,234 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="EPI-Aetheris — Política de Privacidad"
+  descripcion="Tratamiento de datos técnicos, almacenamiento local y ausencia de rastreo en EPI-Aetheris."
+>
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
+    <article class="card-elevated rounded-2xl border border-border bg-surface p-6 sm:p-10 doc-md">
+      <header class="border-b border-border pb-6">
+        <p class="font-mono text-xs text-ink-muted">
+          Última actualización: 20 de septiembre de 2026
+        </p>
+        <h1 class="mt-2 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          Política de Privacidad
+        </h1>
+        <p class="mt-2 text-sm text-ink-muted">
+          Detalle exhaustivo de las superficies técnicas por las que transitan datos de red,
+          política estricta de no rastreo y gestión del almacenamiento local.
+        </p>
+      </header>
+
+      <section>
+        <h2>1. Quién trata los datos</h2>
+        <p>
+          El responsable del tratamiento de los datos técnicos asociados al dominio
+          <code>https://epi-aetheris.dev</code> es <strong>«RESPONSABLE»</strong>. Para cualquier consulta,
+          aclaración o ejercicio de derechos sobre privacidad, puede dirigirse al buzón institucional:
+          <a href="mailto:«CORREO_CONTACTO»">«CORREO_CONTACTO»</a>.
+        </p>
+        <p>
+          EPI-Aetheris es una plataforma académica orientada a la investigación y a la vigilancia
+          epidemiológica descriptiva en El Salvador.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Qué NO hacemos</h2>
+        <p>
+          El diseño del sistema responde a un principio de minimización radical de datos:
+        </p>
+        <ul>
+          <li><strong>Sin cuentas ni registro:</strong> No existen perfiles de usuario, contraseñas ni paneles privados para el público general.</li>
+          <li><strong>Sin pasarelas de pago ni cobros:</strong> El acceso a la información y a la API pública es libre y gratuito; no se procesan datos financieros.</li>
+          <li><strong>Sin analítica de terceros:</strong> No se integran herramientas de telemetría, Google Analytics, Plausible ni scripts de medición de audiencia.</li>
+          <li><strong>Sin píxeles ni redes sociales embebidas:</strong> No cargamos rastreadores de Meta, X, LinkedIn ni bibliotecas externas de publicidad.</li>
+          <li><strong>Sin perfilado de usuarios:</strong> No se construyen historiales de navegación ni se toman decisiones automatizadas sobre las personas.</li>
+          <li><strong>Sin venta ni cesión:</strong> Ningún dato se comercializa ni se comparte con terceros con fines mercantiles o publicitarios.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. Qué se trata igualmente (Superficies técnicas reales)</h2>
+        <p>
+          Al navegar por el sitio se generan transferencias técnicas inevitables para el funcionamiento
+          de la web contemporánea. Estas son las únicas cinco superficies reales verificables en el código:
+        </p>
+
+        <h3>3.1. Teselas cartográficas de OpenStreetMap</h3>
+        <p>
+          Las visualizaciones cartográficas del sitio (portada, <code>/dengue</code>, <code>/respiratorio</code> y
+          las fichas departamentales) cargan fragmentos de mapas desde <code>https://&#123;s&#125;.tile.openstreetmap.org/&#123;z&#125;/&#123;x&#125;/&#123;y&#125;.png</code>.
+          Al desplegarse un mapa, la dirección IP de su navegador es enviada a la <strong>OpenStreetMap Foundation (OSMF)</strong>
+          para permitir la entrega técnica de las imágenes cartográficas. Es la única transferencia a un tercero durante la navegación estándar.
+          Puede revisar la política de privacidad de OSMF en su sitio oficial:
+          <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">https://wiki.osmfoundation.org/wiki/Privacy_Policy</a>.
+          <em>Base legal:</em> interés legítimo en la contextualización territorial de los datos epidemiológicos.
+        </p>
+
+        <h3>3.2. Hospedaje y red de entrega (Render)</h3>
+        <p>
+          El sitio web estático y la API pública están alojados en la plataforma Render Services, Inc.
+          (servidores ubicados en la región <code>oregon</code>, EE. UU.). Al recibir una petición, los servidores
+          de borde registran transitoriamente la dirección IP del visitante, la cabecera <code>User-Agent</code>,
+          la ruta solicitada y la marca de tiempo. Estos registros se conservan por periodos limitados con fines
+          de seguridad, diagnóstico de caídas y protección frente a ataques de denegación de servicio.
+          <em>Base legal:</em> interés legítimo en garantizar la disponibilidad, seguridad y resiliencia de la infraestructura.
+        </p>
+
+        <h3>3.3. Límite de peticiones del backend (Rate Limiting)</h3>
+        <p>
+          La API pública cuenta con un sistema de prevención de saturación basado en <code>slowapi</code>.
+          Para aplicar la cuota por cliente (30 peticiones por minuto en endpoints de análisis pesado), el sistema
+          obtiene la IP del visitante evaluando el último salto del encabezado <code>X-Forwarded-For</code>
+          (para evitar suplantaciones de cabeceras). Dicha dirección IP se utiliza exclusivamente como clave numérica
+          de conteo en la memoria volátil del proceso backend; no se almacena en base de datos ni se asocia a ninguna identidad.
+        </p>
+
+        <h3>3.4. Tipografías autoalojadas</h3>
+        <p>
+          Las tipografías del sitio (Inter, IBM Plex Mono y Fraunces) se descargan e integran directamente en el bundle
+          estático en tiempo de construcción (build) mediante la Fonts API de Astro. Al consultar las páginas,
+          <strong>no se realiza ninguna llamada ni conexión a servidores de Google</strong> (como <code>fonts.googleapis.com</code> o <code>gstatic.com</code>).
+        </p>
+
+        <h3>3.5. Formulario de emisión de alertas de campo (/alertas/nueva)</h3>
+        <p>
+          Esta ruta no está enlazada en la navegación general y su uso está reservado a operadores autorizados.
+          Al enviar una alerta, se transmite una cabecera <code>Authorization: Bearer</code> con un token de acceso
+          y los campos del formulario, incluyendo el campo <code>autor</code> de texto libre. El contenido enviado
+          se publica íntegramente de manera pública en la sección de alertas. Los operadores no deben ingresar datos
+          personales no pertinentes ni información clínica individual en dicho campo.
+        </p>
+      </section>
+
+      <section>
+        <h2>4. Terceros que intervienen</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tercero</th>
+              <th>Función</th>
+              <th>Ubicación</th>
+              <th>Datos transferidos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Render Services, Inc.</strong></td>
+              <td>Hospedaje web, CDN y ejecución de backend API</td>
+              <td>Estados Unidos (región Oregon)</td>
+              <td>Registros de acceso de servidor (IP, agente de usuario, fecha/hora).</td>
+            </tr>
+            <tr>
+              <td><strong>Render Postgres</strong></td>
+              <td>Base de datos del backend</td>
+              <td>Estados Unidos (región Oregon)</td>
+              <td>Solo series epidemiológicas agregadas. Ningún dato personal del visitante.</td>
+            </tr>
+            <tr>
+              <td><strong>OpenStreetMap Foundation</strong></td>
+              <td>Suministro de teselas cartográficas</td>
+              <td>Reino Unido / Internacional</td>
+              <td>Dirección IP al cargar y renderizar los mapas interactivos.</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub, Inc.</strong></td>
+              <td>Destino de enlaces externos (/sugerencias y repositorio)</td>
+              <td>Estados Unidos</td>
+              <td>Aplica la política de GitHub únicamente si el usuario hace clic y visita el enlace externo.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <em>Fuentes de datos agregados:</em> El Ministerio de Salud de El Salvador (MINSAL), OpenDengue y Open-Meteo
+          actúan exclusivamente como fuentes públicas agregadas que el backend procesa; no reciben peticiones ni datos de los visitantes del sitio.
+        </p>
+      </section>
+
+      <section>
+        <h2>5. Almacenamiento local y ausencia de cookies</h2>
+        <p>
+          <strong>Este sitio no utiliza cookies.</strong> No se genera ningún banner de cookies porque no se deposita
+          ningún identificador de rastreo ni cookie de sesión o análisis en el dispositivo del visitante.
+        </p>
+        <p>
+          El sitio emplea dos mecanismos técnicos transparentes de almacenamiento del lado del cliente:
+        </p>
+        <ul>
+          <li>
+            <strong><code>localStorage</code> opcional:</strong> En la ruta <code>/alertas/nueva</code> se utiliza la clave
+            <code>epi-aetheris:alertas-token</code> para recordar el token de operador. Solo se guarda si el usuario marca explícitamente
+            la opción «Recordar el token en este navegador» y se suprime al pulsar «Cerrar sesión (olvidar token)».
+          </li>
+          <li>
+            <strong>Service Worker (Caché local):</strong> El archivo <code>public/sw.js</code> crea dos cachés locales
+            (<code>epi-shell-v1</code> y <code>epi-api-v1</code>) con páginas públicas y las últimas alertas. Su única función es permitir
+            que el personal de salud consulte las alertas existentes aun en zonas rurales sin cobertura móvil. Estos datos pueden borrarse
+            limpiando el almacenamiento o la caché del sitio desde los ajustes del navegador.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>6. Datos de salud</h2>
+        <p>
+          EPI-Aetheris no recopila, procesa ni almacena información de pacientes, historias clínicas ni registros médicos individuales.
+          Toda la información epidemiológica expuesta corresponde a <strong>datos agregados a nivel departamental agrupados por semana epidemiológica</strong>,
+          extraídos de boletines y repositorios de acceso público. Para mayores detalles metodológicos, consulte
+          <a href="/biblioteca/04-fuentes-de-datos">Fuentes de datos en la Biblioteca</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2>7. Ejercicio de derechos</h2>
+        <p>
+          Cualquier visitante puede consultar o solicitar aclaraciones sobre los tratamientos técnicos descritos escribiendo a
+          <a href="mailto:«CORREO_CONTACTO»">«CORREO_CONTACTO»</a>. Al no recopilar nombres, correos ni identificadores de personas
+          en la navegación pública, no disponemos de bases de datos de usuarios a las que vincular una identidad específica, salvo los
+          registros de conexión técnica del proveedor de infraestructura o el campo <code>autor</code> firmado en una alerta pública.
+          El plazo estimado de respuesta para solicitudes generales es de <strong>5 días hábiles</strong>.
+        </p>
+      </section>
+
+      <section>
+        <h2>8. Menores de edad</h2>
+        <p>
+          El servicio es de divulgación técnica y académica y no está diseñado ni dirigido a menores de edad, ni solicita conscientemente datos de menores.
+        </p>
+      </section>
+
+      <section>
+        <h2>9. Transferencias internacionales</h2>
+        <p>
+          Los servidores de alojamiento web y de API operan en Estados Unidos mediante el proveedor Render Services, Inc.
+        </p>
+      </section>
+
+      <section>
+        <h2>10. Cambios en esta política</h2>
+        <p>
+          Cualquier actualización de este documento se reflejará con una nueva fecha en el encabezado. Puesto que el código y
+          la documentación del proyecto son abiertos y públicos, el historial íntegro de modificaciones puede ser auditado
+          en el repositorio público de control de versiones.
+        </p>
+      </section>
+
+      <footer class="mt-8 border-t border-border pt-6 font-sans text-xs text-ink-muted">
+        <p class="font-semibold text-ink">Documentos relacionados:</p>
+        <div class="mt-2 flex flex-wrap gap-4">
+          <a href="/legal/terminos" class="enlace-filete text-accent hover:underline">Términos y Condiciones</a>
+          <span aria-hidden="true">·</span>
+          <a href="/legal/aviso-legal" class="enlace-filete text-accent hover:underline">Aviso Legal</a>
+          <span aria-hidden="true">·</span>
+          <a href="/contacto" class="enlace-filete text-accent hover:underline">Canales de Contacto</a>
+        </div>
+      </footer>
+    </article>
+  </main>
+</Layout>

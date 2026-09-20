@@ -573,8 +573,8 @@ const { variante = 'completo' } = Astro.props;
     // caja de zoom: últimas ~13 semanas observadas + el abanico, ajustada a la
     // razón de aspecto del viewBox base para que no haya letterbox.
     const vbBase: [number, number, number, number] = [0, 0, ancho, alto];
-    let zx = e.x(Math.max(0, tAncla - 13)) - 8;
-    let zw = e.x(tMax) + 16 - zx;
+    const zx = e.x(Math.max(0, tAncla - 13)) - 8;
+    const zw = e.x(tMax) + 16 - zx;
     // rango vertical: nos ceñimos a la banda del 50 % + mediana + ancla (mucho
     // más estrecho que el 95 %), con margen. Las colas del 95 % pueden sangrar
     // fuera del encuadre: es una vista "héroe" del abanico, no un recorte exacto.

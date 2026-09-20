@@ -1,8 +1,11 @@
 ---
 /**
- * Página de contacto. Sin formulario, y se dice por qué: un formulario
+ * Página de contacto. Sin formulario, y se explica por qué: habilitarlo
  * obligaría a almacenar texto libre de terceros, que es justo lo que la
  * política de privacidad declara que este sitio no hace.
+ *
+ * Registro formal, sin disculpas sobre el tamaño del equipo ni sobre el nivel
+ * de soporte: los plazos se enuncian como compromiso, no como excusa.
  *
  * El aviso de vulnerabilidades no usa un segundo buzón: va por los avisos de
  * seguridad privados de GitHub, que dejan el hilo cerrado hasta que hay
@@ -20,7 +23,7 @@ const CANALES = [
   {
     titulo: 'Consultas generales y datos',
     descripcion:
-      'Dudas sobre lo que publica el sitio, sobre el uso de los datos o sobre el ejercicio de tus derechos de privacidad. Es también la vía para solicitar la corrección o la retirada de una alerta publicada.',
+      'Consultas sobre el contenido publicado, sobre el uso de los datos o sobre el ejercicio de los derechos en materia de protección de datos personales. Es también la vía para solicitar la corrección o la retirada de una alerta publicada.',
     enlace: `mailto:${CORREO_CONTACTO}`,
     cta: CORREO_CONTACTO,
     icono: 'mail',
@@ -29,7 +32,7 @@ const CANALES = [
   {
     titulo: 'Errores y propuestas de mejora',
     descripcion:
-      'Un dato que no cuadra, una capa del mapa que confunde, un fallo de la API o una función que echas en falta. Se gestionan como issues públicos para que la discusión quede registrada.',
+      'Inconsistencias en los datos, deficiencias en la representación de los mapas o las gráficas, fallos de la API y funciones no disponibles. Se gestionan como issues públicos para que la discusión quede registrada.',
     enlace: '/sugerencias',
     cta: 'Ver cómo se envían las sugerencias',
     icono: 'message-2',
@@ -38,7 +41,7 @@ const CANALES = [
   {
     titulo: 'Vulnerabilidades de seguridad',
     descripcion:
-      'Si encuentras un fallo de seguridad, avísanos antes de publicarlo. Se atiende por los avisos privados de GitHub, que mantienen el hilo cerrado hasta que hay arreglo; si no usas GitHub, sirve el correo de contacto. Las condiciones están en security.txt, conforme al RFC 9116.',
+      'Los fallos de seguridad deben comunicarse antes de su divulgación pública. La recepción se realiza mediante los avisos privados de GitHub, que mantienen el hilo cerrado hasta que exista corrección; en su defecto, por el correo de contacto. Las condiciones constan en security.txt, conforme al RFC 9116.',
     enlace: AVISO_SEGURIDAD,
     cta: 'Abrir un aviso de seguridad en GitHub',
     icono: 'shield-lock',
@@ -62,25 +65,23 @@ const CANALES = [
         Contacto
       </h1>
       <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-        Este sitio no tiene formulario de contacto: recibirlo obligaría a
-        almacenar texto libre de terceros, que es justo lo que la{' '}
+        Este sitio no dispone de formulario de contacto: habilitarlo obligaría a
+        almacenar texto libre de terceros, algo que la{' '}
         <a href="/legal/privacidad" class="text-accent underline"
           >política de privacidad</a
-        > declara que no se hace. Los canales son el correo y GitHub, y ambos son
-        directos.
+        > declara expresamente que no se hace. Los canales habilitados son el correo
+        electrónico y GitHub.
       </p>
       <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-        Detrás hay un equipo pequeño y no hay soporte permanente: una consulta
-        corriente suele contestarse en unos{' '}
+        Las consultas ordinarias se atienden en un plazo aproximado de{' '}
         <strong class="font-semibold text-ink">cinco días hábiles</strong>.
-        Preferimos prometer poco y cumplirlo.
       </p>
       <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-        Si escribes para ejercer un derecho sobre tus datos personales, el plazo
-        no lo ponemos nosotros: la ley concede{' '}
+        Las solicitudes de ejercicio de derechos sobre datos personales se rigen
+        por el plazo que fija la ley:{' '}
         <strong class="font-semibold text-ink">veinte días hábiles</strong>,
-        prorrogables por otros veinte cuando hay causa justificada. El
-        procedimiento está en la{' '}
+        prorrogables por otros veinte cuando concurra causa justificada. El
+        procedimiento se detalla en la{' '}
         <a href="/legal/privacidad" class="text-accent underline"
           >política de privacidad</a
         >.
@@ -119,15 +120,15 @@ const CANALES = [
         class="mt-3 space-y-2 font-sans text-sm leading-relaxed text-ink-muted"
       >
         <li>
-          Si la duda es sobre qué mide el sistema y qué deja fuera, la respuesta
-          más completa está en el{' '}
+          Las preguntas sobre qué mide el sistema y qué deja fuera están
+          respondidas con mayor detalle en el{' '}
           <a
             href="/biblioteca/05-sensibilidad-y-honestidad"
             class="text-accent underline">aviso de sensibilidad</a
           >.
         </li>
         <li>
-          Si es sobre la procedencia o la licencia de un dato, está en{' '}
+          La procedencia y la licencia de cada dato constan en{' '}
           <a
             href="/biblioteca/04-fuentes-de-datos"
             class="text-accent underline">de dónde salen los datos</a

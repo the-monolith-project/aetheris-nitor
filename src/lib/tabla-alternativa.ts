@@ -1,3 +1,14 @@
+import { escapeHtml } from '../utils/security';
+
+// Todo lo que se interpola en innerHTML pasa por escapeHtml (regla de la casa,
+// CLAUDE.md): los valores de las celdas vienen de la API -- el nombre del
+// departamento, sin ir mas lejos -- y el encabezado y el caption los fija cada
+// panel. escapeHtml devuelve la entrada intacta si no es string, asi que se
+// convierte antes: una celda puede ser un numero o null.
+function textoSeguro(valor: unknown): string {
+  return escapeHtml(String(valor));
+}
+
 export interface ColumnaTabla {
   clave: string;
   encabezado: string;
@@ -66,7 +77,7 @@ export class TablaAlternativa<T = any> {
         (col) =>
           `<th scope="col" class="px-3 py-2 text-left font-sans text-xs font-semibold text-ink ${
             col.alineacion === 'derecha' ? 'text-right' : ''
-          }">${col.encabezado}</th>`,
+          }">${textoSeguro(col.encabezado)}</th>`,
       )
       .join('');
 
@@ -79,7 +90,7 @@ export class TablaAlternativa<T = any> {
             const esDerecha = col.alineacion === 'derecha';
             return `<td class="px-3 py-1.5 text-xs text-ink ${
               esDerecha ? 'text-right cifra' : 'font-sans'
-            }">${val}</td>`;
+            }">${textoSeguro(val)}</td>`;
           })
           .join('');
         return `<tr class="border-b border-border/50 hover:bg-secondary/20">${celdas}</tr>`;
@@ -89,7 +100,7 @@ export class TablaAlternativa<T = any> {
     this.contenedor.innerHTML = `
       <div class="mt-2 max-h-64 overflow-y-auto overflow-x-auto rounded-lg border border-border">
         <table class="w-full border-collapse text-left font-sans">
-          <caption class="sr-only">${this.caption}</caption>
+          <caption class="sr-only">${textoSeguro(this.caption)}</caption>
           <thead class="sticky top-0 bg-surface border-b border-border">
             <tr>${encabezadosHtml}</tr>
           </thead>

@@ -4,10 +4,13 @@ import icon from 'astro-icon';
 
 // Configuración principal del framework Astro
 export default defineConfig({
-  // Dominio de producción -- inferido de render.yaml (servicio estático
-  // "epi-aetheris-web", CORS_ALLOWED_ORIGINS). Habilita canonical/og:url
-  // absolutos y sitemaps. Verificar contra la URL real tras el deploy.
-  site: 'https://epi-aetheris-web.onrender.com',
+  // Dominio de producción de ESTE repo. aetheris-nitor es el fork-vitrina de
+  // web/: se despliega solo, en su propio Static Site de Render, y su dominio
+  // propio es epi-aetheris.dev (ya listado en CORS_ALLOWED_ORIGINS del
+  // backend). El valor anterior, epi-aetheris-web.onrender.com, es el
+  // despliegue del monorepo: con él, cada página emitía canonical y og:url
+  // apuntando a OTRO sitio, y el sitemap habría heredado el error.
+  site: 'https://epi-aetheris.dev',
   // Precarga el HTML de cualquier enlace del sitio al pasar el cursor /
   // entrar en viewport -- navegación casi instantánea entre las 5 vistas.
   prefetch: {

@@ -11,7 +11,7 @@
 # renovar esta fecha cada año (recordatorio en /contacto).
 
 Contact: https://github.com/the-monolith-project/EPI-Aetheris/security/advisories/new
-Contact: mailto:contacto@epi-aetheris.dev
+Contact: mailto:epi-aetheris@epi-aetheris.dev
 Expires: 2027-09-20T00:00:00.000Z
 Preferred-Languages: es, en
 Canonical: https://epi-aetheris.dev/.well-known/security.txt

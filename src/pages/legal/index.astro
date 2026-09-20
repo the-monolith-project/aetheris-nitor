@@ -5,31 +5,31 @@ import Icono from '../../components/Icono.astro';
 const SECCIONES = [
   {
     href: '/legal/privacidad',
-    titulo: 'Política de Privacidad',
+    titulo: 'Política de Privacidad y Protección de Datos',
     descripcion:
-      'Tratamiento de direcciones IP, ausencia de cookies, almacenamiento local y políticas de terceros como OpenStreetMap.',
+      'Régimen de tratamiento de metadatos de red, ausencia de cookies, estipulaciones sobre almacenamiento local, salvaguardas y cesión técnica a proveedores como OpenStreetMap.',
     icono: 'shield-check',
   },
   {
     href: '/legal/terminos',
-    titulo: 'Términos y Condiciones',
+    titulo: 'Términos y Condiciones Generales de Uso',
     descripcion:
-      'Naturaleza académica, ausencia de garantías, límites de uso de la API pública y licenciamiento bajo GPL-3.0.',
+      'Contrato vinculante de navegación, deslinde médico pericial, condiciones de explotación de la API pública, conductas prohibidas, licencias y exoneración de responsabilidad.',
     icono: 'file-text',
   },
   {
     href: '/legal/aviso-legal',
-    titulo: 'Aviso Legal',
+    titulo: 'Aviso Legal e Información General',
     descripcion:
-      'Datos de identificación institucional del titular, entidad responsable, infraestructura de hospedaje y jurisdicción.',
+      'Identificación del titular del dominio, domicilio postal, naturaleza no lucrativa de la actividad, proveedor de alojamiento telemático y régimen de jurisdicción aplicable.',
     icono: 'building',
   },
 ];
 ---
 
 <Layout
-  title="EPI-Aetheris — Marco Legal y Privacidad"
-  descripcion="Índice de documentación legal, privacidad de datos y condiciones de uso de EPI-Aetheris."
+  title="EPI-Aetheris — Marco Jurídico e Institucional"
+  descripcion="Índice formal de instrumentos jurídicos, régimen de privacidad y condiciones de uso de EPI-Aetheris."
 >
   <main
     id="contenido-principal"
@@ -37,15 +37,16 @@ const SECCIONES = [
   >
     <header class="mb-8">
       <p class="font-mono text-xs font-semibold uppercase tracking-wider text-accent">
-        Transparencia institucional
+        Gobernanza y Transparencia
       </p>
       <h1
         class="mt-2 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl"
       >
-        Marco Legal y Confianza
+        Marco Jurídico e Institucional
       </h1>
       <p class="mt-3 max-w-2xl font-sans text-sm leading-relaxed text-ink-muted">
-        Documentación que rige la privacidad técnica, las condiciones de uso de la API y los deslindes de responsabilidad de la plataforma.
+        Instrumentos normativos que regulan las condiciones de acceso, navegación telemática,
+        garantías de protección de datos personales y los límites perentorios de responsabilidad jurídica de la plataforma.
       </p>
     </header>
 
@@ -66,7 +67,7 @@ const SECCIONES = [
               </p>
             </div>
             <span class="mt-4 inline-flex items-center gap-1 font-sans text-xs font-medium text-accent">
-              Leer documento &rarr;
+              Consultar instrumento &rarr;
             </span>
           </a>
         ))

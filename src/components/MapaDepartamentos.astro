@@ -1021,9 +1021,14 @@ import Icono from './Icono.astro';
           ? [f.geometry.coordinates]
           : f.geometry.coordinates;
       for (const poligono of partes) {
-        agujeros.push(
-          poligono[0].map(([lon, lat]: [number, number]) => [lat, lon]),
-        );
+        const ring = poligono[0];
+        const len = ring.length;
+        const mapped: [number, number][] = new Array(len);
+        for (let i = 0; i < len; i++) {
+          const pt = ring[i];
+          mapped[i] = [pt[1], pt[0]];
+        }
+        agujeros.push(mapped);
       }
     }
     return [ANILLO_MUNDO, ...agujeros];

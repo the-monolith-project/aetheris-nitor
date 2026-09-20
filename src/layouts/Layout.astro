@@ -158,7 +158,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <footer class="mt-16 bg-deep">
       <div class="mx-auto max-w-[1600px] px-4 py-12 sm:px-8 sm:py-16 lg:px-12">
         <div
-          class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_repeat(3,1fr)] lg:gap-12"
+          class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)] lg:gap-12"
         >
           {
             /* Columna de identidad: marca, que es el proyecto, procedencia de
@@ -190,7 +190,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
           </div>
 
           {
-            /* Tres tramos de igual ancho, cada uno abierto por un filete: el
+            /* Cuatro tramos de igual ancho, cada uno abierto por un filete: el
               encabezado se distingue por peso y color, sin versalitas
               espaciadas. Los enlaces responden con el filete compartido en
               vez de llevar subrayado permanente. */
@@ -207,6 +207,14 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
                     class="enlace-filete text-deep-ink transition-colors hover:text-white"
                   >
                     Qué es
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/acerca-de"
+                    class="enlace-filete text-deep-ink transition-colors hover:text-white"
+                  >
+                    Acerca de
                   </a>
                 </li>
                 <li>
@@ -317,6 +325,46 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
                     class="enlace-filete text-deep-ink transition-colors hover:text-white"
                   >
                     Sugerencias (GitHub Issues)
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-t border-white/12 pt-4">
+              <h2 class="font-sans text-xs font-semibold text-secondary">
+                Legal y contacto
+              </h2>
+              <ul class="mt-4 space-y-2.5 font-sans text-xs">
+                <li>
+                  <a
+                    href="/legal/privacidad"
+                    class="enlace-filete text-deep-ink transition-colors hover:text-white"
+                  >
+                    Privacidad
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/legal/terminos"
+                    class="enlace-filete text-deep-ink transition-colors hover:text-white"
+                  >
+                    Términos
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/legal/aviso-legal"
+                    class="enlace-filete text-deep-ink transition-colors hover:text-white"
+                  >
+                    Aviso legal
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/contacto"
+                    class="enlace-filete text-deep-ink transition-colors hover:text-white"
+                  >
+                    Contacto
                   </a>
                 </li>
               </ul>

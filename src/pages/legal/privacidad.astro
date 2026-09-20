@@ -9,6 +9,14 @@
  * El responsable y el correo de contacto se publican literales, no como
  * marcadores: el aviso legal (/legal/aviso-legal) es la fuente de esos datos y
  * esta página los repite para que se lea sola.
+ *
+ * La estructura sigue el contenido minimo que la Ley para la Proteccion de
+ * Datos Personales de El Salvador (Decreto Legislativo n.º 144) exige a un
+ * aviso de privacidad: identificacion y domicilio del responsable, datos
+ * tratados senalando los sensibles, finalidades, mecanismos para ejercer los
+ * derechos ARCO-POL, como se comunican los cambios, los encargados
+ * subcontratados y el uso de cookies. Si se reordena esta pagina, que no se
+ * pierda ninguno de esos bloques.
  */
 import DocumentoTexto from '../../components/DocumentoTexto.astro';
 ---
@@ -42,6 +50,10 @@ import DocumentoTexto from '../../components/DocumentoTexto.astro';
   <p>
     Aun sin cuentas ni analítica, hay cinco puntos en los que circulan datos
     técnicos. Se enumeran todos, incluidos los que no se ven.
+    <strong
+      >Ninguno de ellos es un dato sensible: no se tratan datos de salud, de
+      origen étnico, biométricos ni de creencias de quien visita el sitio.</strong
+    >
   </p>
 
   <h3>1. Mapas: teselas de OpenStreetMap</h3>
@@ -65,8 +77,9 @@ import DocumentoTexto from '../../components/DocumentoTexto.astro';
   <p>
     El sitio y la API están alojados en Render. Como cualquier servidor web, su
     infraestructura guarda registros de acceso con dirección IP, user-agent,
-    fecha y recurso solicitado. Finalidad: operar el servicio y detectar abusos.
-    Base: interés legítimo. La retención la fija el proveedor.
+    fecha y recurso solicitado. Son registros técnicos inherentes a servir una
+    página web: existen para operar el servicio y detectar abusos, y no se usan
+    para ninguna otra cosa. La retención la fija el proveedor.
   </p>
 
   <h3>3. Límite de peticiones de la API</h3>
@@ -107,17 +120,35 @@ import DocumentoTexto from '../../components/DocumentoTexto.astro';
     </thead>
     <tbody>
       <tr>
-        <td>Render Services, Inc. (EE. UU.)</td>
+        <td>
+          Render Services, Inc. (EE. UU.) —<a
+            href="https://render.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer">su política</a
+          >
+        </td>
         <td>Hospedaje del sitio, de la API y de la base de datos</td>
         <td>Registros de acceso: IP, user-agent, fecha</td>
       </tr>
       <tr>
-        <td>OpenStreetMap Foundation</td>
+        <td>
+          OpenStreetMap Foundation —<a
+            href="https://wiki.osmfoundation.org/wiki/Privacy_Policy"
+            target="_blank"
+            rel="noopener noreferrer">su política</a
+          >
+        </td>
         <td>Imágenes de fondo de los mapas</td>
         <td>IP y user-agent al cargar cada tesela</td>
       </tr>
       <tr>
-        <td>GitHub, Inc.</td>
+        <td>
+          GitHub, Inc. —<a
+            href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+            target="_blank"
+            rel="noopener noreferrer">su política</a
+          >
+        </td>
         <td>Destino de los enlaces de código y sugerencias</td>
         <td>Nada, salvo que sigas uno de esos enlaces</td>
       </tr>
@@ -163,22 +194,42 @@ import DocumentoTexto from '../../components/DocumentoTexto.astro';
     de cada fuente está en{' '}
     <a href="/biblioteca/04-fuentes-de-datos">de dónde salen los datos</a>.
   </p>
-
-  <h2>Tus derechos</h2>
   <p>
-    Puedes solicitar acceso, rectificación, supresión, limitación u oposición
-    escribiendo a <a href="mailto:epi-aetheris@epi-aetheris.dev"
+    Dicho en los términos de la ley: las cifras que publica este sitio están{
+      ' '
+    }
+    <strong>disociadas</strong> en origen —llegan ya agregadas y no es posible volver
+    a asociarlas a ninguna persona—, de modo que lo que se muestra no son datos personales
+    de salud de nadie.
+  </p>
+
+  <h2>Tus derechos (ARCO-POL)</h2>
+  <p>
+    La Ley para la Protección de Datos Personales de El Salvador reconoce siete
+    derechos sobre los datos personales: <strong>acceso</strong>,
+    <strong>rectificación</strong>, <strong>cancelación</strong>,
+    <strong>oposición</strong>, <strong>portabilidad</strong>,
+    <strong>olvido</strong> y <strong>limitación</strong>. Se ejercen
+    escribiendo directamente al responsable, sin intermediarios, a{' '}
+    <a href="mailto:epi-aetheris@epi-aetheris.dev"
       >epi-aetheris@epi-aetheris.dev</a
-    >. Conviene ser claro sobre el alcance real: como no hay cuentas, lo único
-    que podría asociarse a una persona son los registros de acceso del proveedor
-    de hospedaje y el campo de autoría de una alerta publicada. Sobre lo
-    primero, la solicitud se traslada al proveedor; sobre lo segundo, se corrige
-    o retira la alerta.
+    >.
   </p>
   <p>
-    El plazo de respuesta previsto está en la <a href="/contacto"
+    <strong>Plazo.</strong> La respuesta se entrega dentro de los veinte días hábiles
+    que fija la ley, prorrogables por otros veinte si hay causa justificada, que se
+    comunica. Si la solicitud llega incompleta, se pide una sola vez que se complete
+    y hay diez días hábiles para hacerlo. Para consultas ordinarias, que no son solicitudes
+    de derechos, el plazo con el que se trabaja está en la <a href="/contacto"
       >página de contacto</a
     >.
+  </p>
+  <p>
+    Conviene ser claro sobre el alcance real: como no hay cuentas, lo único que
+    podría asociarse a una persona son los registros de acceso del proveedor de
+    hospedaje y el campo de autoría de una alerta publicada. Sobre lo primero,
+    la solicitud se traslada al proveedor; sobre lo segundo, se corrige o retira
+    la alerta. No hay perfil que exportar porque no hay perfil.
   </p>
 
   <h2>Menores</h2>
@@ -196,8 +247,11 @@ import DocumentoTexto from '../../components/DocumentoTexto.astro';
 
   <h2>Cambios en esta política</h2>
   <p>
-    La fecha de última actualización aparece al principio. Como el código del
-    sitio es público, el historial completo de cambios de este documento se
+    Los cambios se comunican publicando la versión nueva en esta misma página,
+    que es la única dirección donde vive el documento: la fecha de última
+    actualización del encabezado cambia con ella. No hay lista de correo ni
+    aviso individual porque no hay cuentas a las que escribir. Como el código
+    del sitio es público, el historial completo de cambios de este documento se
     puede consultar en el repositorio.
   </p>
 

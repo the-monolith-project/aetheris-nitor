@@ -32,7 +32,12 @@ const claseTipo = {
             )}
             {descripcion && <p class="panel-descripcion">{descripcion}</p>}
           </div>
-          <slot name="controles" />
+          <div
+            data-panel-controles
+            class="relative flex items-center gap-2 shrink-0"
+          >
+            <slot name="controles" />
+          </div>
         </header>
       )
     )

@@ -4,14 +4,17 @@
  * obligaría a almacenar texto libre de terceros, que es justo lo que la
  * política de privacidad declara que este sitio no hace.
  *
- * Mismo patrón de tarjetas que /sugerencias. Los marcadores «CORREO_…» se
- * rellenan antes de desplegar (ver el aviso legal).
+ * El aviso de vulnerabilidades no usa un segundo buzón: va por los avisos de
+ * seguridad privados de GitHub, que dejan el hilo cerrado hasta que hay
+ * arreglo. security.txt ofrece el correo como alternativa para quien no tenga
+ * cuenta.
  */
 import Layout from '../layouts/Layout.astro';
 import Icono from '../components/Icono.astro';
 
-const CORREO_CONTACTO = '«CORREO_CONTACTO»';
-const CORREO_SEGURIDAD = '«CORREO_SEGURIDAD»';
+const CORREO_CONTACTO = 'contacto@epi-aetheris.dev';
+const AVISO_SEGURIDAD =
+  'https://github.com/the-monolith-project/EPI-Aetheris/security/advisories/new';
 
 const CANALES = [
   {
@@ -35,11 +38,11 @@ const CANALES = [
   {
     titulo: 'Vulnerabilidades de seguridad',
     descripcion:
-      'Si encuentras un fallo de seguridad, escribe antes de publicarlo. Las condiciones de divulgación responsable están en el archivo security.txt, conforme al RFC 9116.',
-    enlace: `mailto:${CORREO_SEGURIDAD}`,
-    cta: CORREO_SEGURIDAD,
+      'Si encuentras un fallo de seguridad, avísanos antes de publicarlo. Se atiende por los avisos privados de GitHub, que mantienen el hilo cerrado hasta que hay arreglo; si no usas GitHub, sirve el correo de contacto. Las condiciones están en security.txt, conforme al RFC 9116.',
+    enlace: AVISO_SEGURIDAD,
+    cta: 'Abrir un aviso de seguridad en GitHub',
     icono: 'shield-lock',
-    externo: false,
+    externo: true,
   },
 ];
 ---
@@ -80,6 +83,8 @@ const CANALES = [
         CANALES.map((canal) => (
           <a
             href={canal.enlace}
+            target={canal.externo ? '_blank' : undefined}
+            rel={canal.externo ? 'noopener noreferrer' : undefined}
             class="card-elevated flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5"
           >
             <h2 class="font-sans text-base font-semibold leading-snug text-ink">

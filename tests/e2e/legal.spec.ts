@@ -5,12 +5,14 @@ import { expect, test } from '@playwright/test';
 // acerca de y la 404. Son páginas estáticas -- ninguna toca el backend, así
 // que estos tests no gastan la ventana de 30/minuto de los endpoints pesados.
 //
-// Lo que NO se comprueba aquí: que los marcadores «RESPONSABLE», «CORREO_…»
-// y «JURISDICCION» estén rellenos. Esa es una puerta de despliegue, no de
-// suite: vive en el bloque de comprobaciones de build
-// (`grep -rn "«" dist/`), que sí corre antes de pushear. Meterla aquí
-// dejaría la suite en rojo permanente y rompería la heurística de
-// "46 pasan y 1 falla" con la que se lee esta suite.
+// Lo que NO se comprueba aquí: que no queden marcadores sin rellenar en el
+// texto legal. Esa es una puerta de despliegue, no de suite: vive en el bloque
+// de comprobaciones de build, que sí corre antes de pushear. El patrón tiene
+// que nombrar los marcadores, no buscar «» a secas: las comillas angulares son
+// puntuación normal en español y aparecen legítimamente en estas páginas
+// («tal cual», «Recordar el token en este navegador»).
+//
+//   grep -rnE "«(RESPONSABLE|DOMICILIO|CORREO_CONTACTO|CORREO_SEGURIDAD|JURISDICCION)»" dist/
 
 const PAGINAS = [
   { ruta: '/legal/privacidad', h1: 'Política de privacidad' },

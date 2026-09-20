@@ -478,6 +478,15 @@ html[data-animar] .aparece.visto {
   border-radius: var(--radio-traza);
   overflow: hidden;
 }
+.panel-visor > .panel-cabecera {
+  padding: 1.25rem 1.25rem 0.75rem 1.25rem;
+  margin-bottom: 0;
+}
+@media (min-width: 640px) {
+  .panel-visor > .panel-cabecera {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+}
 
 .panel-matriz {
   background-color: var(--color-surface);

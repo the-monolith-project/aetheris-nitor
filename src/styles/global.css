@@ -359,11 +359,19 @@ html[data-animar] .aparece.visto {
 }
 
 /* Paneles y menus de la vista de analisis entran con un pequeno ascenso
-   cada vez que dejan de estar ocultos. El cierre sigue siendo inmediato:
-   `hidden` no admite salida sin JavaScript extra y el contenido que se
-   cierra no necesita ser observado. */
-[data-panel-workspace]:not([hidden]) {
+   cuando se muestran explicitamente o en la revelacion inicial orquestada. */
+html[data-animar] [data-panel-workspace][data-panel-nuevo] {
   animation: panel-entra 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+html[data-animar] .workspace-revelacion [data-panel-workspace]:not([hidden]) {
+  animation: panel-entra 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--revelacion-retraso, 0ms);
+}
+
+/* Transicion suave en resumenes cuando cambia el valor */
+[role='status'] {
+  transition: opacity 160ms ease;
 }
 @keyframes panel-entra {
   from {

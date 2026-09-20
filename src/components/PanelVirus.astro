@@ -1,32 +1,15 @@
 ---
+import PanelWorkspace from './analisis/PanelWorkspace.astro';
 // Vigilancia laboratorial nacional. No hay mapa: la fuente no desagrega
 // por departamento. Una métrica por escala (no se mezclan conteos y %).
 ---
 
-<section
-  class="card-elevated rounded-2xl border border-border bg-surface p-5 sm:p-6"
+<PanelWorkspace
+  tipo="registro"
+  titulo="Vigilancia centinela de virus (nacional)"
+  descripcion="Muestras, detecciones y positividad publicadas por MINSAL a nivel nacional. Que un virus coincida en el tiempo con un alza de IRA no prueba que la haya causado. SARS-CoV-2 aparece como covid_19 solo en 2023."
   data-panel-virus
 >
-  <div class="flex items-start gap-3">
-    <span
-      class="mt-1 h-6 w-1 shrink-0 rounded-full bg-accent"
-      aria-hidden="true"></span>
-    <div>
-      <h2 class="font-sans text-base font-semibold text-ink sm:text-lg">
-        Vigilancia centinela de virus (nacional)
-      </h2>
-      <p
-        class="mt-1 max-w-3xl font-sans text-sm leading-relaxed text-ink-muted"
-      >
-        Muestras, detecciones y positividad publicadas por MINSAL a nivel
-        nacional. Que un virus coincida en el tiempo con un alza de IRA no
-        prueba que la haya causado. SARS-CoV-2 aparece como <code
-          class="font-mono text-xs">covid_19</code
-        > solo en 2023.
-      </p>
-    </div>
-  </div>
-
   <div class="mt-4 flex flex-wrap gap-3 font-sans text-sm">
     <label class="flex items-center gap-2"
       >Métrica
@@ -79,8 +62,13 @@
       Reintentar
     </button>
   </div>
-  <div data-virus-heatmap role="status" class="mt-4 overflow-x-auto scroll-shadow-x"></div>
-</section>
+  <div
+    data-virus-heatmap
+    role="status"
+    class="mt-4 overflow-x-auto scroll-shadow-x"
+  >
+  </div>
+</PanelWorkspace>
 
 <script>
   import {

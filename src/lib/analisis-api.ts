@@ -36,6 +36,9 @@ function cargarDataset(
         );
       }
       const datos: unknown = await respuesta.json();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('epi:datos-cargados'));
+      }
       if (esNoDisponible(datos)) {
         return datos as any;
       }

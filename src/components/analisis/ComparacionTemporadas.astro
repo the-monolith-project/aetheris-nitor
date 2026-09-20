@@ -296,7 +296,19 @@ import PanelWorkspace from './PanelWorkspace.astro';
     filtrosActuales = filtros;
     void renderizar(filtros);
   });
-  new ResizeObserver(() => void renderizar(filtrosActuales)).observe(
-    contenedor!,
-  );
+  let ultimoAncho = 0;
+  let timerResize: ReturnType<typeof setTimeout> | null = null;
+  if (contenedor) {
+    new ResizeObserver((entradas) => {
+      const entrada = entradas[0];
+      if (!entrada) return;
+      const nuevoAncho = Math.round(entrada.contentRect.width);
+      if (nuevoAncho === ultimoAncho) return;
+      ultimoAncho = nuevoAncho;
+      if (timerResize) clearTimeout(timerResize);
+      timerResize = setTimeout(() => {
+        void renderizar(filtrosActuales);
+      }, 150);
+    }).observe(contenedor);
+  }
 </script>

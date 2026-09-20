@@ -1,5 +1,6 @@
 ---
 import Icono from './Icono.astro';
+import PanelWorkspace from './analisis/PanelWorkspace.astro';
 interface Props {
   evento?: 'ira' | 'neumonias';
 }
@@ -11,26 +12,13 @@ const endpoint =
     : '/api/ira/departamental';
 ---
 
-<section
-  class="card-elevated rounded-2xl border border-border bg-surface p-5 sm:p-6"
+<PanelWorkspace
+  tipo="visor"
+  titulo={`Mapa departamental — ${etiqueta}`}
+  descripcion="Volumen acumulado de casos notificados por departamento (MINSAL, 2018-2023, sin 2020). Unidad: conteo notificado."
   data-mapa-evento={evento}
   data-mapa-endpoint={endpoint}
 >
-  <div class="flex items-start gap-3">
-    <span
-      class="mt-1 h-6 w-1 shrink-0 rounded-full bg-accent"
-      aria-hidden="true"></span>
-    <div>
-      <h2 class="font-sans text-base font-semibold text-ink sm:text-lg">
-        Mapa departamental -- {etiqueta}
-      </h2>
-      <p class="mt-1 font-sans text-sm leading-relaxed text-ink-muted">
-        Volumen acumulado de casos notificados por departamento (MINSAL,
-        2018-2023, sin 2020). Unidad: conteo notificado.
-      </p>
-    </div>
-  </div>
-
   <div
     class="mt-4 flex gap-2 rounded-lg border border-dashed border-border bg-bg p-3"
   >
@@ -92,7 +80,7 @@ const endpoint =
       </table>
     </div>
   </details>
-</section>
+</PanelWorkspace>
 
 <style>
   :global(.leaflet-container) {
@@ -410,7 +398,7 @@ const endpoint =
   }
 
   document
-    .querySelectorAll<HTMLElement>('section[data-mapa-evento]')
+    .querySelectorAll<HTMLElement>('[data-mapa-evento]')
     .forEach((seccion) => {
       void iniciarSeccion(seccion).catch(() => {
         seccion.querySelector('[data-mapa-vacio]')?.classList.remove('hidden');

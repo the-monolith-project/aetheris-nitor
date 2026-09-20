@@ -5,9 +5,17 @@ interface Props {
   descripcion?: string;
   idTitulo?: string;
   clase?: string;
+  [key: string]: unknown;
 }
 
-const { tipo, titulo, descripcion, idTitulo, clase = '' } = Astro.props;
+const {
+  tipo,
+  titulo,
+  descripcion,
+  idTitulo,
+  clase = '',
+  ...resto
+} = Astro.props;
 
 const claseTipo = {
   visor: 'panel-visor',
@@ -17,7 +25,7 @@ const claseTipo = {
 }[tipo];
 ---
 
-<article class:list={[claseTipo, clase]} aria-labelledby={idTitulo}>
+<article class:list={[claseTipo, clase]} aria-labelledby={idTitulo} {...resto}>
   {
     Astro.slots.has('cabecera') ? (
       <slot name="cabecera" />

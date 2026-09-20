@@ -279,12 +279,27 @@ import ToolbarAnalisis from './ToolbarAnalisis.astro';
     }
   });
 
+  let primerPaseLayout = true;
+
   suscribirLayoutAnalisis((layout) => {
     const vistaGeneralOptimizada = esVistaGeneralOptimizada(layout);
     aplicarComposicionGeneral(vistaGeneralOptimizada);
     paneles.forEach((panel) => {
       const id = panel.dataset.panelWorkspace as PanelAnalitico;
-      panel.hidden = !layout.panelesVisibles.includes(id);
+      const debeEstarVisible = layout.panelesVisibles.includes(id);
+      const estabaOculto = panel.hidden;
+
+      panel.hidden = !debeEstarVisible;
+
+      if (!primerPaseLayout && estabaOculto && debeEstarVisible) {
+        panel.setAttribute('data-panel-nuevo', '');
+        panel.addEventListener(
+          'animationend',
+          () => panel.removeAttribute('data-panel-nuevo'),
+          { once: true },
+        );
+      }
+
       clasesColumnas.forEach((clase) => panel.classList.remove(clase));
       if (!vistaGeneralOptimizada) {
         panel.classList.add(
@@ -301,8 +316,43 @@ import ToolbarAnalisis from './ToolbarAnalisis.astro';
           layout.panelEnFoco === id ? 'Salir de foco' : 'Abrir en foco';
       }
     });
+    primerPaseLayout = false;
     aplicarZoomTemporal(layout.zoomTemporal);
   });
+
+  let revelacionIniciada = false;
+  function orquestarRevelacionInicial(): void {
+    if (revelacionIniciada) return;
+    if (
+      typeof document !== 'undefined' &&
+      !document.documentElement.hasAttribute('data-animar')
+    ) {
+      return;
+    }
+    const grid = document.getElementById('workspace-analitico-grid');
+    if (!grid) return;
+    revelacionIniciada = true;
+    const visibles = Array.from(
+      grid.querySelectorAll<HTMLElement>(
+        '[data-panel-workspace]:not([hidden])',
+      ),
+    );
+    visibles.forEach((panel, i) => {
+      panel.style.setProperty('--revelacion-retraso', `${i * 60}ms`);
+    });
+    grid.classList.add('workspace-revelacion');
+    setTimeout(() => {
+      grid.classList.remove('workspace-revelacion');
+      visibles.forEach((panel) => {
+        panel.style.removeProperty('--revelacion-retraso');
+      });
+    }, 800);
+  }
+
+  window.addEventListener('epi:datos-cargados', orquestarRevelacionInicial, {
+    once: true,
+  });
+  setTimeout(orquestarRevelacionInicial, 600);
 
   function aplicarZoomTemporal(zoom: number): void {
     const anchosBase: Record<string, number> = {

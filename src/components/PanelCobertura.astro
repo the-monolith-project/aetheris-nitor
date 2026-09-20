@@ -1,27 +1,14 @@
 ---
+import PanelWorkspace from './analisis/PanelWorkspace.astro';
 // Cobertura de la ingesta respiratoria. No es M4.
 ---
 
-<section
-  class="card-elevated rounded-2xl border border-border bg-surface p-5 sm:p-6"
+<PanelWorkspace
+  tipo="registro"
+  titulo="Cobertura y calidad de la fuente"
+  descripcion="Mide cuántas semanas del año tienen dato cargado en la base, frente a las 52 nominales."
   data-cobertura
 >
-  <div class="flex items-start gap-3">
-    <span
-      class="mt-1 h-6 w-1 shrink-0 rounded-full bg-accent"
-      aria-hidden="true"></span>
-    <div>
-      <h2 class="font-sans text-base font-semibold text-ink sm:text-lg">
-        Cobertura y calidad de la fuente
-      </h2>
-      <p
-        class="mt-1 max-w-3xl font-sans text-sm leading-relaxed text-ink-muted"
-      >
-        Mide cuántas semanas del año tienen dato cargado en la base, frente a
-        las 52 nominales.
-      </p>
-    </div>
-  </div>
   <div
     data-cob-error
     role="status"
@@ -40,7 +27,7 @@
   </div>
   <div data-cob-cuerpo role="status" class="mt-4 space-y-4 font-sans text-sm">
   </div>
-</section>
+</PanelWorkspace>
 
 <script>
   import {

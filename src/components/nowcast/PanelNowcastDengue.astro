@@ -40,11 +40,7 @@ const { variante = 'completo' } = Astro.props;
     </div>
   </div>
 
-  <div
-    data-nowcast-cuerpo
-    class="mt-4"
-    role="status"
-  >
+  <div data-nowcast-cuerpo class="mt-4" role="status">
     <div data-estado aria-hidden="true">
       <div class="skeleton h-56 w-full sm:h-64"></div>
       <div class="skeleton mt-3 h-3 w-2/5"></div>
@@ -138,7 +134,11 @@ const { variante = 'completo' } = Astro.props;
     margen: { arriba: number; abajo: number; izq: number; der: number };
   }
 
-  function crearSvg(ancho: number, alto: number, etiqueta: string): SVGSVGElement {
+  function crearSvg(
+    ancho: number,
+    alto: number,
+    etiqueta: string,
+  ): SVGSVGElement {
     const svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${ancho} ${alto}`);
     svg.setAttribute('class', 'w-full');
@@ -217,10 +217,7 @@ const { variante = 'completo' } = Astro.props;
 
   // Llama a aplicar(frac) con frac lineal de 0 a 1 sobre `dur` ms. Respeta
   // prefers-reduced-motion (salta al estado final). Resuelve al terminar.
-  function animar(
-    aplicar: (frac: number) => void,
-    dur: number,
-  ): Promise<void> {
+  function animar(aplicar: (frac: number) => void, dur: number): Promise<void> {
     const reduce =
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -278,15 +275,17 @@ const { variante = 'completo' } = Astro.props;
       b95: e.banda_95,
     }));
     // el abanico arranca pegado al último punto observado
-    const anclaPunto = { t: tAncla, med: casoAncla, b50: [casoAncla, casoAncla] as [number, number], b95: [casoAncla, casoAncla] as [number, number] };
+    const anclaPunto = {
+      t: tAncla,
+      med: casoAncla,
+      b50: [casoAncla, casoAncla] as [number, number],
+      b95: [casoAncla, casoAncla] as [number, number],
+    };
     const fanDesdeAncla = [anclaPunto, ...fan];
 
     const tMax = fan[fan.length - 1].t;
     const maxV =
-      Math.max(
-        ...serieObs.map((p) => p.v),
-        ...fan.map((p) => p.b95[1]),
-      ) * 1.08;
+      Math.max(...serieObs.map((p) => p.v), ...fan.map((p) => p.b95[1])) * 1.08;
 
     const areaX = ancho - margen.izq - margen.der;
     const areaY = alto - margen.arriba - margen.abajo;
@@ -573,8 +572,8 @@ const { variante = 'completo' } = Astro.props;
     // caja de zoom: últimas ~13 semanas observadas + el abanico, ajustada a la
     // razón de aspecto del viewBox base para que no haya letterbox.
     const vbBase: [number, number, number, number] = [0, 0, ancho, alto];
-    let zx = e.x(Math.max(0, tAncla - 13)) - 8;
-    let zw = e.x(tMax) + 16 - zx;
+    const zx = e.x(Math.max(0, tAncla - 13)) - 8;
+    const zw = e.x(tMax) + 16 - zx;
     // rango vertical: nos ceñimos a la banda del 50 % + mediana + ancla (mucho
     // más estrecho que el 95 %), con margen. Las colas del 95 % pueden sangrar
     // fuera del encuadre: es una vista "héroe" del abanico, no un recorte exacto.
@@ -632,9 +631,8 @@ const { variante = 'completo' } = Astro.props;
     const tMax = tEje(puntos[puntos.length - 1].fecha);
 
     const maxV =
-      Math.max(
-        ...puntos.map((p) => Math.max(p.observado, p.banda_95[1])),
-      ) * 1.08;
+      Math.max(...puntos.map((p) => Math.max(p.observado, p.banda_95[1]))) *
+      1.08;
 
     const areaX = ancho - margen.izq - margen.der;
     const areaY = alto - margen.arriba - margen.abajo;
@@ -729,8 +727,7 @@ const { variante = 'completo' } = Astro.props;
 
   function bloque(titulo: string): HTMLElement {
     const h = document.createElement('h3');
-    h.className =
-      'mt-6 font-sans text-sm font-semibold text-ink';
+    h.className = 'mt-6 font-sans text-sm font-semibold text-ink';
     h.textContent = titulo;
     return h;
   }
@@ -808,8 +805,14 @@ const { variante = 'completo' } = Astro.props;
     cont.appendChild(
       leyenda([
         ['var(--color-accent)', 'observado'],
-        ['color-mix(in srgb, var(--color-accent) 22%, transparent)', 'rango 50 %'],
-        ['color-mix(in srgb, var(--color-accent) 10%, transparent)', 'rango 95 %'],
+        [
+          'color-mix(in srgb, var(--color-accent) 22%, transparent)',
+          'rango 50 %',
+        ],
+        [
+          'color-mix(in srgb, var(--color-accent) 10%, transparent)',
+          'rango 95 %',
+        ],
       ]),
     );
 
@@ -825,15 +828,26 @@ const { variante = 'completo' } = Astro.props;
       (demo ? ' transition-opacity duration-500 opacity-0' : '');
     const pct = Math.round(d.reduccion_wis * 100);
     const signo = pct > 0 ? '−' : '+';
-    const contadores: { nodo: HTMLElement; plantilla: string; valor: number }[] = [];
+    const contadores: {
+      nodo: HTMLElement;
+      plantilla: string;
+      valor: number;
+    }[] = [];
     const chipCont = (plantilla: string, valor: number, fuerte = false) => {
       const nodo = chip(plantilla.replace('{n}', String(valor)), fuerte);
       contadores.push({ nodo, plantilla, valor });
       return nodo;
     };
     chips.append(
-      chipCont(`${signo}{n} % de error frente a la persistencia`, Math.abs(pct), true),
-      chipCont(`mejor en {n} de ${d.n_anios} temporadas de prueba`, d.anios_ganados),
+      chipCont(
+        `${signo}{n} % de error frente a la persistencia`,
+        Math.abs(pct),
+        true,
+      ),
+      chipCont(
+        `mejor en {n} de ${d.n_anios} temporadas de prueba`,
+        d.anios_ganados,
+      ),
       chip(`horizonte de referencia: ${d.horizonte} semanas`),
     );
     cont.appendChild(chips);
@@ -868,8 +882,14 @@ const { variante = 'completo' } = Astro.props;
         extra.appendChild(
           leyenda([
             ['var(--color-ink)', 'observado'],
-            ['color-mix(in srgb, var(--color-accent) 60%, transparent)', 'predicción (mediana)'],
-            ['color-mix(in srgb, var(--color-accent) 18%, transparent)', 'rango 50 %'],
+            [
+              'color-mix(in srgb, var(--color-accent) 60%, transparent)',
+              'predicción (mediana)',
+            ],
+            [
+              'color-mix(in srgb, var(--color-accent) 18%, transparent)',
+              'rango 50 %',
+            ],
           ]),
         );
       }
@@ -878,8 +898,7 @@ const { variante = 'completo' } = Astro.props;
       const anios = Object.keys(d.skill_por_anio);
       if (anios.length) {
         const tabla = document.createElement('div');
-        tabla.className =
-          'mt-4 grid gap-2 sm:grid-cols-5';
+        tabla.className = 'mt-4 grid gap-2 sm:grid-cols-5';
         for (const a of anios) {
           const celda = document.createElement('div');
           celda.className =
@@ -978,8 +997,8 @@ const { variante = 'completo' } = Astro.props;
       );
       rei?.addEventListener('click', () => render(cont, datos, completo));
     } else {
-      requestAnimationFrame(() =>
-        void handleAbanico.revelar(completo ? 650 : 450),
+      requestAnimationFrame(
+        () => void handleAbanico.revelar(completo ? 650 : 450),
       );
     }
 

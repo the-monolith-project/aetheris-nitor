@@ -14,16 +14,23 @@ const TABS = [
 ---
 
 <Layout title="EPI-Aetheris — Dengue">
-  {/* Modo presentación para grabar el video de la demo (?demo=1, ?demo=lento).
-     Se activa lo antes posible para minimizar el parpadeo del header. */}
+  {
+    /* Modo presentación para grabar el video de la demo (?demo=1, ?demo=lento).
+     Se activa lo antes posible para minimizar el parpadeo del header. */
+  }
   <script is:inline>
     try {
       if (new URLSearchParams(location.search).has('demo')) {
         document.documentElement.classList.add('demo-presentacion');
       }
-    } catch (_) {}
+    } catch {
+      // Ignorar errores de URL parsing en navegadores sin soporte
+    }
   </script>
-  <main id="contenido-principal" class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
+  <main
+    id="contenido-principal"
+    class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
+  >
     <h1 class="font-display text-2xl font-semibold text-ink sm:text-3xl">
       Vigilancia de Dengue por Departamento
     </h1>
@@ -75,7 +82,10 @@ const TABS = [
         <PanelNowcastDengue variante="compacto" />
       </div>
 
-      <section aria-labelledby="contexto-panel-titulo" class="mt-8 scroll-mt-24">
+      <section
+        aria-labelledby="contexto-panel-titulo"
+        class="mt-8 scroll-mt-24"
+      >
         <h2
           id="contexto-panel-titulo"
           class="font-display text-xl font-semibold text-ink"
@@ -148,13 +158,14 @@ const TABS = [
       let j = i;
       if (ev.key === 'ArrowRight') j = (i + 1) % tabs.length;
       else if (ev.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
-      else return;
+      if (j === i) return;
       ev.preventDefault();
       activar(tabs[j].dataset.tab as string, true);
     });
 
     const inicial = new URLSearchParams(location.search).get('t');
-    if (inicial && tabs.some((t) => t.dataset.tab === inicial)) activar(inicial);
+    if (inicial && tabs.some((t) => t.dataset.tab === inicial))
+      activar(inicial);
   }
 </script>
 

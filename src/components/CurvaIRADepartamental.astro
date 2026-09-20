@@ -90,7 +90,9 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
       <button
         type="button"
         data-curva-export
-        class="rounded-lg border border-border bg-bg px-3 py-1.5 text-ink"
+        aria-label={`Exportar datos de ${etiqueta} a CSV`}
+        disabled
+        class="rounded-lg border border-border bg-bg px-3 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
       >
         Exportar CSV
       </button>
@@ -455,6 +457,7 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
           }
         }
         ultimoCsv = lineas.join('\n');
+        if (btnExport) btnExport.disabled = false;
       } catch (err) {
         const noDisponible =
           err instanceof Error &&
@@ -469,6 +472,7 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
           renderErrorFuente(contenedor, () => void refrescar());
         }
         ultimoCsv = '';
+        if (btnExport) btnExport.disabled = true;
       } finally {
         contenedor.removeAttribute('aria-busy');
         contenedor.classList.remove('opacity-60');

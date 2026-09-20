@@ -19,11 +19,16 @@ import ToolbarAnalisis from './ToolbarAnalisis.astro';
   class="workspace-analitico scroll-mt-24"
   aria-labelledby="panel-analisis-titulo"
 >
+  {
+    /* Sin rotulo encima del titulo: "Workspace analitico" nombraba la seccion
+    por como esta construida y no por lo que la persona hace en ella, y el
+    titulo de abajo ya lo dice. La seccion se anuncia por aria-labelledby, asi
+    que tampoco le aportaba nada a un lector de pantalla. */
+  }
   <header class="mb-4 max-w-3xl">
-    <p class="font-sans text-xs font-medium text-accent">Workspace analítico</p>
     <h2
       id="panel-analisis-titulo"
-      class="mt-1 font-display text-xl font-semibold text-ink"
+      class="font-display text-xl font-semibold text-ink"
     >
       Exploración espacial y temporal
     </h2>

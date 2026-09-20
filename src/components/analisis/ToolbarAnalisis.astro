@@ -215,28 +215,24 @@ import { DESCRIPCIONES_PRESETS } from '../../lib/analisis-layout-state';
     const deptoObj = filtrosActuales.departamento
       ? DEPARTAMENTOS_POR_CODIGO[filtrosActuales.departamento]
       : null;
-    const deptoNombre = deptoObj ? deptoObj.nombre : 'Todos los departamentos';
-    const serieNombre =
-      filtrosActuales.serie === 'confirmado' ? 'Confirmado' : 'Probable';
+    // Frase, no cadena de datos unidos por puntos medios: el resumen es la
+    // linea que dice donde estas parado, y se lee igual con los ojos que en voz
+    // alta (el contenedor es aria-live, asi que lo que se ve es lo que se
+    // anuncia -- por eso ya no hace falta una copia sr-only aparte). Los
+    // valores medidos van en mono via .cifra; las palabras, en Inter.
+    const donde = deptoObj ? deptoObj.nombre : 'los 14 departamentos';
+    const serie =
+      filtrosActuales.serie === 'confirmado' ? 'confirmado' : 'probable';
     const semanaTexto = etiquetaSemana(semana);
     const rangoTexto = `${etiquetaSemana(filtrosActuales.semanaDesde)}–${etiquetaSemana(filtrosActuales.semanaHasta)}`;
-    const vistaTexto = `Vista ${layoutActual.vista}`;
-    const textoPlano = `Dengue · ${deptoNombre} · ${filtrosActuales.anio} · ${semanaTexto} · ${serieNombre} · ${rangoTexto} · ${vistaTexto}`;
 
-    resumen.innerHTML = `
-      <span class="sr-only">${textoPlano}</span>
-      <span class="flex flex-wrap items-center gap-1.5 text-xs" aria-hidden="true">
-        <span class="font-medium text-ink">Dengue</span>
-        <span class="text-ink-muted">·</span>
-        <span class="font-medium text-ink">${serieNombre}</span>
-        <span class="cifra text-ink">${filtrosActuales.anio}</span>
-        <span class="cifra font-semibold text-accent">${semanaTexto}</span>
-        <span class="text-ink-muted">·</span>
-        <span class="cifra text-ink">${deptoNombre}</span>
-        <span class="cifra text-[11px] text-ink-muted">(${rangoTexto})</span>
-        <span class="inline-flex items-center rounded bg-secondary px-1.5 py-0.5 font-mono text-[10px] font-semibold text-secondary-ink">${layoutActual.vista}</span>
-      </span>
-    `;
+    // La vista no entra en la frase: la linea de abajo
+    // (#toolbar-vista-descripcion) ya dice cual esta activa y que muestra.
+    resumen.innerHTML =
+      `Dengue ${serie} en <span class="font-medium text-ink">${donde}</span>, ` +
+      `semana <span class="cifra font-semibold text-accent">${semanaTexto}</span> ` +
+      `de <span class="cifra text-ink">${filtrosActuales.anio}</span>, ` +
+      `comparada con <span class="cifra text-ink">${rangoTexto}</span>.`;
   }
 
   function actualizarRangoCinta(desde: number, hasta: number): void {

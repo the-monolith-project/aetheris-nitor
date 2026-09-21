@@ -44,6 +44,7 @@ const { variante = 'completo' } = Astro.props;
     data-nowcast-cuerpo
     class="mt-4"
     role="status"
+    aria-busy="true"
   >
     <div data-estado aria-hidden="true">
       <div class="skeleton h-56 w-full sm:h-64"></div>
@@ -998,12 +999,14 @@ const { variante = 'completo' } = Astro.props;
       if (!cont) continue;
       const completo = sec.dataset.variante !== 'compacto';
       try {
+        cont.setAttribute('aria-busy', 'true');
         const datos = await obtenerNowcastDengue();
         if (esNoDisponible(datos)) {
           renderSinDato(cont, motivoNoDisponible(datos));
           continue;
         }
         render(cont, datos, completo);
+        cont.removeAttribute('aria-busy');
       } catch {
         renderErrorFuente(cont, () => void iniciar());
       }

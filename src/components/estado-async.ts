@@ -50,6 +50,7 @@ export function marcarRegionEstado(contenedor: HTMLElement): void {
   ) {
     contenedor.setAttribute('role', 'status');
   }
+  contenedor.removeAttribute('aria-busy');
 }
 
 /**

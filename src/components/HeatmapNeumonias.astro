@@ -76,7 +76,24 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       Reintentar
     </button>
   </div>
-  <div data-hm-grid role="status" class="mt-4 overflow-x-auto scroll-shadow-x">
+  <div
+    data-hm-grid
+    role="status"
+    aria-busy="true"
+    class="mt-4 min-h-[380px] overflow-x-auto scroll-shadow-x"
+  >
+    <div
+      class="flex h-full min-h-[380px] w-full min-w-[760px] flex-col justify-between gap-2.5 p-2"
+      aria-hidden="true"
+    >
+      <div class="skeleton h-5 w-full rounded"></div>
+      <div class="skeleton h-5 w-full rounded"></div>
+      <div class="skeleton h-5 w-full rounded"></div>
+      <div class="skeleton h-5 w-full rounded"></div>
+      <div class="skeleton h-5 w-full rounded"></div>
+      <div class="skeleton h-5 w-full rounded"></div>
+      <div class="skeleton h-5 w-full rounded"></div>
+    </div>
   </div>
 </PanelWorkspace>
 
@@ -84,6 +101,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   import {
     esNoDisponible,
     motivoNoDisponible,
+    renderEsqueletoMatriz,
     renderSinDato,
   } from './estado-async';
 
@@ -131,7 +149,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     inpDesde.setAttribute('aria-valuetext', `Semana ${inpDesde.value}`);
     inpHasta.setAttribute('aria-valuetext', `Semana ${inpHasta.value}`);
     const anio = sel.value;
-    grid.textContent = 'Cargando…';
+    grid.setAttribute('aria-busy', 'true');
+    renderEsqueletoMatriz(grid, 7);
     try {
       const resp = await fetch(`${API_BASE}/api/neumonias/heatmap/${anio}`);
       if (!resp.ok) throw new Error('no ok');
@@ -215,9 +234,11 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       nota.className = 'mt-2 font-sans text-xs text-ink-muted';
       nota.textContent = `Conteo notificado · ${anio} · SE${desde}–SE${hasta} · MINSAL. Claro = hueco. Escala única de conteo, no positividad.`;
       grid.replaceChildren(table, nota);
+      grid.removeAttribute('aria-busy');
     } catch {
       error.classList.remove('hidden');
       grid.textContent = '';
+      grid.removeAttribute('aria-busy');
       ultimo = null;
     }
   }

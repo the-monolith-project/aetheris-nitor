@@ -33,7 +33,16 @@ import PanelWorkspace from './PanelWorkspace.astro';
       class="min-h-[240px] min-w-[720px]"
       role="region"
       aria-label="Comparación semanal en paneles alineados para los departamentos seleccionados"
+      aria-busy="true"
     >
+      <div
+        class="flex h-full min-h-[240px] w-full min-w-[720px] flex-col justify-around gap-4 p-4"
+        aria-hidden="true"
+      >
+        <div class="skeleton h-5 w-full rounded"></div>
+        <div class="skeleton h-5 w-full rounded"></div>
+        <div class="skeleton h-5 w-full rounded"></div>
+      </div>
     </div>
   </div>
 

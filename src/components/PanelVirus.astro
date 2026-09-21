@@ -65,8 +65,19 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   <div
     data-virus-heatmap
     role="status"
-    class="mt-4 overflow-x-auto scroll-shadow-x"
+    aria-busy="true"
+    class="mt-4 min-h-[220px] overflow-x-auto scroll-shadow-x"
   >
+    <div
+      class="flex h-full min-h-[220px] w-full min-w-[760px] flex-col justify-between gap-2.5 p-2"
+      aria-hidden="true"
+    >
+      <div class="skeleton h-7 w-full rounded"></div>
+      <div class="skeleton h-7 w-full rounded"></div>
+      <div class="skeleton h-7 w-full rounded"></div>
+      <div class="skeleton h-7 w-full rounded"></div>
+      <div class="skeleton h-7 w-full rounded"></div>
+    </div>
   </div>
 </PanelWorkspace>
 
@@ -74,6 +85,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   import {
     esNoDisponible,
     motivoNoDisponible,
+    renderEsqueletoMatriz,
     renderSinDato,
   } from './estado-async';
 
@@ -143,6 +155,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
 
     let catalogo: CatalogoItem[] = [];
     try {
+      heatmap.setAttribute('aria-busy', 'true');
+      renderEsqueletoMatriz(heatmap, 5);
       const datos = await jsonOk(`${API_BASE}/api/respiratorios/virus`);
       if (esNoDisponible(datos)) {
         error.classList.add('hidden');
@@ -154,6 +168,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       aviso.textContent = datos.aviso;
     } catch {
       error.classList.remove('hidden');
+      heatmap.textContent = '';
+      heatmap.removeAttribute('aria-busy');
       return;
     }
 
@@ -210,7 +226,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         : [...toggles.querySelectorAll<HTMLInputElement>('input:checked')].map(
             (c) => c.value,
           );
-      heatmap.textContent = 'Cargando…';
+      heatmap.setAttribute('aria-busy', 'true');
+      renderEsqueletoMatriz(heatmap, Math.max(3, virusConsulta.length));
       const seriesPorVirus: Record<
         string,
         Record<string, [number, number][]>
@@ -237,6 +254,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       } catch {
         error.classList.remove('hidden');
         heatmap.textContent = '';
+        heatmap.removeAttribute('aria-busy');
         return;
       }
       error.classList.add('hidden');
@@ -325,6 +343,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       nota.className = 'mt-2 font-sans text-xs text-ink-muted';
       nota.textContent = `Heatmap ${metrica} · año ${anio} · celdas claras = hueco real. Una sola métrica por escala. Fuente: MINSAL.`;
       heatmap.appendChild(nota);
+      heatmap.removeAttribute('aria-busy');
     }
 
     reintentarVirus = () => {

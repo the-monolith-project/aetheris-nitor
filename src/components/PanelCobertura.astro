@@ -25,7 +25,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       Reintentar
     </button>
   </div>
-  <div data-cob-cuerpo role="status" class="mt-4 space-y-4 font-sans text-sm">
+  <div data-cob-cuerpo role="status" aria-busy="true" class="mt-4 space-y-4 font-sans text-sm">
+    <div class="flex h-full w-full flex-col gap-3 p-3" aria-hidden="true">
+      <div class="skeleton h-4 w-1/3 rounded"></div>
+      <div class="skeleton h-10 w-full rounded"></div>
+      <div class="skeleton h-10 w-full rounded"></div>
+    </div>
   </div>
 </PanelWorkspace>
 
@@ -33,6 +38,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   import {
     esNoDisponible,
     motivoNoDisponible,
+    renderEsqueletoRegistro,
     renderSinDato,
   } from './estado-async';
 
@@ -81,6 +87,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     }
     try {
       error.classList.add('hidden');
+      cuerpo.setAttribute('aria-busy', 'true');
+      renderEsqueletoRegistro(cuerpo);
       const resp = await fetch(`${API_BASE}/api/respiratorios/cobertura`);
       if (!resp.ok) throw new Error('no ok');
       const d = await resp.json();
@@ -122,8 +130,11 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           ],
         ),
       );
+      cuerpo.removeAttribute('aria-busy');
     } catch {
       error.classList.remove('hidden');
+      cuerpo.textContent = '';
+      cuerpo.removeAttribute('aria-busy');
     }
   }
 

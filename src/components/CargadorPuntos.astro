@@ -1,0 +1,21 @@
+---
+interface Props {
+  texto?: string;
+  class?: string;
+}
+
+const { texto = 'Cargando…', class: clase = '' } = Astro.props;
+---
+
+<div
+  class:list={['ea-dot-cargador', clase]}
+  role="status"
+  aria-live="polite"
+>
+  <div class="ea-dot-bounce" aria-hidden="true">
+    <span class="ea-dot"></span>
+    <span class="ea-dot"></span>
+    <span class="ea-dot"></span>
+  </div>
+  <span class="ea-cargador-etiqueta">{texto}</span>
+</div>

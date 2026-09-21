@@ -200,3 +200,33 @@ export function renderCargadorCurva(
   envoltorio.append(svg, etiqueta);
   contenedor.replaceChildren(envoltorio);
 }
+
+/**
+ * Pinta un cargador de puntos en cascada (ea-dot-bounce) con etiqueta visible.
+ */
+export function renderCargadorPuntos(
+  contenedor: HTMLElement,
+  texto = 'Cargando…',
+): void {
+  marcarRegionEstado(contenedor);
+  contenedor.setAttribute('aria-busy', 'true');
+
+  const envoltorio = document.createElement('div');
+  envoltorio.className = 'ea-dot-cargador';
+  envoltorio.setAttribute('aria-hidden', 'true');
+
+  const puntos = document.createElement('div');
+  puntos.className = 'ea-dot-bounce';
+  for (let i = 0; i < 3; i++) {
+    const punto = document.createElement('span');
+    punto.className = 'ea-dot';
+    puntos.appendChild(punto);
+  }
+
+  const etiqueta = document.createElement('span');
+  etiqueta.className = 'ea-cargador-etiqueta';
+  etiqueta.textContent = texto;
+
+  envoltorio.append(puntos, etiqueta);
+  contenedor.replaceChildren(envoltorio);
+}

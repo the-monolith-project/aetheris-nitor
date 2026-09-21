@@ -5,6 +5,13 @@
  * (src/lib/enlaces.ts, RUTA_SENSIBILIDAD) y esta página enlaza a él.
  * Lo propio de este documento es el uso de la API, la propiedad intelectual y
  * la ausencia de garantías.
+ *
+ * Es el unico de los tres documentos con clausulas numeradas: es el
+ * contractual, y la numeracion existe para poder invocar una condicion
+ * concreta ("clausula 4.2"). La privacidad y el aviso legal se quedan con
+ * secciones tituladas a proposito; el decreto 144 pide que el aviso este
+ * "redactado y estructurado de manera clara y sencilla", no que imite a un
+ * articulado.
  */
 import DocumentoTexto from '../../components/DocumentoTexto.astro';
 import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
@@ -16,7 +23,7 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
   descripcion="Qué es y qué no es esta herramienta, qué se puede hacer con la API y los datos, y con qué garantías se ofrece."
   actualizado="20 de septiembre de 2026"
 >
-  <h2>Qué es este servicio</h2>
+  <h2>1. Qué es este servicio</h2>
   <p>
     EPI-Aetheris es una herramienta de vigilancia epidemiológica{' '}
     <strong>descriptiva</strong>, de acceso libre y gratuito, construida sobre
@@ -32,12 +39,12 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
     acepte debe abstenerse de utilizarlo.
   </p>
 
-  <h2>Uso de la API pública</h2>
+  <h2>2. Uso de la API pública</h2>
   <p>
     La API que alimenta este sitio es pública y está documentada. Puede
     consultarse, reutilizarse y construirse sobre ella, con dos condiciones:
   </p>
-  <ul>
+  <ol class="clausulas" style="--c: '2'">
     <li>
       <strong>Respetar el límite de peticiones.</strong> Los endpoints de análisis
       están limitados a 30 consultas por minuto y por cliente. El límite protege la
@@ -49,10 +56,10 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
       según se detalla en{' '}
       <a href="/biblioteca/04-fuentes-de-datos">de dónde salen los datos</a>.
     </li>
-  </ul>
+  </ol>
 
-  <h2>Conductas prohibidas</h2>
-  <ul>
+  <h2>3. Conductas prohibidas</h2>
+  <ol class="clausulas" style="--c: '3'">
     <li>
       Eludir el límite de peticiones, por ejemplo rotando direcciones o
       paralelizando clientes para superarlo.
@@ -75,10 +82,10 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
       Republicar alertas de campo alteradas, fuera de contexto o sin su ventana
       de vigencia, de forma que induzcan a una decisión sanitaria equivocada.
     </li>
-  </ul>
+  </ol>
 
-  <h2>Propiedad intelectual y licencias</h2>
-  <ul>
+  <h2>4. Propiedad intelectual y licencias</h2>
+  <ol class="clausulas" style="--c: '4'">
     <li>
       <strong>El código</strong> se publica bajo licencia GPL-3.0. Puede usarse, estudiarse,
       modificarse y redistribuirse en los términos de esa licencia, cuyo texto completo
@@ -101,17 +108,17 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
       <strong>Los documentos y textos</strong> del sitio pueden citarse indicando
       la fuente y el enlace.
     </li>
-  </ul>
+  </ol>
 
-  <h2>Cuentas y credenciales</h2>
+  <h2>5. Cuentas y credenciales</h2>
   <p>
     No existen cuentas de usuario: todo el contenido es de consulta abierta. El
     token de escritura de alertas es una credencial operativa del equipo, no una
     cuenta personal; compartirlo o usarlo sin autorización entra dentro de las
-    conductas prohibidas.
+    conductas prohibidas de la cláusula 3.
   </p>
 
-  <h2>Ausencia de garantías</h2>
+  <h2>6. Ausencia de garantías</h2>
   <p>
     El servicio se ofrece <strong>«tal cual»</strong>, sin garantía de ningún
     tipo, expresa o implícita, incluidas las de adecuación a un propósito
@@ -121,7 +128,7 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
     posteriores; el propio sitio señala esas limitaciones cuando las conoce.
   </p>
 
-  <h2>Limitación de responsabilidad</h2>
+  <h2>7. Limitación de responsabilidad</h2>
   <p>
     En la medida en que lo permita la ley aplicable, el responsable del sitio no
     responde por daños directos o indirectos derivados del uso o de la
@@ -130,28 +137,28 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
     criterio profesional y a los lineamientos oficiales.
   </p>
 
-  <h2>Disponibilidad</h2>
+  <h2>8. Disponibilidad</h2>
   <p>
     No hay compromiso de nivel de servicio ni garantía de continuidad. El
     proyecto es académico y puede interrumpirse, cambiar de alcance o dejar de
     actualizarse.
   </p>
 
-  <h2>Enlaces a sitios de terceros</h2>
+  <h2>9. Enlaces a sitios de terceros</h2>
   <p>
     El sitio enlaza a repositorios, fuentes de datos y documentación externa. No
     se controla su contenido ni sus políticas; al seguir uno de esos enlaces se
     aplican sus propios términos.
   </p>
 
-  <h2>Cambios en estos términos</h2>
+  <h2>10. Cambios en estos términos</h2>
   <p>
     Pueden modificarse para reflejar cambios en el servicio o en la normativa.
     La fecha de última actualización aparece al principio y el historial queda
     en el repositorio público.
   </p>
 
-  <h2>Ley aplicable</h2>
+  <h2>11. Ley aplicable</h2>
   <p>
     Estos términos se rigen por la legislación de <strong
       >la República de El Salvador</strong
@@ -166,3 +173,24 @@ import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
     <a href="/contacto">contacto</a>.
   </p>
 </DocumentoTexto>
+
+<style>
+  /* Numeracion "N.n" para poder citar una condicion concreta. El numero de
+     seccion viaja en la custom property --c del <ol>, que hereda a los <li>;
+     attr() no sirve aqui porque leeria el atributo del propio <li>. */
+  .clausulas {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: clausula;
+  }
+  .clausulas > li {
+    counter-increment: clausula;
+    padding-left: 2.75rem;
+    text-indent: -2.75rem;
+  }
+  .clausulas > li::before {
+    content: var(--c) '.' counter(clausula) '\00a0\00a0';
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+</style>

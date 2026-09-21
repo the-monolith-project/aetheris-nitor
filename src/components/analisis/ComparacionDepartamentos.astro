@@ -68,7 +68,11 @@ import PanelWorkspace from './PanelWorkspace.astro';
 </PanelWorkspace>
 
 <script>
-  import * as Plot from '@observablehq/plot';
+  // Plot entra por import dinamico, como en el resto de paneles: cuando
+  // un solo componente lo importa de forma estatica, Vite lo arrastra al
+  // grafo inicial y anula los await import de los demas -- 391 KB de Plot
+  // y d3 quedaban en la carga critica de /dengue.
+  let Plot: typeof import('@observablehq/plot') | null = null;
   import {
     esNoDisponible,
     motivoNoDisponible,
@@ -209,7 +213,8 @@ import PanelWorkspace from './PanelWorkspace.astro';
       datosTabla = observados;
       tablaAlternativa?.marcarCaducada();
 
-      const grafica = Plot.plot({
+      Plot ??= await import('@observablehq/plot');
+      const grafica = Plot!.plot({
         width: Math.max(contenedor.clientWidth, 720),
         height: Math.max(260, departamentos.length * 170),
         marginLeft: 130,
@@ -254,7 +259,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
             title: (punto: PuntoDepartamento) =>
               `${punto.departamento} · SE${String(punto.semana).padStart(2, '0')}\n${punto.casos} casos ${filtros.serie}`,
           }),
-          marcoPlot(),
+          marcoPlot(Plot!),
         ],
       });
       vincularMarcasPlot(

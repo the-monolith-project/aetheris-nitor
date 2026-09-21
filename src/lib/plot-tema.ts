@@ -1,4 +1,8 @@
-import * as Plot from '@observablehq/plot';
+// Import SOLO de tipo: se borra en build y no deja dependencia en runtime.
+// Con el import de valor, este modulo -- que los siete paneles importan de
+// forma estatica -- arrastraba los 391 KB de Plot y d3 al grafo inicial de
+// /dengue, anulando los await import de los componentes.
+import type * as Plot from '@observablehq/plot';
 
 export const ESTILO_PLOT = {
   background: 'transparent',
@@ -42,7 +46,6 @@ export function ejeSemana(
   };
 }
 
-export function marcoPlot(plotInstance?: typeof Plot) {
-  const P = plotInstance ?? Plot;
+export function marcoPlot(P: typeof Plot) {
   return P.frame({ stroke: 'var(--color-border)' });
 }

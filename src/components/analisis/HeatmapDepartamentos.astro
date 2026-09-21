@@ -62,7 +62,11 @@ import { RAMPA_PRESION } from '../../lib/colores';
 </PanelWorkspace>
 
 <script>
-  import * as Plot from '@observablehq/plot';
+  // Plot entra por import dinamico, como en el resto de paneles: cuando
+  // un solo componente lo importa de forma estatica, Vite lo arrastra al
+  // grafo inicial y anula los await import de los demas -- 391 KB de Plot
+  // y d3 quedaban en la carga critica de /dengue.
+  let Plot: typeof import('@observablehq/plot') | null = null;
   import {
     esNoDisponible,
     motivoNoDisponible,
@@ -214,7 +218,8 @@ import { RAMPA_PRESION } from '../../lib/colores';
       }));
       tablaAlternativa?.marcarCaducada();
 
-      const grafica = Plot.plot({
+      Plot ??= await import('@observablehq/plot');
+      const grafica = Plot!.plot({
         width: Math.max(contenedor.clientWidth, 760),
         height: 430,
         marginLeft: MARGENES.matriz.marginLeft,
@@ -253,7 +258,7 @@ import { RAMPA_PRESION } from '../../lib/colores';
             inset: 0.5,
             pointerEvents: 'none',
           }),
-          marcoPlot(),
+          marcoPlot(Plot!),
         ],
       });
       vincularMarcasPlot(

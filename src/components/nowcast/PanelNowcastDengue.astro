@@ -44,6 +44,7 @@ const { variante = 'completo' } = Astro.props;
     data-nowcast-cuerpo
     class="mt-4"
     role="status"
+    aria-busy="true"
   >
     <div data-estado aria-hidden="true">
       <div class="skeleton h-56 w-full sm:h-64"></div>
@@ -573,8 +574,8 @@ const { variante = 'completo' } = Astro.props;
     // caja de zoom: últimas ~13 semanas observadas + el abanico, ajustada a la
     // razón de aspecto del viewBox base para que no haya letterbox.
     const vbBase: [number, number, number, number] = [0, 0, ancho, alto];
-    let zx = e.x(Math.max(0, tAncla - 13)) - 8;
-    let zw = e.x(tMax) + 16 - zx;
+    const zx = e.x(Math.max(0, tAncla - 13)) - 8;
+    const zw = e.x(tMax) + 16 - zx;
     // rango vertical: nos ceñimos a la banda del 50 % + mediana + ancla (mucho
     // más estrecho que el 95 %), con margen. Las colas del 95 % pueden sangrar
     // fuera del encuadre: es una vista "héroe" del abanico, no un recorte exacto.
@@ -998,12 +999,14 @@ const { variante = 'completo' } = Astro.props;
       if (!cont) continue;
       const completo = sec.dataset.variante !== 'compacto';
       try {
+        cont.setAttribute('aria-busy', 'true');
         const datos = await obtenerNowcastDengue();
         if (esNoDisponible(datos)) {
           renderSinDato(cont, motivoNoDisponible(datos));
           continue;
         }
         render(cont, datos, completo);
+        cont.removeAttribute('aria-busy');
       } catch {
         renderErrorFuente(cont, () => void iniciar());
       }

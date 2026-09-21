@@ -71,6 +71,19 @@ const PRESETS: Record<
   },
 };
 
+export const DESCRIPCIONES_PRESETS: Record<VistaAnalisis, string> = {
+  general:
+    'General: mapa, matriz de presión y comparaciones temporales y territoriales.',
+  territorial:
+    'Territorial: mapa, matriz de presión y comparación entre departamentos.',
+  temporal:
+    'Temporal: serie histórica del departamento, temporadas y calendario nacional.',
+  clima:
+    'Clima: mapa territorial y dispersión de anomalía climática contra presión.',
+  calidad:
+    'Calidad de datos: disponibilidad de observaciones y auditoría de procedencia.',
+};
+
 const TAMANOS_PREDETERMINADOS: Record<PanelAnalitico, TamanoPanel> = {
   mapa: 'mediano',
   presion: 'grande',

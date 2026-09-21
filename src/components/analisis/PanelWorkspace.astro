@@ -1,0 +1,57 @@
+---
+interface Props {
+  tipo: 'visor' | 'matriz' | 'traza' | 'registro';
+  titulo?: string;
+  descripcion?: string;
+  idTitulo?: string;
+  clase?: string;
+  [key: string]: unknown;
+}
+
+const {
+  tipo,
+  titulo,
+  descripcion,
+  idTitulo,
+  clase = '',
+  ...resto
+} = Astro.props;
+
+const claseTipo = {
+  visor: 'panel-visor',
+  matriz: 'panel-matriz',
+  traza: 'panel-traza',
+  registro: 'panel-registro',
+}[tipo];
+---
+
+<article class:list={[claseTipo, clase]} aria-labelledby={idTitulo} {...resto}>
+  {
+    Astro.slots.has('cabecera') ? (
+      <slot name="cabecera" />
+    ) : (
+      (titulo || Astro.slots.has('controles')) && (
+        <header class="panel-cabecera">
+          <div>
+            {titulo && (
+              <h3 id={idTitulo} class="panel-titulo">
+                {titulo}
+              </h3>
+            )}
+            {descripcion && <p class="panel-descripcion">{descripcion}</p>}
+          </div>
+          <div
+            data-panel-controles
+            class="relative flex items-center gap-2 shrink-0"
+          >
+            <slot name="controles" />
+          </div>
+        </header>
+      )
+    )
+  }
+
+  <slot />
+
+  <slot name="pie" />
+</article>

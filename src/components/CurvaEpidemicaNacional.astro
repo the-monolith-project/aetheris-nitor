@@ -60,6 +60,7 @@
     id="curva-epidemica"
     class="mt-3 overflow-x-auto scroll-shadow-x rounded-xl border border-border bg-bg p-3 sm:p-4"
     role="status"
+    aria-busy="true"
   >
     <!-- Skeleton con la misma altura aproximada del SVG final (viewBox 720x240,
          w-full) para que la página no salte al llegar los datos. -->
@@ -265,9 +266,11 @@
     if (!contenedor) return;
 
     try {
+      contenedor.setAttribute('aria-busy', 'true');
       const datos = await obtenerCasosNacionales();
       datosActuales = datos;
       dibujar(contenedor, datos);
+      contenedor.removeAttribute('aria-busy');
       if (botonDescarga && datos.length > 0) {
         botonDescarga.disabled = false;
         botonDescarga.removeAttribute('title');

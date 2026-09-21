@@ -359,11 +359,19 @@ html[data-animar] .aparece.visto {
 }
 
 /* Paneles y menus de la vista de analisis entran con un pequeno ascenso
-   cada vez que dejan de estar ocultos. El cierre sigue siendo inmediato:
-   `hidden` no admite salida sin JavaScript extra y el contenido que se
-   cierra no necesita ser observado. */
-[data-panel-workspace]:not([hidden]) {
+   cuando se muestran explicitamente o en la revelacion inicial orquestada. */
+html[data-animar] [data-panel-workspace][data-panel-nuevo] {
   animation: panel-entra 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+html[data-animar] .workspace-revelacion [data-panel-workspace]:not([hidden]) {
+  animation: panel-entra 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--revelacion-retraso, 0ms);
+}
+
+/* Transicion suave en resumenes cuando cambia el valor */
+[role='status'] {
+  transition: opacity 160ms ease;
 }
 @keyframes panel-entra {
   from {
@@ -465,6 +473,388 @@ html[data-animar] .aparece.visto {
   .skeleton::after {
     animation: none;
   }
+}
+
+.bg-deep .skeleton,
+[class*="bg-deep"] .skeleton {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.bg-deep .skeleton::after,
+[class*="bg-deep"] .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+}
+
+/* Cargador de curva epidemiológica (propuesta 2: ea-comet).
+   Trazo de curva epidemiológica con un cometa animado a lo largo de la curva.
+   Fallback estático declarado: en reduced-motion el cometa descansa visible al
+   inicio del trazo sin desaparecer. */
+.ea-comet-cargador {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.ea-comet-svg {
+  width: 120px;
+  height: 48px;
+  overflow: visible;
+}
+
+.ea-comet-pista {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ea-comet-trazo {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 70 281;
+  stroke-dashoffset: 351;
+  animation: ea-comet-anim 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes ea-comet-anim {
+  0% {
+    stroke-dashoffset: 351;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ea-cargador-etiqueta {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  letter-spacing: 0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ea-comet-trazo {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Cargador de puntos en cascada (propuesta 4: ea-dot-bounce).
+   Para esperas cortas o compactas donde no cabe un skeleton.
+   Tres puntos con pulsación secuencial; en reduced-motion se fijan en
+   opacidad completa sin parpadeo. */
+.ea-dot-cargador {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ea-dot-bounce {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ea-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--color-accent);
+  opacity: 1;
+  animation: ea-dot-bounce-anim 1.2s ease-in-out infinite;
+}
+
+.ea-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.ea-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.ea-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes ea-dot-bounce-anim {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ea-dot {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Barra de actividad superior (propuesta 5: ea-bar-sweep).
+   Indicador indeterminado para peticiones de datos en vuelo.
+   En reduced-motion muestra una barra continua visible (ancho 100% estático)
+   evitando la desaparición que sufriría sin estilos base declarados. */
+.ea-bar-sweep {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  background-color: var(--color-border);
+}
+
+.ea-bar-sweep-indicador {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 30%;
+  border-radius: 9999px;
+  background-color: var(--color-accent);
+  animation: ea-bar-sweep-anim 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes ea-bar-sweep-anim {
+  0% {
+    left: -35%;
+    width: 30%;
+  }
+  50% {
+    left: 35%;
+    width: 45%;
+  }
+  100% {
+    left: 105%;
+    width: 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ea-bar-sweep-indicador {
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.8;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Primitivas del workspace de análisis (rediseño 2026-09).
+   La forma codifica el tipo de contenido: visor, matriz, traza o registro.
+   --------------------------------------------------------------------------- */
+
+.panel-visor {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-traza);
+  overflow: hidden;
+}
+.panel-visor > .panel-cabecera {
+  padding: 1.25rem 1.25rem 0.75rem 1.25rem;
+  margin-bottom: 0;
+}
+@media (min-width: 640px) {
+  .panel-visor > .panel-cabecera {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+}
+
+.panel-matriz {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-matriz);
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel-matriz {
+    padding: 1.5rem;
+  }
+}
+
+.panel-traza {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: var(--filete-traza) solid var(--color-accent);
+  border-radius: var(--radio-traza);
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel-traza {
+    padding: 1.5rem;
+  }
+}
+
+.panel-registro {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-matriz);
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  .panel-registro {
+    padding: 1.5rem;
+  }
+}
+
+.panel-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-titulo {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.panel-descripcion {
+  margin-top: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+  max-width: 68ch;
+}
+
+.cifra {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Prosa compartida para documentos de Biblioteca y páginas legales */
+.doc-md {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.doc-md h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  margin-bottom: 1rem;
+}
+.doc-md h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-ink);
+  margin-top: 2.25rem;
+  margin-bottom: 0.6rem;
+}
+.doc-md h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-ink);
+  margin-top: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.doc-md p {
+  margin-top: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+.doc-md ul,
+.doc-md ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1.25rem;
+}
+.doc-md ul {
+  list-style: disc;
+}
+.doc-md ol {
+  list-style: decimal;
+}
+.doc-md li {
+  margin-top: 0.35rem;
+}
+.doc-md a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.doc-md strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.doc-md code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.doc-md pre {
+  background: var(--color-deep);
+  color: var(--color-deep-ink);
+  border-radius: 12px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.doc-md pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+.doc-md blockquote {
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  padding: 0.75rem 1rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+}
+.doc-md blockquote p {
+  margin: 0;
+}
+.doc-md hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 1.5rem 0;
+}
+.doc-md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.85em;
+}
+.doc-md th,
+.doc-md td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.doc-md th {
+  background: var(--color-bg);
+  font-weight: 600;
 }
 
 /* Piso global de "reduced motion" -- va al final, DESPUÉS de las excepciones

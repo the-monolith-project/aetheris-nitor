@@ -159,3 +159,44 @@ export function renderEsqueletoRegistro(contenedor: HTMLElement): void {
   contenedorReg.append(t, c1, c2);
   contenedor.replaceChildren(contenedorReg);
 }
+
+/**
+ * Pinta un cargador de curva epidemiológica (ea-comet) con etiqueta visible.
+ */
+export function renderCargadorCurva(
+  contenedor: HTMLElement,
+  texto = 'Cargando…',
+): void {
+  marcarRegionEstado(contenedor);
+  contenedor.setAttribute('aria-busy', 'true');
+
+  const envoltorio = document.createElement('div');
+  envoltorio.className = 'ea-comet-cargador';
+  envoltorio.setAttribute('aria-hidden', 'true');
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 120 48');
+  svg.setAttribute('class', 'ea-comet-svg');
+
+  const dCurva =
+    'M 8 40 C 24 40 36 34 46 22 C 54 12 60 8 68 8 C 76 8 82 18 90 28 C 98 38 106 40 112 40';
+
+  const pista = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  pista.setAttribute('d', dCurva);
+  pista.setAttribute('class', 'ea-comet-pista');
+  pista.setAttribute('pathLength', '351');
+
+  const trazo = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  trazo.setAttribute('d', dCurva);
+  trazo.setAttribute('class', 'ea-comet-trazo');
+  trazo.setAttribute('pathLength', '351');
+
+  svg.append(pista, trazo);
+
+  const etiqueta = document.createElement('span');
+  etiqueta.className = 'ea-cargador-etiqueta';
+  etiqueta.textContent = texto;
+
+  envoltorio.append(svg, etiqueta);
+  contenedor.replaceChildren(envoltorio);
+}

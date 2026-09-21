@@ -607,6 +607,53 @@ html[data-animar] .workspace-revelacion [data-panel-workspace]:not([hidden]) {
   }
 }
 
+/* Barra de actividad superior (propuesta 5: ea-bar-sweep).
+   Indicador indeterminado para peticiones de datos en vuelo.
+   En reduced-motion muestra una barra continua visible (ancho 100% estático)
+   evitando la desaparición que sufriría sin estilos base declarados. */
+.ea-bar-sweep {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  background-color: var(--color-border);
+}
+
+.ea-bar-sweep-indicador {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 30%;
+  border-radius: 9999px;
+  background-color: var(--color-accent);
+  animation: ea-bar-sweep-anim 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes ea-bar-sweep-anim {
+  0% {
+    left: -35%;
+    width: 30%;
+  }
+  50% {
+    left: 35%;
+    width: 45%;
+  }
+  100% {
+    left: 105%;
+    width: 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ea-bar-sweep-indicador {
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.8;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Primitivas del workspace de análisis (rediseño 2026-09).
    La forma codifica el tipo de contenido: visor, matriz, traza o registro.

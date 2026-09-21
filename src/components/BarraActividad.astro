@@ -1,0 +1,25 @@
+---
+interface Props {
+  id?: string;
+  class?: string;
+  etiqueta?: string;
+}
+
+const {
+  id = 'barra-actividad',
+  class: clase = '',
+  etiqueta = 'Actualizando datos…',
+} = Astro.props;
+---
+
+<div
+  id={id}
+  class:list={['ea-bar-sweep', clase]}
+  role="status"
+  aria-live="polite"
+  aria-label={etiqueta}
+  hidden
+>
+  <div class="ea-bar-sweep-indicador" aria-hidden="true"></div>
+  <span class="sr-only">{etiqueta}</span>
+</div>

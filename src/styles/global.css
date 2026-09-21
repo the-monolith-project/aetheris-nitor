@@ -476,11 +476,11 @@ html[data-animar] .workspace-revelacion [data-panel-workspace]:not([hidden]) {
 }
 
 .bg-deep .skeleton,
-[class*="bg-deep"] .skeleton {
+[class*='bg-deep'] .skeleton {
   background-color: rgba(255, 255, 255, 0.12);
 }
 .bg-deep .skeleton::after,
-[class*="bg-deep"] .skeleton::after {
+[class*='bg-deep'] .skeleton::after {
   background: linear-gradient(
     90deg,
     transparent,
@@ -617,6 +617,14 @@ html[data-animar] .workspace-revelacion [data-panel-workspace]:not([hidden]) {
   height: 3px;
   overflow: hidden;
   background-color: var(--color-border);
+}
+/* En reposo la región sigue en el DOM -- es la que anuncia -- pero no deja
+   rastro visual: sin esto quedaría un filete gris permanente. */
+.ea-bar-sweep[data-activa='false'] {
+  background-color: transparent;
+}
+.ea-bar-sweep[data-activa='false'] .ea-bar-sweep-indicador {
+  display: none;
 }
 
 .ea-bar-sweep-indicador {

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import Icono from '../../../components/Icono.astro';
+import CargadorPuntos from '../../../components/CargadorPuntos.astro';
 import {
   DEPARTAMENTOS,
   type DepartamentoInfo,
@@ -87,6 +88,7 @@ const { codigo, nombre } = departamento;
         >
           <Icono nombre="printer" class="h-4 w-4 text-accent" />
           <span data-imprimir-texto>Cargando datos…</span>
+          <CargadorPuntos data-imprimir-puntos />
         </button>
       </div>
     </div>
@@ -1433,6 +1435,7 @@ const { codigo, nombre } = departamento;
     if (textoImprimir) {
       textoImprimir.textContent = 'Imprimir ficha';
     }
+    document.querySelector<HTMLElement>('[data-imprimir-puntos]')?.remove();
     root?.setAttribute('data-cargado', '1');
   });
 </script>

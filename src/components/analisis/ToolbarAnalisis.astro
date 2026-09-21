@@ -1,5 +1,6 @@
 ---
 import { DESCRIPCIONES_PRESETS } from '../../lib/analisis-layout-state';
+import BarraActividad from '../BarraActividad.astro';
 ---
 
 <div
@@ -11,17 +12,11 @@ import { DESCRIPCIONES_PRESETS } from '../../lib/analisis-layout-state';
     aria-label="Controles del workspace analítico"
     class="relative overflow-hidden rounded-2xl border border-border bg-surface/95 p-3 shadow-sm backdrop-blur sm:p-4"
   >
-    <div
+    <BarraActividad
       id="toolbar-actividad-barra"
-      class="ea-bar-sweep absolute inset-x-0 top-0 h-[3px] overflow-hidden"
-      role="status"
-      aria-live="polite"
-      aria-label="Actualizando datos del análisis"
-      hidden
-    >
-      <div class="ea-bar-sweep-indicador" aria-hidden="true"></div>
-      <span class="sr-only">Actualizando datos del análisis…</span>
-    </div>
+      class="absolute inset-x-0 top-0"
+      etiqueta="Actualizando datos del análisis…"
+    />
     <div
       class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
     >
@@ -431,12 +426,21 @@ import { DESCRIPCIONES_PRESETS } from '../../lib/analisis-layout-state';
   });
 
   const barraActividad = document.getElementById('toolbar-actividad-barra');
+  const barraTexto =
+    barraActividad?.querySelector<HTMLElement>('[data-barra-texto]');
   if (typeof window !== 'undefined') {
     window.addEventListener('epi:actividad-red', ((
       evento: CustomEvent<{ enVuelo: boolean; conteo: number }>,
     ) => {
-      if (barraActividad) {
-        barraActividad.hidden = !evento.detail.enVuelo;
+      if (!barraActividad) return;
+      const activa = evento.detail.enVuelo;
+      barraActividad.dataset.activa = activa ? 'true' : 'false';
+      // Rellenar y vaciar el texto, no ocultar la región: es el cambio de
+      // contenido lo que el lector de pantalla anuncia.
+      if (barraTexto) {
+        barraTexto.textContent = activa
+          ? (barraActividad.dataset.etiqueta ?? 'Actualizando datos…')
+          : '';
       }
     }) as EventListener);
   }

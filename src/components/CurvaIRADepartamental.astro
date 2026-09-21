@@ -1,5 +1,6 @@
 ---
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
+import CargadorCurva from './CargadorCurva.astro';
 interface Props {
   evento?: 'ira' | 'neumonias';
 }
@@ -88,8 +89,10 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
     role="status"
   >
     <div data-estado aria-hidden="true">
-      <div class="skeleton h-40 w-full sm:h-52"></div>
-      <div class="skeleton mt-2 h-3 w-1/3"></div>
+      <CargadorCurva
+        class="h-40 w-full justify-center sm:h-52"
+        texto="Cargando la curva…"
+      />
     </div>
   </div>
 </PanelWorkspace>

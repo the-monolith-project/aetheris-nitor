@@ -69,13 +69,16 @@ export default defineConfig({
   // Se usan a traves de src/components/Icono.astro, no de <Icon> directo.
   integrations: [
     icon({ include: { tabler: ['*'], 'simple-icons': ['*'] } }),
-    // Sitemap a partir de `site`. Quedan fuera dos rutas que no son
+    // Sitemap a partir de `site`. Quedan fuera las rutas que no son
     // contenido público: /alertas/nueva (formulario de operadores, además
-    // marcado noindex en su propia página) y /panel, que no es una página
-    // sino la redirección generada por `redirects` a /dengue.
+    // marcado noindex en su propia página), /demos (recorridos animados para
+    // enseñar o grabar, también noindex) y /panel, que no es una página sino
+    // la redirección generada por `redirects` a /dengue.
     sitemap({
       filter: (pagina) =>
-        !pagina.includes('/alertas/nueva') && !pagina.includes('/panel'),
+        !pagina.includes('/alertas/nueva') &&
+        !pagina.includes('/panel') &&
+        !pagina.includes('/demos'),
     }),
   ],
   server: {

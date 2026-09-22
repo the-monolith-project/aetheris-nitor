@@ -5,9 +5,23 @@
     aria-haspopup="menu"
     aria-expanded="false"
     aria-controls="analisis-paneles-menu"
-    class="rounded-lg border border-border bg-bg px-2.5 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent"
+    class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-bg px-2.5 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent"
   >
-    Paneles
+    <span>Paneles</span>
+    <svg
+      id="analisis-paneles-icono"
+      class="h-3.5 w-3.5 text-ink-muted transition-transform duration-200"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+    </svg>
   </button>
   <div
     id="analisis-paneles-menu"
@@ -173,14 +187,28 @@
     PANELES_ANALITICOS.map(({ id }) => id),
   );
 
+  const icono = document.getElementById('analisis-paneles-icono');
+
   function estaAbierto(): boolean {
     return menu?.hidden === false;
+  }
+
+  function actualizarEstadoVisual(abierto: boolean): void {
+    if (!boton) return;
+    boton.setAttribute('aria-expanded', String(abierto));
+    if (icono) {
+      if (abierto) {
+        icono.classList.add('rotate-180');
+      } else {
+        icono.classList.remove('rotate-180');
+      }
+    }
   }
 
   function cerrarMenu(devolverFoco = false): void {
     if (!menu || !boton) return;
     menu.hidden = true;
-    boton.setAttribute('aria-expanded', 'false');
+    actualizarEstadoVisual(false);
     if (devolverFoco) boton.focus();
   }
 
@@ -188,7 +216,7 @@
     if (!menu || !boton) return;
     const abierto = !estaAbierto();
     menu.hidden = !abierto;
-    boton.setAttribute('aria-expanded', String(abierto));
+    actualizarEstadoVisual(abierto);
   }
 
   function actualizarContador(visibles: number): void {

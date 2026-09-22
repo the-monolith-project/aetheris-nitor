@@ -76,7 +76,9 @@ function cargarDataset(
           typeof datos !== 'object' ||
           !Array.isArray((datos as { departamentos?: unknown }).departamentos)
         ) {
-          throw new Error('El dataset analítico no tiene el contrato esperado.');
+          throw new Error(
+            'El dataset analítico no tiene el contrato esperado.',
+          );
         }
         return datos as DatasetAnaliticoDengue;
       },
@@ -136,26 +138,26 @@ export function obtenerIntegridadVigilancia(): Promise<IntegridadVigilancia> {
               `No se pudo cargar la integridad de vigilancia (${respuesta.status}).`,
             );
           }
-        const datos: unknown = await respuesta.json();
-        if (esNoDisponible(datos)) {
-          return datos as any;
-        }
-        if (
-          !datos ||
-          typeof datos !== 'object' ||
-          !('antiguedad' in datos) ||
-          !Array.isArray((datos as { resumen_anual?: unknown }).resumen_anual)
-        ) {
-          throw new Error(
-            'La integridad de vigilancia no tiene el contrato esperado.',
-          );
-        }
-        return datos as IntegridadVigilancia;
-      })
-      .catch((error) => {
-        cacheIntegridad = null;
-        throw error;
-      }),
+          const datos: unknown = await respuesta.json();
+          if (esNoDisponible(datos)) {
+            return datos as any;
+          }
+          if (
+            !datos ||
+            typeof datos !== 'object' ||
+            !('antiguedad' in datos) ||
+            !Array.isArray((datos as { resumen_anual?: unknown }).resumen_anual)
+          ) {
+            throw new Error(
+              'La integridad de vigilancia no tiene el contrato esperado.',
+            );
+          }
+          return datos as IntegridadVigilancia;
+        })
+        .catch((error) => {
+          cacheIntegridad = null;
+          throw error;
+        }),
     );
   }
   return cacheIntegridad;
@@ -266,7 +268,9 @@ export function obtenerSeriePresion(
             return datos as any;
           }
           if (!tieneSemanas(datos)) {
-            throw new Error('La serie de presión no tiene el contrato esperado.');
+            throw new Error(
+              'La serie de presión no tiene el contrato esperado.',
+            );
           }
           return datos as SerieTemporalPresion;
         })
@@ -303,9 +307,7 @@ export function obtenerProcedenciaAnalitica(
       dept: filtros.departamento,
     });
     solicitud = registrarPeticion(
-      fetch(
-        `${API_BASE}/api/v1/analisis/dengue/procedencia?${parametros}`,
-      )
+      fetch(`${API_BASE}/api/v1/analisis/dengue/procedencia?${parametros}`)
         .then(async (respuesta) => {
           if (!respuesta.ok) {
             throw new Error(

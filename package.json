@@ -11,7 +11,8 @@
     "lint": "eslint \"src/**/*.{astro,js,ts}\" \"tests/**/*.{js,ts}\" \"*.{js,mjs,ts}\"",
     "format": "prettier --write \"src/**/*.{astro,js,ts,css}\" \"tests/**/*.{js,ts}\" \"*.{js,mjs,ts,json}\"",
     "format:check": "prettier --check \"src/**/*.{astro,js,ts,css}\" \"tests/**/*.{js,ts}\" \"*.{js,mjs,ts,json}\"",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:unit": "node --experimental-strip-types --test \"tests/unit/**/*.test.ts\""
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

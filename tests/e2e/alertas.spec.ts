@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import {
   AVISO_HONESTIDAD_ALERTAS,
   ROTULO_ALERTA_PRUEBA,
+  esNivelAlerta,
   renderTextoAccionable,
   SIGNIFICADO_NIVEL,
   textoEstadoVacio,
@@ -31,6 +32,18 @@ test('nivel meanings match INDICACIONES §4', () => {
   );
   expect(textoSignificadoNivel('atencion')).toBe(SIGNIFICADO_NIVEL.atencion);
   expect(textoSignificadoNivel('otro')).toBe('');
+});
+
+test('esNivelAlerta identifies valid alert levels and rejects invalid values', () => {
+  expect(esNivelAlerta('informativo')).toBe(true);
+  expect(esNivelAlerta('atencion')).toBe(true);
+  expect(esNivelAlerta('intensificacion')).toBe(true);
+
+  expect(esNivelAlerta('')).toBe(false);
+  expect(esNivelAlerta('urgente')).toBe(false);
+  expect(esNivelAlerta('INFORMATIVO')).toBe(false);
+  expect(esNivelAlerta('atención')).toBe(false);
+  expect(esNivelAlerta(' atencion ')).toBe(false);
 });
 
 test('empty-state copy is the list-empty view branch', () => {

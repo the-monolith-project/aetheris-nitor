@@ -662,10 +662,9 @@ import Icono from './Icono.astro';
           const datos = await obtenerDatasetAnalitico(ANIO_ESPACIAL);
           const mapa = new Map<string, DatoPresion>();
           for (const departamento of datos.departamentos) {
-            const semanasByEpi = new Map(
-              departamento.semanas.map((semana) => [semana.semana_epi, semana]),
+            const fila = departamento.semanas.find(
+              (semana) => semana.semana_epi === SEMANA_ESPACIAL,
             );
-            const fila = semanasByEpi.get(SEMANA_ESPACIAL);
             mapa.set(departamento.codigo, {
               codigo: departamento.codigo,
               probable: fila?.presion_probable,

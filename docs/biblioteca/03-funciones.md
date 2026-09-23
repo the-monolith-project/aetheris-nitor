@@ -13,7 +13,7 @@ Responde qué tan favorable es el clima de un departamento-semana para *Aedes ae
 
 **Datos.** Open-Meteo: `temp_media` y `humedad_relativa_media` de ERA5-Land; `precipitation_sum` de ERA5. Semanas con alguna de las tres variables ausente se omiten; no se imputa.
 
-**Fórmulas** (mismas constantes que el experimento de lead time del 18 de agosto de 2026):
+**Fórmulas** (mismas constantes que el experimento de anticipación del 18 de agosto de 2026):
 
 - **`f_T`** — forma **Brière**: `f_T(T) = c · T · (T − Tmin) · √(Tmax − T)` dentro de [16 °C, 38 °C], y 0 fuera. La constante de normalización `c` no viene publicada: se resuelve numéricamente (grid fino) para que el máximo de `f_T` en ese intervalo sea 1 (`c ≈ 0,000795`).
 - **`f_R`** — **logística** sobre precipitación acumulada a dos semanas (semana actual + anterior, sin envolver entre años): `f_R(R) = 1 / (1 + e^(−k·(R−R0)))`, con R0 = 30 mm y k = 0,1.
@@ -30,7 +30,7 @@ Responde qué tan inusual es el `Iv` de un departamento-semana respecto de su pr
 
 **Método.** Z-score leave-one-out de `Iv` por (departamento, semana del año). Línea base: corpus desde 2014 hasta el año en curso (ADR 0018; los años nuevos entran al pool y mueven los σ históricos), excluyendo el año descrito (anti-fuga). Misma semana exacta, **sin** ventana de semanas vecinas. El reanálisis ERA5 tiene un rezago de unos 5 días.
 
-**Presentación.** Serie continua (`anomaly_sigma`). El umbral Z ≥ 1,5 durante dos semanas consecutivas se usó en el experimento de lead time y se retiró: ese umbral se cruza en el 100 % de los años evaluados y no discrimina.
+**Presentación.** Serie continua (`anomaly_sigma`). El umbral Z ≥ 1,5 durante dos semanas consecutivas se usó en el experimento de anticipación y se retiró. Ese umbral se cruza en el 100 % de los años evaluados, así que no discrimina.
 
 **Qué no hace.** No emite alerta binaria, no habla de "temporada adelantada" y no expone `lead_time_weeks`.
 
@@ -92,9 +92,9 @@ Los cinco campos clínicos (ADR 0014) se llenaron por tipo con transcripción ci
 
 **Qué no hace.** No se genera desde M1–M3 ni desde el clasificador retirado.
 
-## PWA / offline
+## PWA y uso sin conexión
 
-Service worker escrito a mano (`web/public/sw.js`), sin dependencias. El shell usa stale-while-revalidate. **`GET /api/alertas` es network-first**: una alerta ya apagada tiene consecuencia clínica, así que la red gana y el cache es último recurso. Lo servido desde cache lleva `_desde_cache: true` en el cuerpo JSON (no en una cabecera: la API es de otro origen y CORS filtra cabeceras propias) y la vista muestra el sello de frescura.
+Service worker escrito a mano (`web/public/sw.js`), sin dependencias. El shell usa stale-while-revalidate. **`GET /api/alertas` es network-first**: una alerta ya apagada tiene consecuencia clínica, así que la red gana y la caché es el último recurso. Lo servido desde la caché lleva `_desde_cache: true` en el cuerpo JSON, y la vista muestra el sello de frescura. Va en el cuerpo y no en una cabecera porque la API es de otro origen y CORS filtra las cabeceras propias.
 
 **Qué no hace.** No sirve una alerta apagada como si siguiera vigente cuando hay red.
 

@@ -23,13 +23,13 @@ La interfaz no debe afirmar que un color del mapa "es" un brote, ni que un perce
 
 ## Predicción de casos a corto plazo
 
-Desde septiembre de 2026 la página de dengue incluye una **predicción estadística de horizonte corto**: a partir de la última semana observada de la serie nacional (OpenDengue), predice el conteo de casos de las siguientes 1 a 8 semanas con un intervalo de incertidumbre calibrado.
+Desde septiembre de 2026 la página de dengue incluye una **predicción estadística de horizonte corto**. Parte de la última semana observada de la serie nacional (OpenDengue) y predice el conteo de casos de las 1 a 8 semanas siguientes, con un intervalo de incertidumbre calibrado.
 
 - Predice el **conteo de casos** de la serie nacional agregada, con su incertidumbre. No es una lectura de transmisión ni un juicio clínico: da un número y un rango, no una clase de riesgo.
 - Se extiende **desde la última semana observada, no desde la fecha de hoy**. La fuente pública va varios meses detrás del tiempo real; el gráfico muestra siempre la fecha de anclaje.
-- Su **desempeño está a la vista**: en validación temporal sin fuga sobre 2019 y 2021–2024 reduce el error de intervalo (WIS) frente a la persistencia en las cinco temporadas de prueba. El número y el protocolo acompañan a la predicción y se documentan en `docs/experimentos/experimento-nowcast-corto-plazo.md`, que incluye una segunda confirmación independiente (reimplementación desde cero de las métricas y la validación).
+- Su **desempeño está a la vista**: en validación temporal sin fuga sobre 2019 y 2021–2024 reduce el error de intervalo (WIS) frente a la persistencia en las cinco temporadas de prueba. El número y el protocolo acompañan a la predicción. Se documentan en `docs/experimentos/experimento-nowcast-corto-plazo.md`, que incluye una segunda confirmación independiente: se reimplementaron desde cero las métricas y la validación.
 
-Al principio del proyecto se descartó incluso un proto-predictor por considerarlo inviable; el experimento firmado mostró lo contrario para la serie nacional agregada, y por eso se expone y se llama predicción.
+Al principio del proyecto se descartó incluso un proto-predictor por considerarlo inviable. El experimento firmado mostró lo contrario para la serie nacional agregada; por eso se publica y se llama predicción.
 
 El coordinador precisó el 7 de septiembre de 2026 el borde fino de esta regla. **Sí está permitido** mostrar recomendaciones de prevención **ya publicadas** por OPS/OMS o MINSAL, citando la fuente: tarjetas del tipo "elimine criaderos, revise depósitos de agua". Reproducir una guía pública no es diagnosticar ni predecir. **No está permitido** que el sistema *redacte* indicaciones clínicas propias, ni que las derive automáticamente del nivel de M1–M3, de M4 o del clasificador retirado. M4 describe calidad del dato (completitud, cuadre, antigüedad), no transmisión.
 
@@ -43,7 +43,7 @@ Hechos, no atmósfera:
 
 - El clasificador nacional de producción obtuvo **recall de "alto" = 0,000** en 2019 y en 2022, los únicos años de la ventana con semanas reales de esa clase.
 - Cinco vías de rescate (fuga temporal, transferencia multipaís, casos previos, posición estacional, features con mecanismo biológico) no sostuvieron el criterio de éxito predeclarado. Vía 0: 0 de 16 países. Vías 1 y 3: 0 de 10 semillas en el único fold evaluable.
-- El experimento de lead time del mismo día produjo, en los dos únicos casos comparables, **+29 y −30 semanas**, sin acuerdo de signo.
+- El experimento de anticipación del mismo día produjo, en los dos únicos casos comparables, **+29 y −30 semanas**, sin acuerdo de signo.
 
 La recomendación del informe de cierre fue entregar ese resultado negativo como evidencia reproducible, no integrar una clasificación experimental al tablero como si fuera una alerta. El código (`entrenar_clasificador.py` y la línea de `docs/clasificador-retirado/`) **se conserva** para que cualquiera repita las corridas. Conservarlo no es una invitación a reactivarlo: no se extiende, no se expone en vivo, no se pinta como semáforo departamental.
 
@@ -58,8 +58,8 @@ Eso gobierna el diseño, no solo el discurso:
 - No hay tabla de usuarios. La API pública de lectura (`GET /api/alertas`, módulos, series) no pide cuenta.
 - La escritura de alertas (ADR 0015) usa un **secreto de entorno** (`ALERTAS_TOKEN`, cabecera Bearer, comparación con `secrets.compare_digest`). No hay cuentas, correos ni nombres de operador en la base. Si el secreto no está definido, `POST`/`PATCH` responden 503 y no escriben. No hay `DELETE`: una alerta emitida se desactiva, queda en el archivo.
 - El token no se versiona. El formulario `/alertas/nueva` no aparece en la navegación; el token no se guarda en `localStorage` salvo opción explícita del operador.
-- El feedback de quien usa el sitio no pasa por un formulario propio que guardaría texto de terceros: `/sugerencias` enruta a GitHub Issues, ya público y trazable.
-- `regiones.nivel_admin = 2` (municipio) está reservado **sin filas**. No hay dato que sostenga una pantalla "mi municipio hoy", y titular una vista "hoy" o "esta semana" sobre una ventana que llega a 2023 sería fingir tiempo real.
+- Los comentarios de quien usa el sitio no pasan por un formulario propio que guardaría texto de terceros. `/sugerencias` lleva a GitHub Issues, que ya es público y trazable.
+- `regiones.nivel_admin = 2` (municipio) está reservado **sin filas**. No hay dato que sostenga una pantalla "mi municipio hoy". Titular una vista "hoy" o "esta semana" sobre una ventana que llega a 2023 sería fingir tiempo real.
 
 Una propuesta anterior del equipo (AULA-PULSE, deserción escolar) se descartó precisamente porque exigía datos de menores y no había dataset público: fabricar uno se consideró inaceptable. Esa negativa es el mismo principio, aplicado antes de escribir código.
 
@@ -70,7 +70,7 @@ Estatuto no negociable: todo dato viene de una fuente pública, real, verificabl
 - No se simula una serie epidemiológica "para que la demo funcione".
 - No se rellena un hueco de vacaciones repartiendo el conteo del boletín vecino.
 - Las 19 correcciones retroactivas negativas de MINSAL se excluyen; no se "suavizan".
-- Celdas vacías en la tabla departamental de dengue se ingieren como **0** porque la fuente lo establece así; no se convierten en 0 los huecos de otra naturaleza (boletín ausente, tabla no publicada).
+- Las celdas vacías de la tabla departamental de dengue se ingieren como **0** porque la fuente lo establece así. Los huecos de otra naturaleza (boletín ausente, tabla no publicada) no se convierten en 0.
 - OpenDengue no se etiqueta como `confirmado`.
 - `precipitation_hours` bajo un modelo que no sirve precipitación llega como `0.0` fabricado: el loader lo rechaza.
 - El volcado `db/seed/seed_datos_reales.sql` (ADR 0010) es `pg_dump` de esas mismas tablas reales, no un dataset sintético. Pesa 4,4 MB y no incluye un PDF crudo.
@@ -95,10 +95,10 @@ En la práctica:
 
 - M1 y M2 exponen el valor continuo (`iv`, `anomaly_sigma`), no un semáforo.
 - M3 expone el percentil crudo **y** la lectura baja/media/alta. Si el piso de ≥ 3 años no se cumple, el campo va `null` con nota; no se inventa un percentil.
-- El informe de cierre, las corridas de cada vía y el experimento de lead time están en el repositorio, con recalls absolutos por año y con la recomendación de no adoptar.
+- El informe de cierre, las corridas de cada vía y el experimento de anticipación están en el repositorio, con los recalls absolutos por año y con la recomendación de no adoptar.
 - El mapa declara la semana y el año de la ventana cargada. No hay reloj de "esta semana".
 
-Ocultar que 2019 y 2022 no fueron detectados por el clasificador, o que el lead time no tiene signo estable, convertiría esta Biblioteca en marketing. El proyecto eligió lo contrario: el resultado negativo es parte del entregable.
+Ocultar que 2019 y 2022 no fueron detectados por el clasificador, o que la anticipación no tiene signo estable, convertiría esta Biblioteca en marketing. El proyecto eligió lo contrario: el resultado negativo es parte del entregable.
 
 ## El aporte es de ingeniería, y eso es el diferenciador
 

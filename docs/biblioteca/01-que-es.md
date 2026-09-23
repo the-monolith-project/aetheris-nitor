@@ -5,7 +5,7 @@ orden: 1
 categoria: "El proyecto"
 ---
 
-EPI-Aetheris es un sistema **open-source, contenedorizado y desplegable con un comando** que alinea casos históricos de dengue y de eventos respiratorios con variables climáticas, por semana epidemiológica, y los expone en una API y un mapa.
+EPI-Aetheris es un sistema **de código abierto, en contenedores y desplegable con un solo comando**. Alinea por semana epidemiológica los casos históricos de dengue y de eventos respiratorios con variables climáticas, y los publica en una API y un mapa.
 
 El piloto cubre **El Salvador**: 14 departamentos, series de MINSAL 2018–2023 (sin 2020 en la ventana departamental) y la serie nacional de OpenDengue. El diseño del esquema es **agnóstico a enfermedad y a región**: `tipos_evento` y `regiones` son catálogos. Dengue e IRA en El Salvador son el caso que el sistema ya sirve; no son el techo de la arquitectura.
 

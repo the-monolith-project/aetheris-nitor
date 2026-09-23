@@ -9,7 +9,7 @@ Todo conteo y toda variable ambiental en EPI-Aetheris sale de una fuente públic
 
 ## MINSAL — boletines epidemiológicos
 
-**Qué es.** PDF semanales de `salud.gob.sv` (WordPress Download Manager), fuente citada VIGEPES. 14 departamentos. **264 archivos** en la ventana parseable **2018–2023**. 2020 no se descargó para la rama departamental (subregistro por covid y riesgo de extracción). A partir de 2024 el dashboard `boletin.salud.gob.sv` está bloqueado por Cloudflare Bot Management: no hay fuente departamental automatizable.
+**Qué es.** PDF semanales de `salud.gob.sv` (WordPress Download Manager), fuente citada VIGEPES. 14 departamentos. **264 archivos** en la ventana parseable **2018–2023**. 2020 no se descargó para la rama departamental (subregistro por covid y riesgo de extracción). A partir de 2024 el panel `boletin.salud.gob.sv` está bloqueado por Cloudflare Bot Management: no hay fuente departamental automatizable.
 
 **Cobertura real.** No son 52/52 semanas con tabla departamental. Boletines de Semana Santa, Fiestas Agostinas y Fin de Año no publican esa tabla. Algunos boletines de semana normal tampoco (por ejemplo SE18/2023). La cobertura efectiva ronda **~49/52 semanas por año** (48/52 en 2023). 2018 y 2019 además tienen semanas "no elaboradas" según nota oficial de MINSAL.
 
@@ -18,7 +18,7 @@ Todo conteo y toda variable ambiental en EPI-Aetheris sale de una fuente públic
 - Familia A: columnas Probable / Confirmado / Tasa × 100.000.
 - Familia B: Probable (semana actual) / Confirmado (semana − 1), sin tasa.
 
-Probable y confirmado son **acumulados desde SE1** hasta la semana que declara el encabezado, y además corresponden a **semanas distintas** dentro de la misma fila. El pipeline desacumula por diferencias entre boletines consecutivos. Un hueco no se reparte; una diferencia negativa (corrección retroactiva de MINSAL, 19 en el corpus, magnitud −1 o −2) se registra aparte y se excluye de la serie.
+Probable y confirmado son **acumulados desde SE1** hasta la semana que declara el encabezado, y además corresponden a **semanas distintas** dentro de la misma fila. El pipeline desacumula por diferencias entre boletines consecutivos. Un hueco no se reparte. Una diferencia negativa es una corrección retroactiva de MINSAL (hay 19 en el corpus, de magnitud −1 o −2): se registra aparte y se excluye de la serie.
 
 Otras reglas de la fuente, verificadas al leer los PDF:
 
@@ -45,7 +45,7 @@ Las cifras no coinciden al peso con el total MINSAL (2018: 8.448 cargados vs. 8.
 
 ## Open-Meteo
 
-**Qué es.** API gratuita alojada (`archive-api.open-meteo.com`). El self-hosting se evaluó y se descartó: recortar la grilla global no está documentado de forma usable y el volumen (decenas o cientos de GB) excede el hardware del proyecto.
+**Qué es.** API gratuita alojada (`archive-api.open-meteo.com`). Se evaluó alojarla por cuenta propia y se descartó. Recortar la grilla global no está documentado de forma usable, y el volumen (decenas o cientos de GB) excede el hardware del proyecto.
 
 **Modelo por variable** (enmienda del 7 de agosto de 2026; ADR 0006):
 
@@ -74,4 +74,4 @@ Se evaluó como predictor del clasificador retirado y **no se adoptó** en ese c
 
 `fuentes_datos.codigo` usa exactamente estas cadenas: `opendengue_v1_3`, `minsal_pdf`, `open_meteo_era5_land`, `open_meteo_era5`, `noaa_oni`. `variables_ambientales.variable` es texto libre sin `CHECK`: un typo crea una segunda serie en silencio. Las cadenas vigentes son `temp_max`, `temp_min`, `temp_media`, `precipitation_sum`, `precipitation_hours`, `humedad_relativa_media`, `punto_rocio`, `oni_anom`.
 
-Geometría del mapa: geoBoundaries gbOpen SLV ADM1 (OSM vía osm-boundaries.com). El `boundaryLicense` de esta boundary reporta CC BY-SA 2.0; el texto de atribución en la interfaz sigue pendiente de una decisión de redacción, no de la procedencia del archivo.
+Geometría del mapa: geoBoundaries gbOpen SLV ADM1 (OSM vía osm-boundaries.com). El campo `boundaryLicense` de ese límite declara CC BY-SA 2.0. El texto de atribución en la interfaz sigue pendiente de una decisión de redacción, no de la procedencia del archivo.

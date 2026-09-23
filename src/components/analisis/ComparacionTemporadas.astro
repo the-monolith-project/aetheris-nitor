@@ -299,8 +299,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
       if (marcoGrafica) marcoGrafica.hidden = false;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
-        resumen.textContent =
-          'No fue posible cargar la comparación de temporadas.';
+        resumen.textContent = 'No se pudo cargar la comparación de temporadas.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

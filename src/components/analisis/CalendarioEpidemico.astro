@@ -239,7 +239,7 @@ import { RAMPA_CASOS } from '../../lib/colores';
       if (idRevision !== revision) return;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
-        resumen.textContent = 'No fue posible cargar el calendario epidémico.';
+        resumen.textContent = 'No se pudo cargar el calendario epidémico.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

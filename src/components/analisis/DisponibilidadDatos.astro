@@ -244,8 +244,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
       if (idRevision !== revision) return;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
-        resumen.textContent =
-          'No fue posible cargar la disponibilidad de datos.';
+        resumen.textContent = 'No se pudo cargar la disponibilidad de datos.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

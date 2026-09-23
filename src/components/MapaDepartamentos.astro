@@ -79,8 +79,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           class="mt-0.5 h-4 w-4 shrink-0 text-secondary-ink"
         />
         <p class="font-sans text-sm text-ink">
-          No fue posible cargar esta capa. El mapa se muestra en gris hasta que
-          los datos vuelvan a estar disponibles.
+          No se pudo cargar esta capa. El mapa se muestra en gris hasta que los
+          datos vuelvan a estar disponibles.
         </p>
       </div>
     </div>
@@ -1369,7 +1369,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         renderErrorFuente(
           contenedorNoDisponible!,
           () => void activarCapa(id),
-          'No fue posible cargar esta capa. El mapa se muestra en gris hasta que los datos vuelvan a estar disponibles.',
+          'No se pudo cargar esta capa. El mapa se muestra en gris hasta que los datos vuelvan a estar disponibles.',
         );
         pintarTablaValores(capa, null);
         // Se sigue dibujando el contorno departamental, todo en "sin dato",

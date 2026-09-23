@@ -304,7 +304,7 @@ import { RAMPA_PRESION } from '../../lib/colores';
       if (idRevision !== revision) return;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
-        resumen.textContent = 'No fue posible cargar el heatmap departamental.';
+        resumen.textContent = 'No se pudo cargar el heatmap departamental.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

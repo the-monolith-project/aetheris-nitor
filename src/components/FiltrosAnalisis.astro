@@ -446,7 +446,7 @@ import { aniosClimaPresentacion } from '../lib/tipos-analisis';
       if (idCarga !== cargaActual) return;
       if (estadoCarga)
         estadoCarga.textContent =
-          'No fue posible cargar la lista de departamentos.';
+          'No se pudo cargar la lista de departamentos. Recarga la página para reintentarlo.';
     }
   }
 
@@ -496,7 +496,8 @@ import { aniosClimaPresentacion } from '../lib/tipos-analisis';
         estadoAcciones.textContent = `CSV generado con ${filas} filas filtradas.`;
     } catch {
       if (estadoAcciones)
-        estadoAcciones.textContent = 'No fue posible generar el CSV.';
+        estadoAcciones.textContent =
+          'No se pudo generar el CSV. Inténtalo de nuevo.';
     } finally {
       botonExportar.disabled = false;
       botonExportar.textContent = textoOriginal;

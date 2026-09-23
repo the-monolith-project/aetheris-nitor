@@ -263,8 +263,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
       if (idRevision !== revision) return;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
-        resumen.textContent =
-          'No fue posible cargar la relación clima-presión.';
+        resumen.textContent = 'No se pudo cargar la relación clima-presión.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

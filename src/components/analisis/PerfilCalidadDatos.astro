@@ -322,7 +322,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
     } catch {
       if (idRevision !== revision) return;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
-      estado.textContent = 'No fue posible cargar el perfil de calidad.';
+      estado.textContent = 'No se pudo cargar el perfil de calidad.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

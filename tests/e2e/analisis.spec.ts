@@ -525,7 +525,7 @@ test('el panel "Serie del departamento" dibuja los tres módulos del departament
 
   // Sin departamento, el panel pide seleccionar uno.
   await expect(page.locator('#serie-departamento-resumen')).toContainText(
-    'Seleccione un departamento',
+    'Selecciona un departamento',
   );
 
   // Al elegir un departamento, se dibujan las tres gráficas.

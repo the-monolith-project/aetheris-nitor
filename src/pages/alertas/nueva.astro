@@ -293,6 +293,61 @@ anunciaría. */
     if (estado) estado.textContent = 'Token olvidado en este navegador.';
   });
 
+  class ErrorPublicacion extends Error {
+    constructor(
+      readonly status: number,
+      readonly payload: unknown,
+    ) {
+      super(`HTTP ${status}`);
+    }
+  }
+
+  // Nombre visible de un campo, tomado de su etiqueta en el formulario.
+  function etiquetaCampo(nombre: string): string {
+    const campo = form?.elements.namedItem(nombre);
+    const titulo =
+      campo instanceof Element
+        ? campo.closest('label')?.querySelector('.font-semibold')
+        : null;
+    const texto = titulo?.firstChild?.textContent?.trim() ?? '';
+    return texto.replace(/\s*\((opcional|obligatoria)\)$/, '') || nombre;
+  }
+
+  // FastAPI devuelve los errores de validación como detail[].loc = ['body', campo].
+  function camposRechazados(payload: unknown): string[] {
+    if (!payload || typeof payload !== 'object') return [];
+    const detalle = (payload as { detail?: unknown }).detail;
+    if (!Array.isArray(detalle)) return [];
+    const nombres = detalle
+      .map((item) =>
+        item && typeof item === 'object' && Array.isArray(item.loc)
+          ? item.loc[item.loc.length - 1]
+          : null,
+      )
+      .filter((nombre): nombre is string => typeof nombre === 'string');
+    return [...new Set(nombres)].map(etiquetaCampo);
+  }
+
+  function mensajeErrorPublicacion(error: unknown): string {
+    const prefijo = 'No se pudo publicar la alerta.';
+    if (!(error instanceof ErrorPublicacion)) {
+      return `${prefijo} No hay conexión con el servidor. Inténtalo de nuevo en unos minutos.`;
+    }
+    if (error.status === 401 || error.status === 403) {
+      return `${prefijo} El token no es válido o ha caducado. Revísalo e inténtalo de nuevo.`;
+    }
+    if (error.status === 400 || error.status === 422) {
+      const campos = camposRechazados(error.payload);
+      return campos.length > 0
+        ? `${prefijo} Revisa estos campos: ${campos.join(', ')}.`
+        : `${prefijo} Revisa los datos del formulario.`;
+    }
+    if (error.status === 429) {
+      return `${prefijo} Se enviaron demasiadas alertas seguidas. Espera un minuto e inténtalo de nuevo.`;
+    }
+    return `${prefijo} El servidor no puede guardarla ahora. Inténtalo de nuevo en unos minutos.`;
+  }
+
   form?.addEventListener('submit', (evento) => {
     evento.preventDefault();
     if (!form || !inputToken) return;
@@ -349,9 +404,7 @@ anunciaría. */
       .then(async (respuesta) => {
         const payload: unknown = await respuesta.json().catch(() => null);
         if (!respuesta.ok) {
-          throw new Error(
-            `${respuesta.status}${payload ? ` ${JSON.stringify(payload)}` : ''}`,
-          );
+          throw new ErrorPublicacion(respuesta.status, payload);
         }
         const id =
           payload &&
@@ -370,9 +423,11 @@ anunciaría. */
         }
       })
       .catch((error: unknown) => {
+        // El detalle técnico va a la consola; en pantalla, qué pasó y qué hacer.
+        console.error('No se pudo publicar la alerta', error);
         if (estado) {
           estado.setAttribute('role', 'alert');
-          estado.textContent = `No se pudo crear: ${String(error)}`;
+          estado.textContent = mensajeErrorPublicacion(error);
           estado.focus();
         }
       });

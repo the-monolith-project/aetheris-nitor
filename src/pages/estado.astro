@@ -183,7 +183,8 @@ const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
         dot.className = 'flex h-3 w-3 rounded-full bg-rose-500';
         badge.innerHTML = `<span class="rounded-full bg-rose-500/10 px-3 py-1 font-mono text-xs font-medium text-rose-600">Error ${res.status}</span>`;
         mostrarReintento(
-          `El servidor respondió con código de error HTTP ${res.status}.`,
+          'El servidor respondió con un error. Vuelve a comprobarlo en unos segundos.',
+          `Código HTTP ${res.status}`,
         );
       }
     } catch (err) {
@@ -191,12 +192,14 @@ const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
       badge.innerHTML =
         '<span class="rounded-full bg-rose-500/10 px-3 py-1 font-mono text-xs font-medium text-rose-600">Sin conexión</span>';
       mostrarReintento(
-        `No se pudo establecer conexión con la API (${String(err)}). Podría estar arrancando en frío.`,
+        'No hay respuesta del servidor. Si lleva un rato inactivo, tarda hasta un minuto en arrancar. Vuelve a comprobarlo en unos segundos.',
+        err instanceof Error ? err.message : '',
       );
     }
   }
 
-  function mostrarReintento(mensaje) {
+  // El detalle técnico se muestra aparte, en pequeño, para quien diagnostica.
+  function mostrarReintento(mensaje, detalle) {
     if (!contenedor) return;
     contenedor.innerHTML = '';
     const caja = document.createElement('div');
@@ -205,6 +208,14 @@ const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
     const p = document.createElement('p');
     p.className = 'font-sans text-xs leading-relaxed text-ink';
     p.textContent = mensaje;
+    caja.appendChild(p);
+
+    if (detalle) {
+      const pDetalle = document.createElement('p');
+      pDetalle.className = 'mt-1 font-mono text-[11px] text-ink-muted';
+      pDetalle.textContent = `Detalle técnico: ${detalle}`;
+      caja.appendChild(pDetalle);
+    }
 
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -213,7 +224,6 @@ const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
     btn.textContent = 'Reintentar verificación';
     btn.addEventListener('click', () => verificarSalud());
 
-    caja.appendChild(p);
     caja.appendChild(btn);
     contenedor.appendChild(caja);
   }

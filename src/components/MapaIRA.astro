@@ -5,7 +5,7 @@ interface Props {
   evento?: 'ira' | 'neumonias';
 }
 const evento = Astro.props.evento ?? 'ira';
-const etiqueta = evento === 'neumonias' ? 'Neumonías' : 'IRA';
+const etiqueta = evento === 'neumonias' ? 'neumonías' : 'IRA';
 const endpoint =
   evento === 'neumonias'
     ? '/api/neumonias/departamental'
@@ -14,7 +14,7 @@ const endpoint =
 
 <PanelWorkspace
   tipo="visor"
-  titulo={`Mapa departamental — ${etiqueta}`}
+  titulo={`Mapa departamental de ${etiqueta}`}
   descripcion="Volumen acumulado de casos notificados por departamento (MINSAL, 2018-2023, sin 2020). Unidad: conteo notificado."
   data-mapa-evento={evento}
   data-mapa-endpoint={endpoint}

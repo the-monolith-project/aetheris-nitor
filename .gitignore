@@ -30,6 +30,11 @@ graphify-out/
 .claude/
 CLAUDE.md
 
+# Skills de agentes instaladas con `npx skills add` (por desarrollador;
+# .claude/skills/ enlaza aquí)
+.agents/
+skills-lock.json
+
 # Archivos del sistema operativo y editores
 .DS_Store
 Thumbs.db

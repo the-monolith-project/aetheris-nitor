@@ -488,7 +488,7 @@ import { aniosClimaPresentacion } from '../lib/tipos-analisis';
     if (!botonExportar) return;
     const textoOriginal = 'Descargar vista actual';
     botonExportar.disabled = true;
-    botonExportar.textContent = 'Preparando...';
+    botonExportar.textContent = 'Preparando…';
     if (estadoAcciones) estadoAcciones.textContent = 'Preparando CSV…';
     try {
       const filas = await exportarAnalisisCsv(obtenerFiltrosAnalisis());

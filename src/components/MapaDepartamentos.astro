@@ -872,7 +872,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       const celda = pres?.[serie];
       if (celda && celda.percentil !== null) {
         lineas.push(
-          `Casos observados (${serie}): ${celda.casos_observados} · baseline P50/P75: ` +
+          `Casos observados (${serie}): ${celda.casos_observados} · línea base P50/P75: ` +
             `${celda.p50_baseline} / ${celda.p75_baseline}`,
         );
       } else if (celda?.nota) {

@@ -138,7 +138,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
       `Anomalía: ${punto.anomalia.toFixed(2)}σ\nPercentil presión (${filtros.serie}): ${punto.percentil}\n` +
       `Casos observados: ${punto.casos ?? 'sin dato'} · Iv: ${punto.iv?.toFixed(3) ?? 'sin dato'}\n` +
       `P50/P75: ${punto.p50 ?? 'sin dato'} / ${punto.p75 ?? 'sin dato'}\n` +
-      `Baseline: ${punto.observacionesBaseline} observaciones, ${punto.aniosBaseline} años`
+      `Línea base: ${punto.observacionesBaseline} observaciones, ${punto.aniosBaseline} años`
     );
   }
 

@@ -14,7 +14,7 @@ import { RAMPA_PRESION } from '../../lib/colores';
       id="heatmap-departamentos"
       class="min-h-[420px] min-w-[760px]"
       role="region"
-      aria-label="Heatmap de presión epidemiológica relativa por departamento y semana"
+      aria-label="Mapa de calor de presión epidemiológica relativa por departamento y semana"
       aria-busy="true"
     >
       <div
@@ -304,7 +304,8 @@ import { RAMPA_PRESION } from '../../lib/colores';
       if (idRevision !== revision) return;
       renderErrorFuente(contenedor, () => void renderizar(filtrosActuales));
       if (resumen)
-        resumen.textContent = 'No se pudo cargar el heatmap departamental.';
+        resumen.textContent =
+          'No se pudo cargar el mapa de calor departamental.';
     } finally {
       contenedor.setAttribute('aria-busy', 'false');
     }

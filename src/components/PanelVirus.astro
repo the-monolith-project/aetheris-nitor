@@ -290,7 +290,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       table.className = 'font-sans tabular-nums text-[11px] border-collapse';
       table.setAttribute(
         'aria-label',
-        `Heatmap de ${metrica} por virus y semana epidemiológica, año ${anio}`,
+        `Mapa de calor de ${metrica} por virus y semana epidemiológica, año ${anio}`,
       );
       const caption = document.createElement('caption');
       caption.className = 'sr-only';
@@ -342,7 +342,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       heatmap.replaceChildren(table);
       const nota = document.createElement('p');
       nota.className = 'mt-2 font-sans text-xs text-ink-muted';
-      nota.textContent = `Heatmap ${metrica} · año ${anio} · celdas claras = hueco real. Una sola métrica por escala. Fuente: MINSAL.`;
+      nota.textContent = `Mapa de calor de ${metrica} · año ${anio} · celdas claras = hueco real. Una sola métrica por escala. Fuente: MINSAL.`;
       heatmap.appendChild(nota);
       heatmap.removeAttribute('aria-busy');
     }

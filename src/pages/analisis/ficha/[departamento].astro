@@ -1034,7 +1034,7 @@ const { codigo, nombre } = departamento;
           m1Comp.textContent =
             ult.mediana_baseline !== null
               ? `Mediana histórica: ${ult.mediana_baseline.toFixed(3)} (P25–P75: ${ult.p25_baseline?.toFixed(3)}–${ult.p75_baseline?.toFixed(3)})`
-              : 'Sin baseline suficiente';
+              : 'Sin línea base suficiente';
         }
 
         const m2Val = document.querySelector<HTMLElement>('[data-m2-valor]');

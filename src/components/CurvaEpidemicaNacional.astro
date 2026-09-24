@@ -32,7 +32,7 @@ import CargadorCurva from './CargadorCurva.astro';
       id="curva-descargar-csv"
       disabled
       title="Cargando datos para descargar..."
-      class="shrink-0 rounded-full border border-border bg-surface px-3 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:border-accent/40 hover:bg-secondary/30 disabled:cursor-not-allowed disabled:opacity-50"
+      class="shrink-0 rounded-full border border-border bg-surface px-3 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:border-accent/40 hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
     >
       Descargar CSV
     </button>
@@ -42,7 +42,7 @@ import CargadorCurva from './CargadorCurva.astro';
     <button
       id="curva-zoom-menos"
       type="button"
-      class="rounded border border-border px-2 py-1 text-ink transition-colors hover:bg-secondary/30 disabled:cursor-not-allowed disabled:opacity-50"
+      class="rounded border border-border px-2 py-1 text-ink transition-colors hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
       aria-label="Reducir detalle de la curva"
       title="Reducir detalle">−</button
     >
@@ -52,7 +52,7 @@ import CargadorCurva from './CargadorCurva.astro';
     <button
       id="curva-zoom-mas"
       type="button"
-      class="rounded border border-border px-2 py-1 text-ink transition-colors hover:bg-secondary/30 disabled:cursor-not-allowed disabled:opacity-50"
+      class="rounded border border-border px-2 py-1 text-ink transition-colors hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
       aria-label="Aumentar detalle de la curva"
       title="Aumentar detalle">+</button
     >
@@ -259,6 +259,23 @@ import CargadorCurva from './CargadorCurva.astro';
     enlace.click();
     enlace.remove();
     URL.revokeObjectURL(url);
+
+    const botonDescarga = document.getElementById(
+      'curva-descargar-csv',
+    ) as HTMLButtonElement | null;
+    const resumen = document.getElementById('curva-epidemica-resumen');
+    if (botonDescarga) {
+      const textoOriginal = 'Descargar CSV';
+      botonDescarga.textContent = '¡Descargado!';
+      botonDescarga.classList.add('text-accent');
+      if (resumen) {
+        resumen.textContent = 'CSV descargado correctamente.';
+      }
+      setTimeout(() => {
+        botonDescarga.textContent = textoOriginal;
+        botonDescarga.classList.remove('text-accent');
+      }, 2000);
+    }
   }
 
   async function iniciar() {

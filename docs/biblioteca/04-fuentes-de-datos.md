@@ -1,77 +1,77 @@
 ---
 titulo: "De dónde salen los datos"
-descripcion: "MINSAL, OpenDengue, Open-Meteo y NOAA ONI: ventanas, licencias, procedencia y cómo se citan en el esquema."
+descripcion: "MINSAL, OpenDengue, Open-Meteo y NOAA ONI: años cubiertos, licencias, procedencia y cómo se citan en la base."
 orden: 4
 categoria: "Datos y método"
 ---
 
-Todo conteo y toda variable ambiental en EPI-Aetheris sale de una fuente pública, citable, con `fuente_id` en el esquema. Esta página resume procedencia, ventanas y licencias para un lector externo. El detalle empírico de trampas de ingesta vive en `docs/contexto/03-fuentes-de-datos.md` del repositorio.
+Cada conteo y cada variable de clima de EPI-Aetheris viene de una fuente pública y lleva su `fuente_id` en la base. Esta página resume de dónde sale cada serie, qué años cubre y con qué licencia se usa. Los problemas encontrados al cargar cada fuente están documentados en las [notas de fuentes del repositorio](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/contexto/03-fuentes-de-datos.md).
 
-## MINSAL — boletines epidemiológicos
+## Boletines epidemiológicos de MINSAL
 
-**Qué es.** PDF semanales de `salud.gob.sv` (WordPress Download Manager), fuente citada VIGEPES. 14 departamentos. **264 archivos** en la ventana parseable **2018–2023**. 2020 no se descargó para la rama departamental (subregistro por covid y riesgo de extracción). A partir de 2024 el panel `boletin.salud.gob.sv` está bloqueado por Cloudflare Bot Management: no hay fuente departamental automatizable.
+PDF semanales publicados en `salud.gob.sv`, con VIGEPES como fuente citada. Cubren los 14 departamentos. Se cargaron 264 archivos de 2018 a 2023. 2020 no se descargó para la serie departamental por el subregistro durante la covid y por lo difícil de extraer sus tablas. Desde 2024 el panel `boletin.salud.gob.sv` bloquea las descargas automáticas (Cloudflare), así que no hay una fuente departamental que se pueda cargar sin intervención manual.
 
-**Cobertura real.** No son 52/52 semanas con tabla departamental. Boletines de Semana Santa, Fiestas Agostinas y Fin de Año no publican esa tabla. Algunos boletines de semana normal tampoco (por ejemplo SE18/2023). La cobertura efectiva ronda **~49/52 semanas por año** (48/52 en 2023). 2018 y 2019 además tienen semanas "no elaboradas" según nota oficial de MINSAL.
+No todas las semanas tienen tabla departamental. Los boletines de Semana Santa, fiestas agostinas y fin de año no la publican, ni algunos de semanas normales (por ejemplo, la semana 18 de 2023). En promedio hay unas 49 semanas de 52 por año (48 en 2023). En 2018 y 2019 hay además semanas que MINSAL marca como «no elaboradas».
 
-**Dos familias de tabla**, detectadas por documento — nunca por año:
+La tabla tiene dos formatos, y se reconoce cuál es en cada documento, no por el año:
 
-- Familia A: columnas Probable / Confirmado / Tasa × 100.000.
-- Familia B: Probable (semana actual) / Confirmado (semana − 1), sin tasa.
+- Formato A: columnas Probable, Confirmado y Tasa por 100.000.
+- Formato B: Probable (semana actual) y Confirmado (semana anterior), sin tasa.
 
-Probable y confirmado son **acumulados desde SE1** hasta la semana que declara el encabezado, y además corresponden a **semanas distintas** dentro de la misma fila. El pipeline desacumula por diferencias entre boletines consecutivos. Un hueco no se reparte. Una diferencia negativa es una corrección retroactiva de MINSAL (hay 19 en el corpus, de magnitud −1 o −2): se registra aparte y se excluye de la serie.
+Las cifras de probables y confirmados vienen acumuladas desde la semana 1 y, en una misma fila, corresponden a semanas distintas. El sistema calcula las cifras semanales restando boletines consecutivos. Un hueco no se reparte entre semanas. Una diferencia negativa es una corrección retroactiva de MINSAL (hay 19, de −1 o −2 casos): se registra aparte y se excluye de la serie.
 
-Otras reglas de la fuente, verificadas al leer los PDF:
+Otras reglas de la fuente, comprobadas al leer los PDF:
 
-- El año impreso dentro del documento no es fiable; el año se toma del nombre de archivo y del índice.
-- Celda en blanco = **0**, no dato ausente.
-- La fila "Otros países" existe y a veces entra en el total impreso, a veces no: el validador prueba ambas convenciones por boletín.
-- Republicaciones `_v2`…`_v4` son el mismo boletín; gana la versión más alta (ADR 0004).
+- El año impreso dentro del documento no es fiable; se toma del nombre del archivo y del índice.
+- Una celda en blanco significa 0.
+- La fila «Otros países» a veces entra en el total impreso y a veces no, así que la validación prueba las dos formas en cada boletín.
+- Las versiones `_v2` a `_v4` son el mismo boletín republicado; se usa la más reciente (ADR 0004).
 
-Los mismos PDF publican **IRA**, **neumonías** (conteo notificado departamental) y la tabla nacional de **vigilancia laboratorial** de influenza / VSR / SARS-CoV-2.
+Los mismos PDF publican IRA, neumonías (conteo notificado por departamento) y la tabla nacional de vigilancia de laboratorio de influenza, VSR y SARS-CoV-2.
 
-**Licencia / uso.** Publicación oficial del Ministerio de Salud de El Salvador. El proyecto los usa como dato agregado de vigilancia, sin republicar los PDF (los crudos no se versionan).
+Licencia y uso: publicación oficial del Ministerio de Salud de El Salvador. El proyecto usa las cifras agregadas y no republica los PDF, que tampoco se guardan en el repositorio.
 
 ## OpenDengue
 
-**Qué es.** `opendengue.org`, extracto `Spatial_extract_V1_3.csv` (~2,8 millones de filas), distribución en Figshare con DOI y licencia, versión 1.3. Para El Salvador, Admin0 (nacional) es semanal desde 2013/2014; Admin1 (departamento) es **mensual y solo 2000–2009** — no se usa para series semanales.
+Extracto `Spatial_extract_V1_3.csv` de `opendengue.org` (unos 2,8 millones de filas), versión 1.3, distribuido en Figshare con DOI y licencia. Para El Salvador, la serie nacional es semanal desde 2013–2014; la departamental es mensual y solo cubre 2000 a 2009, por lo que no se usa.
 
-**Qué carga el sistema.** 365 filas nacionales, 2018–2024, `clasificacion = 'total'` (ADR 0005). El campo `case_definition_standardised` vale `'Total'` en el 100 % de las 574 filas semanales de Admin0: OpenDengue no separa probable/confirmado a esta resolución. Insertar ese agregado como `confirmado` mezclaría una cifra de definición propia con la confirmación de laboratorio de MINSAL.
+El sistema carga 365 filas nacionales de 2018 a 2024 con `clasificacion = 'total'` (ADR 0005). En las 574 filas semanales nacionales, `case_definition_standardised` vale `'Total'`: OpenDengue no separa probables y confirmados a esta escala. Cargar ese total como `confirmado` lo mezclaría con los casos confirmados por laboratorio de MINSAL.
 
-La semana se resuelve por coincidencia exacta de `calendar_start_date` contra `semanas_epidemiologicas.fecha_inicio` (domingo a sábado, PAHO/CDC), no recalculando con `epiweeks` sobre el CSV.
+Cada fila se asigna a su semana epidemiológica comparando `calendar_start_date` con `semanas_epidemiologicas.fecha_inicio` (de domingo a sábado, criterio OPS/CDC).
 
-**2020.** La serie nacional **incluye 2020**, con nota. Es deliberado: la exclusión de 2020 gobierna la ventana departamental de comparación, no esta serie.
+La serie nacional incluye 2020, con una nota. La exclusión de 2020 solo afecta a la comparación departamental.
 
-Las cifras no coinciden al peso con el total MINSAL (2018: 8.448 cargados vs. 8.443 del boletín SE52; 2022: 16.542 vs. 16.529). La diferencia se documenta; no se fuerza a cuadrar, porque la definición de caso no es la misma.
+Las cifras no coinciden exactamente con el total de MINSAL (2018: 8.448 frente a 8.443 del boletín de la semana 52; 2022: 16.542 frente a 16.529). La diferencia se deja como está porque las dos fuentes no usan la misma definición de caso.
 
 ## Open-Meteo
 
-**Qué es.** API gratuita alojada (`archive-api.open-meteo.com`). Se evaluó alojarla por cuenta propia y se descartó. Recortar la grilla global no está documentado de forma usable, y el volumen (decenas o cientos de GB) excede el hardware del proyecto.
+API gratuita de datos históricos (`archive-api.open-meteo.com`). Se descartó instalarla en un servidor propio: no hay una forma documentada de recortar la grilla mundial y el volumen (decenas o cientos de GB) supera el equipo del proyecto.
 
-**Modelo por variable** (enmienda del 7 de agosto de 2026; ADR 0006):
+Cada variable sale de un modelo fijo (ADR 0006):
 
 | Variables | Modelo | Resolución |
 |---|---|---|
-| Temperatura máx/mín/media, humedad relativa media, punto de rocío | `era5_land` | 0,1° (~11 km); 14/14 celdas distintas |
-| Precipitación acumulada y horas de lluvia | `era5` | 0,25°; 13/14 celdas (La Libertad y San Salvador comparten celda, aceptado) |
+| Temperatura máxima, mínima y media, humedad relativa media, punto de rocío | `era5_land` | 0,1° (unos 11 km); una celda distinta por departamento |
+| Lluvia acumulada y horas de lluvia | `era5` | 0,25°; 13 celdas para 14 departamentos (La Libertad y San Salvador comparten una) |
 
-`era5_land` no sirve precipitación en la implementación de Open-Meteo. **`best_match` y `era5_seamless` están prohibidos**: mezclan grilla sin decir qué modelo produjo cada variable.
+Open-Meteo no ofrece precipitación con `era5_land`. No se usan `best_match` ni `era5_seamless` porque combinan modelos sin indicar cuál produjo cada valor.
 
-Agregación diaria → semanal: media para las variables de estado, suma para las de precipitación. Semana epidemiológica con `timezone=America/El_Salvador`. Coordenadas: punto representativo del polígono departamental (ADR 0003), no el centro de celda que devuelve la API.
+Los datos diarios se pasan a semanales con la media en las variables de estado y la suma en las de lluvia, usando la zona horaria `America/El_Salvador`. Las coordenadas son un punto representativo de cada departamento (ADR 0003), no el centro de la celda que devuelve la API.
 
-**Uso no comercial.** Los términos de Open-Meteo listan de forma explícita investigación pública en instituciones públicas y contenido educativo. El perfil del proyecto (institución educativa pública, feria técnica, sin publicidad ni suscripciones) entra en ese uso.
+Los términos de Open-Meteo permiten el uso no comercial en investigación pública y contenido educativo. El proyecto es de una institución educativa pública, para una feria técnica, sin publicidad ni suscripciones.
 
-**Volumen cargado.** 35.868 filas: 7 variables × 14 departamentos × 2018–2024, **incluyendo 2020**. Rate-limit por minuto (`429`) con backoff en el loader.
+Filas cargadas: 35.868 (7 variables, 14 departamentos, de 2018 a 2024, con 2020). La carga respeta el límite de consultas por minuto de la API y reintenta con espera cuando recibe un `429`.
 
 ## NOAA ONI
 
-**Qué es.** Oceanic Niño Index del Climate Prediction Center de NOAA: `https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`, texto plano público, serie mensual desde 1950 (ADR 0008).
+Índice Oceánico de El Niño (ONI) del Climate Prediction Center de NOAA, publicado como [archivo de texto](https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt). Serie mensual desde 1950 (ADR 0008).
 
-**Qué se guarda.** Variable `oni_anom` (anomalía, no el valor absoluto), región nacional `SV`. El valor mensual se asigna a cada semana epidemiológica cuyo `fecha_inicio` cae en ese mes: es un índice de estado, no un conteo que se fraccione.
+Se guarda la anomalía (`oni_anom`) con la región nacional `SV`. El valor de cada mes se asigna a las semanas epidemiológicas que empiezan en ese mes; como es un índice y no un conteo, no se divide.
 
-Se evaluó como predictor del clasificador retirado y **no se adoptó** en ese conjunto de features. El dato permanece cargado para usos descriptivos.
+Se probó como variable del clasificador retirado y no mejoró sus resultados. Se mantiene como contexto climático.
 
-## Cómo se cita en el esquema
+## Cómo se citan en la base
 
-`fuentes_datos.codigo` usa exactamente estas cadenas: `opendengue_v1_3`, `minsal_pdf`, `open_meteo_era5_land`, `open_meteo_era5`, `noaa_oni`. `variables_ambientales.variable` es texto libre sin `CHECK`: un typo crea una segunda serie en silencio. Las cadenas vigentes son `temp_max`, `temp_min`, `temp_media`, `precipitation_sum`, `precipitation_hours`, `humedad_relativa_media`, `punto_rocio`, `oni_anom`.
+`fuentes_datos.codigo` usa estas cadenas: `opendengue_v1_3`, `minsal_pdf`, `open_meteo_era5_land`, `open_meteo_era5`, `noaa_oni`. `variables_ambientales.variable` es texto libre sin restricción, así que un error de escritura crearía una serie nueva sin avisar. Las variables en uso son `temp_max`, `temp_min`, `temp_media`, `precipitation_sum`, `precipitation_hours`, `humedad_relativa_media`, `punto_rocio` y `oni_anom`.
 
-Geometría del mapa: geoBoundaries gbOpen SLV ADM1 (OSM vía osm-boundaries.com). El campo `boundaryLicense` de ese límite declara CC BY-SA 2.0. El texto de atribución en la interfaz sigue pendiente de una decisión de redacción, no de la procedencia del archivo.
+Los límites departamentales del mapa vienen de geoBoundaries gbOpen SLV ADM1 (datos de OSM a través de osm-boundaries.com), con licencia CC BY-SA 2.0. La atribución está en los [términos de uso](/legal/terminos).

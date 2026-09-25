@@ -1,109 +1,107 @@
 ---
 titulo: "Qué hace hoy"
-descripcion: "Catálogo de módulos Camino Ancho, mapa, observatorio respiratorio, alertas de campo, PWA y pipeline de datos."
+descripcion: "Catálogo de módulos descriptivos (M1 a M4), mapa, observatorio respiratorio, alertas de campo, uso sin conexión y carga de datos."
 orden: 3
 categoria: "Cómo funciona"
 ---
 
-Cada función del sistema tiene un contrato visible: qué mide, qué la alimenta y qué deja fuera. Los módulos M1–M3 se calculan al consultar la API, sin tabla propia y sin cambio de esquema.
+Cada función se describe con lo que mide, los datos que usa y lo que deja fuera. Los módulos M1 a M3 se calculan al consultar la API, sin tabla propia en la base.
 
-## M1 — Idoneidad biofísica (`Iv`)
+## M1. Idoneidad biofísica (`Iv`)
 
-Responde qué tan favorable es el clima de un departamento-semana para *Aedes aegypti*, en una escala continua 0–1.
+Mide qué tan favorable es el clima de un departamento en una semana para *Aedes aegypti*, en una escala continua de 0 a 1.
 
-**Datos.** Open-Meteo: `temp_media` y `humedad_relativa_media` de ERA5-Land; `precipitation_sum` de ERA5. Semanas con alguna de las tres variables ausente se omiten; no se imputa.
+Datos: `temp_media` y `humedad_relativa_media` de ERA5-Land y `precipitation_sum` de ERA5, a través de Open-Meteo. Si falta alguna de las tres variables, la semana se omite; no se imputa.
 
-**Fórmulas** (mismas constantes que el experimento de anticipación del 18 de agosto de 2026):
+Fórmulas, con las mismas constantes del experimento de anticipación:
 
-- **`f_T`** — forma **Brière**: `f_T(T) = c · T · (T − Tmin) · √(Tmax − T)` dentro de [16 °C, 38 °C], y 0 fuera. La constante de normalización `c` no viene publicada: se resuelve numéricamente (grid fino) para que el máximo de `f_T` en ese intervalo sea 1 (`c ≈ 0,000795`).
-- **`f_R`** — **logística** sobre precipitación acumulada a dos semanas (semana actual + anterior, sin envolver entre años): `f_R(R) = 1 / (1 + e^(−k·(R−R0)))`, con R0 = 30 mm y k = 0,1.
-- **`f_H`** — **rampa lineal**, estimación propia del equipo: `f_H(HR) = min(1, max(0, HR/50))`. El documento fuente pedía "penaliza humedad relativa bajo 50 %" sin fórmula; ni Mordecai et al. ni la tesis UES especifican una. Se eligió la forma más simple que cumple ese requisito cualitativo.
-- **`Iv`** = `f_T × (0,3 + 0,7·f_R) × f_H`.
+- `f_T`, curva de Brière: `f_T(T) = c · T · (T − Tmin) · √(Tmax − T)` dentro de [16 °C, 38 °C], y 0 fuera. La constante `c` no viene publicada; se calcula numéricamente para que el máximo de `f_T` en ese intervalo sea 1 (`c ≈ 0,000795`).
+- `f_R`, logística sobre la lluvia acumulada en dos semanas (la actual y la anterior, sin pasar de un año a otro): `f_R(R) = 1 / (1 + e^(−k·(R−R0)))`, con R0 = 30 mm y k = 0,1.
+- `f_H`, rampa lineal propuesta por el equipo: `f_H(HR) = min(1, max(0, HR/50))`. El documento de partida pedía penalizar la humedad relativa por debajo del 50 % sin dar fórmula, y ni Mordecai et al. ni la tesis de la UES la especifican. Se eligió la forma más simple que cumple ese requisito.
+- `Iv` = `f_T × (0,3 + 0,7·f_R) × f_H`.
 
-**Endpoints.** `GET /api/v1/spatial/current` y `GET /api/v1/temporal/{codigo}`.
+Endpoints: `GET /api/v1/spatial/current` y `GET /api/v1/temporal/{codigo}`.
 
-**Qué no hace.** No clasifica riesgo de brote ni adelanta una temporada.
+M1 no clasifica el riesgo de brote ni anticipa una temporada.
 
-## M2 — Anomalía climática continua
+## M2. Anomalía climática continua
 
-Responde qué tan inusual es el `Iv` de un departamento-semana respecto de su propia historia climática.
+Mide qué tan inusual es el `Iv` de un departamento en una semana respecto de su propia historia climática.
 
-**Método.** Z-score leave-one-out de `Iv` por (departamento, semana del año). Línea base: corpus desde 2014 hasta el año en curso (ADR 0018; los años nuevos entran al pool y mueven los σ históricos), excluyendo el año descrito (anti-fuga). Misma semana exacta, **sin** ventana de semanas vecinas. El reanálisis ERA5 tiene un rezago de unos 5 días.
+Método: puntuación z de `Iv` por departamento y semana del año, calculada sin el año que se describe (leave-one-out). La línea base va de 2014 al año en curso (ADR 0018), así que cada año nuevo cambia las desviaciones históricas. Se compara la misma semana exacta, sin semanas vecinas. El reanálisis ERA5 llega con unos 5 días de retraso.
 
-**Presentación.** Serie continua (`anomaly_sigma`). El umbral Z ≥ 1,5 durante dos semanas consecutivas se usó en el experimento de anticipación y se retiró. Ese umbral se cruza en el 100 % de los años evaluados, así que no discrimina.
+Se muestra como serie continua (`anomaly_sigma`). El experimento de anticipación usaba un umbral de Z ≥ 1,5 durante dos semanas seguidas; se retiró porque se cruzaba en todos los años evaluados y no distinguía unos de otros. M2 no emite alertas ni expone `lead_time_weeks`.
 
-**Qué no hace.** No emite alerta binaria, no habla de "temporada adelantada" y no expone `lead_time_weeks`.
+## M3. Presión epidemiológica relativa
 
-## M3 — Presión epidemiológica relativa
-
-Responde qué tan alta es la presión de casos **ya observados** en un departamento-semana comparado con su propia historia. Fórmula cerrada por la coordinación el 21 de agosto de 2026 (`docs/modulos-camino-ancho/modulo-3-presion-epidemiologica.md`).
+Mide qué tan alta es la cifra de casos ya observados en un departamento en una semana, comparada con su propia historia.
 
 | Elemento | Valor |
 |---|---|
-| Variable | `casos_epidemiologicos.conteo`, series **`probable` y `confirmado` por separado** (nunca `total`, nunca fusionadas) |
-| Método | Percentil histórico leave-one-out |
-| Años base | 2018, 2019, 2021, 2022, 2023 (2020 fuera del baseline) |
-| Ventana | ±1 semana, sin envolver entre años |
-| Piso | ≥ 3 de los 4 años leave-one-out con alguna observación en la ventana |
+| Variable | `casos_epidemiologicos.conteo`, series `probable` y `confirmado` por separado (nunca `total` ni las dos sumadas) |
+| Método | Percentil histórico sin el año descrito (leave-one-out) |
+| Años base | 2018, 2019, 2021, 2022, 2023 (2020 no entra) |
+| Ventana | ±1 semana, sin pasar de un año a otro |
+| Mínimo | Al menos 3 de los 4 años de referencia con alguna observación en la ventana |
 | Cortes | P50 y P75 |
-| Lectura | ≤ P50 `baja`; P50 < x ≤ P75 `media`; > P75 `alta`, más el percentil crudo 0–100 |
-| Insuficiencia | `percentil = null` y una nota; no se interpola |
+| Lectura | Hasta P50, `baja`; entre P50 y P75, `media`; por encima de P75, `alta`; más el percentil de 0 a 100 |
+| Sin datos suficientes | `percentil = null` y una nota; no se interpola |
 
-**Endpoints.** `GET /api/v1/presion/current` y `GET /api/v1/presion/temporal/{codigo}`.
+La fórmula completa está en el [documento del módulo 3](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/modulos-descriptivos/modulo-3-presion-epidemiologica.md).
 
-**Qué no hace.** No predice, no usa clima y no produce alerta binaria. Un percentil alto describe lo ya ocurrido frente a la historia observada del departamento.
+Endpoints: `GET /api/v1/presion/current` y `GET /api/v1/presion/temporal/{codigo}`.
 
-## M4 — Integridad de la vigilancia
+M3 no usa el clima ni emite alertas. Un percentil alto compara lo ya ocurrido con los otros años del mismo departamento.
 
-Tres hechos verificables sobre la calidad del dato, **sin combinarlos en un índice**:
+## M4. Integridad de la vigilancia
 
-- **Completitud geográfica:** cuántos de los 14 departamentos tienen fila esa semana (y cuántas semanas de cada año están completas).
-- **Cuadre del boletín:** si la suma departamental coincide con el total nacional publicado en el mismo PDF, y por cuánto difiere cuando no.
-- **Antigüedad:** semanas desde la última observación de cada serie (dengue MINSAL, OpenDengue, clima, IRA, neumonías, virus). Explica el corte de 2023 sin esconderlo. No es el retraso entre el caso y la publicación del boletín: esa fecha no está en la base.
+Da tres datos sobre la calidad de la información, por separado:
 
-**Endpoint.** `GET /api/v1/vigilancia/integridad`. Capa del mapa "Integridad de la vigilancia".
+- Completitud geográfica: cuántos de los 14 departamentos tienen dato esa semana, y cuántas semanas de cada año están completas.
+- Cuadre del boletín: si la suma de los departamentos coincide con el total nacional publicado en el mismo PDF, y por cuánto difiere cuando no.
+- Antigüedad: semanas desde la última observación de cada serie (dengue MINSAL, OpenDengue, clima, IRA, neumonías, virus). Explica por qué la serie de dengue termina en 2023. No mide el retraso entre el caso y la publicación del boletín, porque esa fecha no está en la base.
 
-**Qué no hace.** No afirma transmisión ni riesgo. Un departamento sin color no es un departamento seguro: es un departamento sin fila esa semana.
+Endpoint: `GET /api/v1/vigilancia/integridad`. En el mapa es la capa «Integridad de la vigilancia».
 
-## Mapa departamental descriptivo (dengue)
+Un departamento sin color en esta capa es un departamento sin dato esa semana.
 
-Catorce departamentos, unión por nombre normalizado contra el GeoJSON (el ISO 3166-2 viene vacío en la fuente de límites; ADR 0002). Capa por defecto: casos MINSAL **desacumulados** (probable o confirmado, a elección). Selector de capas para M1, M2 y las dos series de M3.
+## Mapa departamental (dengue)
 
-**Qué no hace.** No pinta un nivel de riesgo departamental. No hay clasificador en producción, nacional ni departamental.
+Muestra los 14 departamentos. Los datos se unen al mapa por el nombre normalizado, porque la fuente de límites trae vacío el código ISO 3166-2 (ADR 0002). La capa inicial son los casos semanales de MINSAL, probables o confirmados. El selector de capas añade M1, M2 y las dos series de M3.
+
+El mapa no pinta niveles de riesgo por departamento.
 
 ## Observatorio respiratorio
 
-Misma familia de boletines MINSAL, otras tablas, otra semántica. Vive en `/respiratorio` (IRA y neumonías son secciones de esa página; no hay ruta `/ira`).
+Usa los mismos boletines de MINSAL, pero otras tablas. Está en `/respiratorio`, con IRA y neumonías como secciones de la página.
 
-- **Neumonías:** conteo clínico departamental único, acumulado desde SE1, `clasificacion = 'notificado'`, `tipos_evento = 'neumonia'`. No se mezcla con IRA ni hereda M1–M4.
-- **IRA:** el mismo contrato de conteo notificado (ADR 0011), serie acumulada y desacumulada, 2.742 filas en el volcado vigente.
-- **Vigilancia laboratorial nacional** (ADR 0012): influenza, VSR y SARS-CoV-2 — muestras, detecciones, positividad. Tabla `vigilancia_virus_respiratorios`. COVID-19 como fila aparece en 2023. No hay mapa departamental de virus.
-- Panel de cobertura: qué semanas y qué tablas están presentes.
+- Neumonías: conteo clínico por departamento, acumulado desde la semana 1, con `clasificacion = 'notificado'` y `tipos_evento = 'neumonia'`. No se mezcla con IRA.
+- IRA: el mismo tipo de conteo notificado (ADR 0011), en serie acumulada y semanal, con 2.742 filas en la copia actual de la base.
+- Vigilancia de laboratorio nacional (ADR 0012): muestras, detecciones y positividad de influenza, VSR y SARS-CoV-2, en la tabla `vigilancia_virus_respiratorios`. COVID-19 aparece como fila propia en 2023. No hay mapa por departamento de virus.
+- Un panel de cobertura indica qué semanas y qué tablas hay.
 
-**Qué no hace.** No computa idoneidad, anomalía ni presión; esas fórmulas están cerradas solo para dengue.
+Las fórmulas de M1 a M3 solo están definidas para dengue, así que esta sección no las usa.
 
 ## Alertas de campo
 
-Decisiones **humanas** persistidas (ADR 0013, operable en ADR 0015): tipo (`dengue` | `respiratorio`), nivel (`informativo` | `atencion` | `intensificacion`), título, contexto, indicaciones, fuente, autor, vigencia, `activa`, y etiqueta opcional (`test` | `simulacro` | `historica`). La vista pública `/alertas` lista solo `activa = true` sin etiqueta. `GET /api/alertas` conserva ese contrato por defecto.
+Las alertas las redacta y publica el equipo de vigilancia (ADR 0013 y 0015). Cada una tiene tipo (`dengue` o `respiratorio`), nivel (`informativo`, `atencion` o `intensificacion`), título, contexto, indicaciones, fuente, autor, vigencia, estado `activa` y una etiqueta opcional (`test`, `simulacro` o `historica`). La página pública `/alertas` lista solo las activas sin etiqueta, igual que `GET /api/alertas` por defecto.
 
-La escritura va por `POST /api/alertas` y `PATCH /api/alertas/{id}` con un secreto de entorno (`ALERTAS_TOKEN`, Bearer). No hay tabla de usuarios ni `DELETE`: una alerta emitida se desactiva, no se borra. El archivo vive en `/alertas/archivo`; el formulario mínimo en `/alertas/nueva` no está en la navegación.
+Para publicar o editar se usan `POST /api/alertas` y `PATCH /api/alertas/{id}` con una clave definida en el servidor (`ALERTAS_TOKEN`, cabecera Bearer). No hay tabla de usuarios ni `DELETE`: una alerta se desactiva y pasa al archivo, en `/alertas/archivo`. El formulario `/alertas/nueva` no aparece en la navegación.
 
-Los cinco campos clínicos (ADR 0014) se llenaron por tipo con transcripción citada de VIGEPES/OPS (migración `0011`). Lo que no tiene fuente queda `null` — por ejemplo signos de alarma y criterios de referencia en respiratorio. El sistema no inventa teléfono ni correo.
+Los cinco campos clínicos (ADR 0014) se llenaron por tipo de alerta transcribiendo VIGEPES y OPS, con la fuente citada. Si la fuente no da un dato, el campo queda en `null`; en respiratorio pasa con los signos de alarma y los criterios de referencia. El sistema no rellena teléfonos ni correos.
 
-**Qué no hace.** No se genera desde M1–M3 ni desde el clasificador retirado.
+Las alertas no se generan a partir de M1 a M3 ni del clasificador retirado.
 
-## PWA y uso sin conexión
+## Uso sin conexión
 
-Service worker escrito a mano (`web/public/sw.js`), sin dependencias. El shell usa stale-while-revalidate. **`GET /api/alertas` es network-first**: una alerta ya apagada tiene consecuencia clínica, así que la red gana y la caché es el último recurso. Lo servido desde la caché lleva `_desde_cache: true` en el cuerpo JSON, y la vista muestra el sello de frescura. Va en el cuerpo y no en una cabecera porque la API es de otro origen y CORS filtra las cabeceras propias.
+El service worker está escrito a mano (`public/sw.js`), sin dependencias. La estructura del sitio se sirve desde la caché y se actualiza en segundo plano. `GET /api/alertas` va primero a la red, porque mostrar como vigente una alerta ya desactivada tendría consecuencias clínicas; la caché solo se usa sin conexión. Lo que viene de la caché lleva `_desde_cache: true` en el JSON y la página muestra la fecha de esa copia. El indicador va en el cuerpo y no en una cabecera porque la API está en otro dominio y CORS no deja leer cabeceras propias.
 
-**Qué no hace.** No sirve una alerta apagada como si siguiera vigente cuando hay red.
+## Carga de datos
 
-## Pipeline de datos
+- Descarga de 264 PDF de boletines MINSAL (2018 a 2023, sin 2020), comprobando que cada archivo empiece por `%PDF`.
+- Lectura de las tablas departamentales: hay dos formatos, que se distinguen en cada documento por la presencia de la columna de tasa y no por el año. Las cifras de probables y confirmados vienen acumuladas desde la semana 1 y se pasan a semanales restando. Los huecos y las correcciones retroactivas no se reparten entre semanas.
+- Registro de cada boletín en `boletines_procesados` (ADR 0004 y 0007), con estado `ok`, `ausencia_esperada`, `sin_texto_extraible`, `revision_manual`, `error` o `pendiente`.
+- Carga de la serie nacional de OpenDengue (`clasificacion = 'total'`, ADR 0005) y del clima de Open-Meteo (ERA5-Land y ERA5, ADR 0006).
+- Semanas epidemiológicas de OPS/CDC (MMWR) con la librería `epiweeks`.
 
-- Descarga de **264 PDF** de boletines MINSAL (2018–2023, 2020 no descargado), validados por firma de bytes `%PDF`.
-- Parser de tablas departamentales: dos familias de esquema, detectadas **por documento** (presencia de la columna de tasa), nunca por rango de año. Probable/confirmado son acumulados desde SE1; se desacumulan por diferencias. Huecos y correcciones retroactivas no se reparten ni se fabrican.
-- Bitácora `boletines_procesados` (ADR 0004, 0007): `ok`, `ausencia_esperada`, `sin_texto_extraible`, `revision_manual`, `error`, `pendiente`.
-- Carga de OpenDengue nacional (`clasificacion = 'total'`, ADR 0005) y de Open-Meteo (ERA5-Land + ERA5, ADR 0006).
-- Semanas epidemiológicas PAHO/CDC (MMWR) vía la librería `epiweeks`.
-
-**Qué no hace.** No rellena una celda vacía de MINSAL como dato ausente (en esa fuente, vacío = 0) ni convierte un hueco real de vacaciones en un conteo interpolado.
+En esa fuente una celda vacía de MINSAL significa 0 y se carga así. Un hueco por vacaciones no se convierte en una cifra interpolada.

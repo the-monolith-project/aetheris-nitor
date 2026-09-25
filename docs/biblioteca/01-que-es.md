@@ -1,37 +1,37 @@
 ---
 titulo: "Qué es EPI-Aetheris"
-descripcion: "Sistema libre de vigilancia epidemiológica descriptiva, contenedorizado y reproducible, piloteado con dengue y eventos respiratorios en El Salvador."
+descripcion: "Sistema de vigilancia epidemiológica descriptiva de código abierto que se instala con Docker, probado con dengue y eventos respiratorios en El Salvador."
 orden: 1
 categoria: "El proyecto"
 ---
 
-EPI-Aetheris es un sistema **de código abierto, en contenedores y desplegable con un solo comando**. Alinea por semana epidemiológica los casos históricos de dengue y de eventos respiratorios con variables climáticas, y los publica en una API y un mapa.
+EPI-Aetheris es un sistema de código abierto que se instala con un solo comando de Docker. Ordena por semana epidemiológica los casos de dengue y de eventos respiratorios junto con datos de clima, y los publica en una API y un mapa.
 
-El piloto cubre **El Salvador**: 14 departamentos, series de MINSAL 2018–2023 (sin 2020 en la ventana departamental) y la serie nacional de OpenDengue. El diseño del esquema es **agnóstico a enfermedad y a región**: `tipos_evento` y `regiones` son catálogos. Dengue e IRA en El Salvador son el caso que el sistema ya sirve; no son el techo de la arquitectura.
+La primera versión cubre El Salvador: 14 departamentos, las series de MINSAL de 2018 a 2023 (sin 2020 en los datos por departamento) y la serie nacional de OpenDengue. Las enfermedades y las regiones son catálogos de la base (`tipos_evento` y `regiones`), así que se pueden añadir otras sin cambiar el esquema.
 
 ## Qué resuelve
 
-El dengue es endémico en El Salvador. La respuesta institucional es mayoritariamente reactiva, aunque la literatura documenta correlación entre incidencia y clima (temperatura, lluvia, humedad) con rezago de semanas. Falta una herramienta **local, gratuita y reproducible** que cruce esos datos, conserve procedencia y deje inspeccionar la serie contra su propia historia.
+El dengue es endémico en El Salvador y la respuesta institucional suele llegar cuando los casos ya subieron. La literatura relaciona la incidencia con la temperatura, la lluvia y la humedad de semanas anteriores, pero no había una herramienta local que cruzara esos datos, indicara su origen y permitiera comparar cada serie con sus propios años anteriores.
 
-Eso es lo que el sistema entrega:
+El sistema incluye:
 
-- Ingesta de boletines MINSAL, OpenDengue, Open-Meteo y NOAA ONI, con bitácora de cada boletín.
-- Un esquema de hechos que no mezcla definiciones de caso distintas (`probable`, `confirmado`, `total`, `notificado`).
-- Módulos descriptivos de Camino Ancho (idoneidad biofísica, anomalía climática, presión epidemiológica relativa) calculados a pedido.
-- Un mapa departamental, un observatorio respiratorio y un canal de alertas de campo redactadas por el equipo de vigilancia.
-- Replicación a costo cercano a cero: `git clone` + `docker compose up` deja el sistema funcionando con datos reales versionados.
+- Carga de los boletines de MINSAL, OpenDengue, Open-Meteo y NOAA ONI, con un registro de cada boletín procesado.
+- Una base que guarda por separado cada definición de caso (`probable`, `confirmado`, `total`, `notificado`).
+- Módulos descriptivos (idoneidad biofísica, anomalía climática, presión epidemiológica relativa) que se calculan al consultarlos.
+- Un mapa por departamento, un observatorio respiratorio y alertas de campo redactadas por el equipo de vigilancia.
+- Una copia de la base dentro del repositorio: `git clone` y `docker compose up` dejan el sistema funcionando con los mismos datos que el sitio público.
 
-## Cómo está organizado el producto
+## Cómo está organizado el sitio
 
-El sitio tiene dos caras, que son **secciones**, no un modo que se conmuta:
+El sitio tiene dos secciones:
 
-- **Consulta** (`/alertas`): personal de salud ve las alertas vigentes y qué hacer en la unidad.
-- **Análisis** (`/analisis`): dengue (mapa y módulos Camino Ancho) y respiratorio (neumonías, IRA, vigilancia laboratorial de virus).
+- Consulta (`/alertas`): el personal de salud ve las alertas vigentes y qué hacer en su unidad.
+- Análisis (`/analisis`): dengue (mapa y módulos descriptivos M1 a M3) y respiratorio (neumonías, IRA y vigilancia de laboratorio de virus).
 
-La **Biblioteca** es esta colección: el relato del proyecto, el catálogo de funciones, las fuentes y el método. El detalle de sensibilidad —límites, deslindes, qué no afirma el sistema— vive en [Sensibilidad y honestidad](/biblioteca/05-sensibilidad-y-honestidad).
+Esta Biblioteca explica qué es el proyecto, qué funciones tiene, de dónde salen los datos y cómo se calculan. Los límites del sistema, y lo que no afirma, están en el [aviso de sensibilidad](/biblioteca/05-sensibilidad-y-honestidad).
 
 ## Quién lo construye
 
-El proyecto lo desarrolla el Equipo 4 de 3.er año de Bachillerato Técnico Vocacional en Desarrollo de Software del **INSAMT** (Instituto Nacional de San Miguel Tepezontes, El Salvador), para Expotécnica. Cinco integrantes; tres dedicados de lleno a programación. El repositorio es público: `github.com/the-monolith-project/EPI-Aetheris`.
+Lo desarrolla el Equipo 4 de 3.er año de Bachillerato Técnico Vocacional en Desarrollo de Software del INSAMT (Instituto Nacional de San Miguel Tepezontes, El Salvador) para Expotécnica. Son cinco integrantes, tres de ellos dedicados a la programación. El código está en [GitHub](https://github.com/the-monolith-project/EPI-Aetheris).
 
-El aporte que el equipo sostiene es de **ingeniería de software**: integración, trazabilidad, despliegue y acceso abierto. La literatura de dengue, clima y aprendizaje automático ya existe; lo que este repositorio publica es un sistema que se clona, se corre y se audita.
+La relación entre dengue, clima y aprendizaje automático ya está estudiada. Lo que aporta el equipo es el software: integración de fuentes, registro del origen de cada dato, instalación con Docker y acceso abierto al código y a los datos.

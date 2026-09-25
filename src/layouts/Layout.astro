@@ -25,10 +25,8 @@ const {
   mapa = false,
 } = Astro.props;
 
-// API pública real -- FastAPI genera /docs (Swagger UI) gratis a partir de
-// los mismos endpoints que consume este frontend. Enlazarlo desde el
-// footer refuerza "aporte de ingeniería reproducible" sin escribir nada
-// nuevo en el backend.
+// FastAPI genera /docs (Swagger UI) a partir de los mismos endpoints que
+// consume este frontend; el pie lo enlaza sin añadir nada al backend.
 const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
 
 const ruta = Astro.url.pathname;
@@ -47,8 +45,8 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
   { href: '/', etiqueta: 'Inicio' },
   // Puente vigilancia -> personal de salud (ADR 0013): decisiones humanas.
   { href: '/alertas', etiqueta: 'Alertas' },
-  // Índice de las herramientas descriptivas. Dengue lleva Camino Ancho
-  // completo; respiratorio (neumonías, IRA y virus, ADR 0011) va sin capas
+  // Índice de las herramientas descriptivas. Dengue lleva los módulos
+  // M1–M3 completos; respiratorio (neumonías, IRA y virus, ADR 0011) va sin capas
   // Iv/anomalía/presión -- esas fórmulas siguen cerradas solo a dengue.
   {
     href: '/analisis',
@@ -349,14 +347,6 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
                 </li>
                 <li>
                   <a
-                    href="/biblioteca/02-historia"
-                    class="enlace-filete text-deep-ink transition-colors hover:text-white"
-                  >
-                    Decisiones y trayectoria
-                  </a>
-                </li>
-                <li>
-                  <a
                     href="/sugerencias"
                     class="enlace-filete text-deep-ink transition-colors hover:text-white"
                   >
@@ -448,7 +438,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
           try {
             await navigator.serviceWorker.register('/sw.js');
             const registro = await navigator.serviceWorker.ready;
-            // En la primera visita el service worker se activa DESPUÉS de que
+            // En la primera visita el service worker se activa después de que
             // el documento pidió sus scripts y estilos, así que esos no
             // pasaron por su `fetch` y no quedaron cacheados. Se le pasa la
             // lista de lo que esta página ya cargó para que la guarde; si no,

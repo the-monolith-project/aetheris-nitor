@@ -1,73 +1,71 @@
 ---
 titulo: "Arquitectura y reproducibilidad"
-descripcion: "Tres servicios Docker, volcado de datos reales versionado y un comando para levantar el sistema: git clone y docker compose up."
+descripcion: "Tres servicios Docker, una copia de la base incluida en el repositorio y los pasos para levantar el sistema con git clone y docker compose up."
 orden: 6
 categoria: "Cómo funciona"
 ---
 
-EPI-Aetheris se replica con el repositorio y Docker. No hay API de datos de pago en el núcleo, no hay SaaS obligatorio y el costo de replicación para un tercero tiende a cero.
+Para instalar EPI-Aetheris basta con el [repositorio](https://github.com/the-monolith-project/EPI-Aetheris) y Docker. El núcleo no depende de APIs de datos de pago ni de servicios en la nube obligatorios. Las rutas de archivo de esta página son relativas a la raíz del repositorio.
 
 ## Tres servicios
 
-`docker-compose.yml` declara una red (`aetheris_network`) y tres contenedores de nombre fijo:
+`docker-compose.yml` define una red (`aetheris_network`) y tres contenedores:
 
 | Servicio | Qué es | Puerto |
 |---|---|---|
 | `db` | PostgreSQL 15 | 5432 |
-| `backend` | FastAPI + `psycopg2` (sin ORM). Entrada: `backend/api/main.py` | 8000 (`/health`, `/docs`) |
-| `web` | Astro + TypeScript + Leaflet + Tailwind | 4321 |
+| `backend` | FastAPI con `psycopg2`, sin ORM | 8000 (`/health`, `/docs`) |
+| `web` | Astro, TypeScript, Leaflet y Tailwind | 4321 |
 
-El esquema se carga desde `db/migrations/*.sql` **una sola vez**, sobre volumen vacío (`docker-entrypoint-initdb.d`). En el mismo arranque se monta `db/seed/seed_datos_reales.sql`: un volcado `pg_dump --data-only` de las tablas de hechos (ADR 0010). Quien clona obtiene el sistema **con datos reales**, no un cascarón vacío.
+La primera vez que arranca con un volumen vacío, la base crea el esquema a partir de `db/migrations/*.sql` y carga `db/seed/seed_datos_reales.sql`, una copia de las tablas de datos hecha con `pg_dump --data-only` (ADR 0010). Así, quien clona el repositorio tiene el sistema funcionando con los mismos datos que el sitio público.
 
-Hardware de referencia: 4 GB de RAM, CPU de dos núcleos x86-64, ~10 GB de disco.
+Equipo mínimo: 4 GB de RAM, procesador x86-64 de dos núcleos y unos 10 GB de disco.
 
 ## Cómo levantarlo
 
 ```bash
-cp .env.example .env   # completar POSTGRES_* ; no commitear .env
+cp .env.example .env   # completar POSTGRES_*; .env no se sube al repositorio
 docker compose up --build
 ```
 
-La API queda en `http://localhost:8000` y el sitio en `http://localhost:4321`. El CORS del backend local admite ese origen del frontend.
+La API queda en `http://localhost:8000` y el sitio en `http://localhost:4321`. La configuración de CORS del backend local ya admite ese origen.
 
-Fuera de Docker (desarrollo):
+Sin Docker, para desarrollo:
 
-- Backend: `cd backend && pip install -r requirements.txt && uvicorn api.main:app --reload` (virtualenv).
-- Web: `cd web && pnpm install && pnpm dev` (pnpm vía Corepack, v9; no `npm`).
+- Backend: `cd backend && pip install -r requirements.txt && uvicorn api.main:app --reload`, dentro de un entorno virtual.
+- Web: `cd web && pnpm install && pnpm dev` (pnpm 9 mediante Corepack).
 
-Los datos crudos e intermedios (`backend/ingestion/data/raw/`, `.../interim/`) no se versionan. El volcado en `db/seed/` es la excepción deliberada que hace cierta la promesa de un comando.
+Los datos descargados y los archivos intermedios no se guardan en el repositorio. La copia de la base en `db/seed/` es la excepción, para que el sistema arranque con datos sin tener que repetir la descarga.
 
-## Qué incluye el volcado
+## Qué incluye la copia de la base
 
-Foto en texto plano (~4,4 MB), sin PDF crudos. Tablas de hechos: `semanas_epidemiologicas`, `boletines_procesados`, `casos_epidemiologicos`, `variables_ambientales`, y desde la foto del 1 de septiembre de 2026 también `vigilancia_virus_respiratorios` e IRA/neumonías (2.742 / 2.749 filas más 3.028 de vigilancia viral).
+Un archivo de texto de unos 4,4 MB, sin los PDF originales. Contiene las tablas `semanas_epidemiologicas`, `boletines_procesados`, `casos_epidemiologicos`, `variables_ambientales` y `vigilancia_virus_respiratorios`, con 2.742 filas de IRA, 2.749 de neumonías y 3.028 de vigilancia de virus.
 
-**No** incluye `regiones`, `tipos_evento` ni `fuentes_datos`: esas tres las siembran las propias migraciones. Tampoco `schema_migrations`: esa tabla la crea el runner de migraciones, no `initdb`.
+No incluye `regiones`, `tipos_evento` ni `fuentes_datos`, que las crean las propias migraciones, ni `schema_migrations`, que la crea el programa de migraciones.
 
-Es una foto fija. Regenerarla es manual (`db/generar_seed.sh`) cuando el equipo decide que vale una imagen más reciente. El script post-procesa los `DISABLE/ENABLE TRIGGER ALL` de `pg_dump` porque en el Postgres gestionado de Render el rol de la aplicación no es superuser.
+La copia no se actualiza sola. Se regenera con `db/generar_seed.sh`, que además quita las instrucciones `DISABLE/ENABLE TRIGGER ALL` de `pg_dump`, porque en la base gestionada de Render el usuario de la aplicación no tiene permisos de superusuario.
 
 ## Migraciones en una base que ya existe
 
-`docker-entrypoint-initdb.d` no vuelve a correr sobre un volumen con datos. Para ese caso está `db/aplicar_migraciones.py` (ADR 0009):
+Con un volumen que ya tiene datos, Postgres no vuelve a ejecutar las migraciones iniciales. Para ese caso está `db/aplicar_migraciones.py` (ADR 0009):
 
 ```bash
-python db/aplicar_migraciones.py --bootstrap   # una vez: registra lo ya aplicado
-python db/aplicar_migraciones.py               # aplica solo archivos nuevos
+python db/aplicar_migraciones.py --bootstrap   # una vez: registra las migraciones ya aplicadas
+python db/aplicar_migraciones.py               # aplica solo los archivos nuevos
 ```
 
-Corre desde el host contra `localhost:5432`. Sin rollback: una migración mala se corrige con otra migración. Todo cambio de esquema exige un ADR aceptado **antes** de escribir el SQL.
+Se ejecuta desde el equipo anfitrión contra `localhost:5432`. No tiene marcha atrás: una migración con errores se corrige con otra migración.
 
-## Stack
+## Tecnologías
 
-- **Backend:** Python, FastAPI, scikit-learn (el clasificador retirado; no se extiende), `pdfplumber`, `epiweeks` (semanas PAHO/CDC, no ISO 8601).
-- **Frontend:** Astro, TypeScript, Tailwind CSS v4, Leaflet. Sin React ni Vue.
-- **Dominio en español:** tablas, columnas, comentarios.
+- Backend: Python, FastAPI, scikit-learn (solo para el clasificador retirado), `pdfplumber` y `epiweeks` (semanas epidemiológicas de OPS/CDC, distintas de las semanas ISO 8601).
+- Frontend: Astro, TypeScript, Tailwind CSS 4 y Leaflet, sin React ni Vue.
+- Tablas, columnas y comentarios del código están en español.
 
-Contenido de esta Biblioteca: Markdown con frontmatter en `docs/biblioteca/`, colección de Astro en `web/src/content.config.ts`. La documentación interna del equipo (`docs/contexto/`, `docs/adr/`, corridas) sigue en su sitio y no se renderiza aquí.
+Esta Biblioteca se escribe en Markdown y Astro la publica como colección de contenido. La documentación interna del equipo (decisiones de arquitectura, notas de contexto, informes de experimentos) está en `docs/` y no se publica aquí.
 
 ## Despliegue público
 
-El entorno de demostración vive en **Render** (`render.yaml`): Postgres 15 gestionado, backend Docker con `preDeployCommand: python db/aplicar_migraciones.py`, y el sitio estático de Astro (`pnpm build`, publica `dist/`). Región `oregon` para los tres, red privada entre API y base.
+El sitio público está en Render y se configura en `render.yaml`: una base Postgres 15 gestionada, el backend en Docker (que aplica las migraciones antes de cada despliegue con `python db/aplicar_migraciones.py`) y el sitio estático de Astro, que se genera con `pnpm build` y publica la carpeta `dist/`. Los tres servicios están en la región `oregon`, y la API y la base se comunican por red privada.
 
-`main` es la rama que Render despliega. Integra solo desde `dev`. Las ramas de trabajo abren PR contra `dev`.
-
-Al publicar una versión nueva del frontend hay que subir `VERSION` en `web/public/sw.js` para invalidar el shell cacheado del service worker.
+Al publicar una versión nueva del frontend hay que subir `VERSION` en `web/public/sw.js`, para que los navegadores descarguen la estructura nueva del sitio en lugar de usar la guardada.

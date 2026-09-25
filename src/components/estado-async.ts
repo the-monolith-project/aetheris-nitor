@@ -89,7 +89,7 @@ export function renderErrorFuente(
   const boton = document.createElement('button');
   boton.type = 'button';
   boton.className =
-    'mt-2 rounded-lg border border-border bg-surface px-3 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent';
+    'mt-2 rounded-lg border border-border bg-surface px-3 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent';
   boton.textContent = 'Reintentar';
   boton.addEventListener('click', () => {
     alReintentar();

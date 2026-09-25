@@ -1,7 +1,7 @@
 ---
 import Icono from './Icono.astro';
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
-// Mapa departamental -- selector de capas DESCRIPTIVAS (Camino Ancho v3,
+// Mapa departamental -- selector de capas descriptivas (módulos M1–M3,
 // docs/contexto). Leaflet necesita el DOM del navegador (no hay forma de
 // renderizarlo en el servidor), así que todo el trabajo con L.* vive en el
 // <script> de abajo, que Astro procesa y ejecuta solo en el cliente. No se
@@ -15,9 +15,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
 // de la vigilancia (M4: presencia de dato / hueco / boletín que no cuadra).
 // M4 no es un semáforo de riesgo ni un índice compuesto.
 //
-// La capa de anomalía climática es deliberadamente NO un semáforo de
-// alerta -- este proyecto retiró un diseño de alerta binaria porque se
-// demostró empíricamente que no discriminaba nada. Escala continua,
+// La capa de anomalía climática no es un semáforo de alerta: el umbral
+// binario que se probó se cruzaba todos los años y no distinguía nada. Escala continua,
 // colores neutros (azul/gris/naranja), sin rojo de urgencia ni lenguaje de
 // "cruce de umbral".
 ---
@@ -473,7 +472,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   let cacheEspacial: Promise<Map<string, DatoEspacial> | null> | null = null;
 
   // Último resultado resuelto del endpoint espacial, para que el tooltip
-  // unificado de Camino Ancho pueda leerlo de forma síncrona.
+  // unificado de los módulos M1–M3 pueda leerlo de forma síncrona.
   let detallesEspacial = new Map<string, DatoEspacial>();
 
   async function obtenerDatosEspaciales(): Promise<Map<
@@ -533,7 +532,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       for (const [codigo, fila] of datos) valores.set(codigo, fila.iv);
       return valores;
     },
-    // Iv está acotado en [0,1] por definición, pero eso NO significa que los
+    // Iv está acotado en [0,1] por definición, pero eso no significa que los
     // valores reales usen ese rango completo -- medido en vivo (SE01/2023):
     // Iv real va de 0.076 a 0.277 en los 14 departamentos, muy por debajo de
     // los cortes fijos que había antes (0.2/0.4/0.6/0.8), así que casi todo
@@ -614,7 +613,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   // cobertura (misma serie que colorea la capa de volumen MINSAL). Ambas
   // comparten un único fetch cacheado.
   //
-  // El color viene de la CATEGORÍA (baja/media/alta contra P50/P75 del
+  // El color viene de la categoría (baja/media/alta contra P50/P75 del
   // propio baseline del departamento), no del percentil crudo -- el
   // percentil exacto y el conteo observado van en el tooltip. Rampa verde
   // azulada neutra: sin rojo de urgencia, esto no es una alerta.
@@ -823,14 +822,14 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   ];
 
   // ---------------------------------------------------------------------
-  // Tooltip unificado de Camino Ancho: al pasar sobre un departamento en
+  // Tooltip unificado de los módulos M1–M3: al pasar sobre un departamento en
   // cualquiera de las capas M1/M2/M3 se ven los cuatro valores a la vez
   // (Iv, anomalía, presión probable y confirmado), no solo el de la capa
-  // activa -- la capa activa solo decide el COLOR del mapa. La línea de la
+  // activa -- la capa activa solo decide el color del mapa. La línea de la
   // capa activa va al final con el detalle extra de su baseline.
   // ---------------------------------------------------------------------
 
-  const ES_CAPA_CAMINO_ANCHO: Partial<Record<IdCapa, boolean>> = {
+  const ES_CAPA_MODULO: Partial<Record<IdCapa, boolean>> = {
     iv: true,
     anomalia: true,
     presion_probable: true,
@@ -847,7 +846,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     return `${etiqueta}: ${celda.categoria} (percentil ${celda.percentil})`;
   }
 
-  function tooltipCaminoAncho(
+  function tooltipModulos(
     codigo: string,
     nombre: string,
     capaActiva: IdCapa,
@@ -885,7 +884,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
 
   // ---------------------------------------------------------------------
   // Detalle de departamento (click en el mapa): snapshot de las 4 capas de
-  // Camino Ancho para la semana/año seleccionados + mini-curva de Iv del
+  // los módulos M1–M3 para la semana/año seleccionados + mini-curva de Iv del
   // año contra su banda histórica P25-P75. Mismo patrón hecho a mano de
   // <svg><polyline> que CurvaEpidemicaNacional.astro -- sin librería de
   // charts nueva.
@@ -1350,11 +1349,11 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         cacheValoresPorCapa.set(id, valores);
       }
 
-      // Para las capas de Camino Ancho el tooltip muestra los CUATRO valores
+      // Para las capas de los módulos M1–M3 el tooltip muestra los cuatro valores
       // (Iv, anomalía, presión probable/confirmado) a la vez -- se esperan
       // ambos endpoints aquí (cacheados: 2 fetch en total como máximo) para
       // que el tooltip no dependa de qué capa se visitó antes.
-      if (ES_CAPA_CAMINO_ANCHO[id]) {
+      if (ES_CAPA_MODULO[id]) {
         await Promise.all([obtenerDatosEspaciales(), obtenerDatosPresion()]);
       }
 
@@ -1450,8 +1449,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
             return;
           }
 
-          if (ES_CAPA_CAMINO_ANCHO[capa.id]) {
-            layer.bindTooltip(tooltipCaminoAncho(codigo, nombre, capa.id));
+          if (ES_CAPA_MODULO[capa.id]) {
+            layer.bindTooltip(tooltipModulos(codigo, nombre, capa.id));
             return;
           }
 

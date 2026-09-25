@@ -1,4 +1,4 @@
-// Import SOLO de tipo: se borra en build y no deja dependencia en runtime.
+// Import solo de tipo: se borra en build y no deja dependencia en runtime.
 // Con el import de valor, este modulo -- que los siete paneles importan de
 // forma estatica -- arrastraba los 391 KB de Plot y d3 al grafo inicial de
 // /dengue, anulando los await import de los componentes.

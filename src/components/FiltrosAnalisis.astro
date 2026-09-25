@@ -508,7 +508,7 @@ import { aniosClimaPresentacion } from '../lib/tipos-analisis';
     try {
       await navigator.clipboard.writeText(window.location.href);
       if (estadoAcciones)
-        estadoAcciones.textContent = 'Enlace reproducible copiado.';
+        estadoAcciones.textContent = 'Enlace a esta vista copiado.';
       botonCopiar.textContent = '¡Copiado!';
       botonCopiar.classList.add('text-accent', 'border-accent/50');
       if (timerCopiado) clearTimeout(timerCopiado);

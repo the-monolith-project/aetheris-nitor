@@ -109,7 +109,7 @@ test('la portada ofrece dos puertas que son enlaces sin estado', async ({
   const m4 = page.locator('main').getByText('Integridad de la vigilancia');
   await expect(m4).toBeVisible();
   await expect(page.locator('main')).toContainText(
-    'Tres hechos verificables sobre la calidad del dato',
+    'Tres indicadores de la calidad del dato',
   );
 });
 

@@ -1,11 +1,11 @@
 ---
 // Predicción de casos de dengue a corto plazo (GET /api/nowcast-dengue).
 // Artefacto precomputado por backend/ingestion/nowcast_estimacion_dengue.py:
-// método del experimento firmado (docs/experimentos/experimento-nowcast-corto-plazo.md)
+// método del experimento (docs/experimentos/experimento-nowcast-corto-plazo.md)
 // más la calibración de intervalos CQR-r. Detalle de método y validación en
 // docs/biblioteca/05-sensibilidad-y-honestidad.md.
 //
-// La predicción se extiende desde la ÚLTIMA SEMANA OBSERVADA de la serie, no
+// La predicción se extiende desde la última semana observada de la serie, no
 // desde la fecha de hoy: OpenDengue va varios meses detrás del tiempo real. El
 // panel muestra siempre esa fecha de anclaje.
 //
@@ -779,7 +779,7 @@ const { variante = 'completo', demo = false } = Astro.props;
         ? new URLSearchParams(location.search)
         : new URLSearchParams();
     const demo = completo && (demoForzado || busqueda.has('demo'));
-    // ?demo=lento (o ?lento en /demos) -> ritmo más pausado en TODA la secuencia.
+    // ?demo=lento (o ?lento en /demos) -> ritmo más pausado en toda la secuencia.
     const RITMO =
       busqueda.get('demo') === 'lento' || busqueda.has('lento') ? 1.6 : 1;
 

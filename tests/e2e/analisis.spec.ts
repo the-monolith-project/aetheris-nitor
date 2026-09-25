@@ -145,7 +145,7 @@ test('restaura la URL, limita la comparación y exporta el filtro actual', async
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.locator('#analisis-copiar-enlace').click();
   await expect(page.locator('#analisis-acciones-estado')).toContainText(
-    'Enlace reproducible copiado',
+    'Enlace a esta vista copiado',
   );
 
   await page.reload();

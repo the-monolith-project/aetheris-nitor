@@ -1,35 +1,51 @@
 ---
+/**
+ * Índice de la sección legal (/legal). Es la puerta de entrada, no un cuarto
+ * documento: cada tarjeta resume lo que el documento enlazado dice de verdad,
+ * y el bloque «En pocas palabras» adelanta los hechos que más preguntan
+ * quienes llegan aquí. Todos se pueden comprobar en el código (sin cookies ni
+ * analítica, teselas de OpenStreetMap en los mapas, licencia GPL-3.0).
+ *
+ * Si cambia el contenido de una de las tres legales, hay que revisar su
+ * descripción aquí: una tarjeta que promete algo que el documento no dice es
+ * peor que no tener índice.
+ *
+ * Las fechas de actualización no se repiten en las tarjetas a propósito: cada
+ * documento muestra la suya en el encabezado y copiarlas aquí solo añadiría un
+ * sitio más donde pueden quedar desfasadas.
+ */
 import Layout from '../../layouts/Layout.astro';
 import Icono from '../../components/Icono.astro';
+import { RUTA_SENSIBILIDAD } from '../../lib/enlaces';
 
 const SECCIONES = [
   {
     href: '/legal/privacidad',
-    titulo: 'Política de Privacidad y Protección de Datos',
+    titulo: 'Política de privacidad',
     descripcion:
-      'Régimen de tratamiento de metadatos de red, ausencia de cookies, estipulaciones sobre almacenamiento local, salvaguardas y cesión técnica a proveedores como OpenStreetMap.',
+      'Qué datos técnicos circulan al usar el sitio, quién los recibe (Render, OpenStreetMap), por qué no hay cookies y cómo ejercer los derechos sobre los datos personales.',
     icono: 'shield-check',
   },
   {
     href: '/legal/terminos',
-    titulo: 'Términos y Condiciones Generales de Uso',
+    titulo: 'Términos de uso',
     descripcion:
-      'Contrato vinculante de navegación, deslinde médico pericial, condiciones de explotación de la API pública, conductas prohibidas, licencias y exoneración de responsabilidad.',
+      'Qué es y qué no es la herramienta, cómo usar la API, qué está prohibido, qué licencias tienen el código y los datos, y por qué se ofrece sin garantías.',
     icono: 'file-text',
   },
   {
     href: '/legal/aviso-legal',
-    titulo: 'Aviso Legal e Información General',
+    titulo: 'Aviso legal',
     descripcion:
-      'Identificación del titular del dominio, domicilio postal, naturaleza no lucrativa de la actividad, proveedor de alojamiento telemático y régimen de jurisdicción aplicable.',
+      'Quién es responsable del sitio y cómo contactarlo, por qué es un proyecto sin fines comerciales, dónde está alojado y qué ley se aplica.',
     icono: 'building',
   },
 ];
 ---
 
 <Layout
-  title="EPI-Aetheris — Marco jurídico e institucional"
-  descripcion="Índice formal de instrumentos jurídicos, régimen de privacidad y condiciones de uso de EPI-Aetheris."
+  title="EPI-Aetheris — Información legal"
+  descripcion="Política de privacidad, términos de uso y aviso legal de EPI-Aetheris, con un resumen en lenguaje llano de cada uno."
 >
   <main
     id="contenido-principal"
@@ -39,19 +55,19 @@ const SECCIONES = [
       <p
         class="font-mono text-xs font-semibold uppercase tracking-wider text-accent"
       >
-        Gobernanza y Transparencia
+        Documentos legales
       </p>
       <h1
         class="mt-2 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl"
       >
-        Marco jurídico e institucional
+        Información legal
       </h1>
       <p
         class="mt-3 max-w-2xl font-sans text-sm leading-relaxed text-ink-muted"
       >
-        Instrumentos normativos que regulan las condiciones de acceso,
-        navegación telemática, garantías de protección de datos personales y los
-        límites perentorios de responsabilidad jurídica de la plataforma.
+        Tres documentos explican quién está detrás de EPI-Aetheris, qué datos se
+        tratan al visitarlo y en qué condiciones se pueden usar el sitio, la API
+        y los datos.
       </p>
     </header>
 
@@ -75,11 +91,51 @@ const SECCIONES = [
               </p>
             </div>
             <span class="mt-4 inline-flex items-center gap-1 font-sans text-xs font-medium text-accent">
-              Consultar instrumento &rarr;
+              Leer el documento <span aria-hidden="true">&rarr;</span>
             </span>
           </a>
         ))
       }
     </div>
+
+    {
+      /* Resumen en lenguaje llano. No sustituye a los documentos: cada punto
+         enlaza, directa o indirectamente, a donde está el detalle. */
+    }
+    <section
+      aria-labelledby="resumen-legal"
+      class="mt-10 max-w-2xl font-sans text-sm leading-relaxed text-ink-muted"
+    >
+      <h2
+        id="resumen-legal"
+        class="font-display text-lg font-semibold tracking-tight text-ink"
+      >
+        En pocas palabras
+      </h2>
+      <ul class="mt-3 list-disc space-y-2 pl-5">
+        <li>
+          No hay cuentas de usuario, cookies ni herramientas de analítica.
+        </li>
+        <li>
+          Al dibujar un mapa, el navegador pide las imágenes de fondo a
+          OpenStreetMap, que recibe la dirección IP de quien visita el sitio.
+        </li>
+        <li>
+          Las cifras son datos públicos agregados por departamento y semana. Lo
+          que el sistema no afirma está en el{' '}
+          <a href={RUTA_SENSIBILIDAD} class="text-accent underline"
+            >aviso de sensibilidad</a
+          >.
+        </li>
+        <li>
+          El código es libre (GPL-3.0) y los datos conservan la licencia de su
+          fuente.
+        </li>
+        <li>
+          Para cualquier consulta, la vía está en{' '}
+          <a href="/contacto" class="text-accent underline">contacto</a>.
+        </li>
+      </ul>
+    </section>
   </main>
 </Layout>

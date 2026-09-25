@@ -384,6 +384,49 @@ test('integra el popover con el toolbar y permite cerrarlo', async ({
   await expect(page.locator('#analisis-abrir-filtros')).toBeFocused();
 });
 
+test('contrae y expande los controles de la barra pegajosa', async ({
+  page,
+}) => {
+  await page.goto(URL_INICIAL);
+  await esperarPanel(page);
+  await abrirFiltros(page);
+
+  const boton = page.locator('#toolbar-analisis-contraer');
+  await expect(boton).toHaveAttribute('aria-expanded', 'true');
+  await boton.click();
+  await expect(boton).toHaveAttribute('aria-expanded', 'false');
+  await expect(boton).toHaveAttribute(
+    'aria-label',
+    'Expandir controles del análisis',
+  );
+  // Contraer cierra el popover: su boton de apertura queda oculto.
+  await expect(page.locator('#analisis-filtros-popover')).toHaveAttribute(
+    'hidden',
+  );
+  await expect(page.locator('#analisis-abrir-filtros')).toBeHidden();
+  await expect(page.locator('#analisis-cinta-semana')).toBeHidden();
+  await expect(page.locator('#toolbar-analisis-resumen')).toBeVisible();
+
+  await boton.click();
+  await expect(boton).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#analisis-abrir-filtros')).toBeVisible();
+  await expect(page.locator('#analisis-cinta-semana')).toBeVisible();
+
+  // Los estados vacíos de los paneles abren los filtros con .click() aunque la
+  // barra esté contraída: la barra se expande y el foco vuelve al botón.
+  await boton.click();
+  await expect(boton).toHaveAttribute('aria-expanded', 'false');
+  await page.evaluate(() =>
+    document.getElementById('analisis-abrir-filtros')?.click(),
+  );
+  await expect(boton).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#analisis-filtros-popover')).not.toHaveAttribute(
+    'hidden',
+  );
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#analisis-abrir-filtros')).toBeFocused();
+});
+
 test('mantiene los filtros usables como panel inferior en móvil', async ({
   page,
 }) => {

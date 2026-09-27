@@ -6,6 +6,7 @@ import ResumenNacional from '../components/ResumenNacional.astro';
 import AuditoriaDatos from '../components/AuditoriaDatos.astro';
 import PanelAnalisis from '../components/analisis/PanelAnalisis.astro';
 import PanelNowcastDengue from '../components/nowcast/PanelNowcastDengue.astro';
+import ContrasteNowcastDengue from '../components/nowcast/ContrasteNowcastDengue.astro';
 
 const TABS = [
   { id: 'vigilancia', etiqueta: 'Vigilancia' },
@@ -115,6 +116,9 @@ const TABS = [
       hidden
     >
       <PanelNowcastDengue variante="completo" />
+      <div class="mt-6">
+        <ContrasteNowcastDengue />
+      </div>
     </section>
   </main>
 </Layout>
@@ -209,7 +213,8 @@ const TABS = [
   html.demo-presentacion body > main > p:has(a[data-enlace-alertas]) {
     display: none !important;
   }
-  html.demo-presentacion [data-tabs] {
+  html.demo-presentacion [data-tabs],
+  html.demo-presentacion #panel-prediccion > :has([data-contraste-nowcast]) {
     display: none !important;
   }
   html.demo-presentacion #panel-prediccion:not([hidden]) {

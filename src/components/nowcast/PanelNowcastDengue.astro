@@ -1,9 +1,8 @@
 ---
 // Predicción de casos de dengue a corto plazo (GET /api/nowcast-dengue).
 // Artefacto precomputado por backend/ingestion/nowcast_estimacion_dengue.py:
-// método del experimento (docs/experimentos/experimento-nowcast-corto-plazo.md)
-// más la calibración de intervalos CQR-r. Detalle de método y validación en
-// docs/biblioteca/05-sensibilidad-y-honestidad.md.
+// método del experimento (ADR 0020) más la calibración de intervalos CQR-r.
+// Detalle de método y validación en docs/biblioteca/05-sensibilidad-y-honestidad.md.
 //
 // La predicción se extiende desde la última semana observada de la serie, no
 // desde la fecha de hoy: OpenDengue va varios meses detrás del tiempo real. El
@@ -109,108 +108,19 @@ const { variante = 'completo', demo = false } = Astro.props;
     renderErrorFuente,
     renderSinDato,
   } from '../estado-async';
+  import {
+    bandaPath,
+    crearSvg,
+    ejeY,
+    el,
+    fecha,
+    fmtFecha,
+    fmtNum,
+    linea,
+    type Escalas,
+  } from './svg-nowcast';
 
-  const SVG_NS = 'http://www.w3.org/2000/svg';
-  const fmtNum = new Intl.NumberFormat('es-SV', { maximumFractionDigits: 0 });
-  const fmtFecha = new Intl.DateTimeFormat('es-SV', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
   const OBS_VENTANA = 60; // semanas observadas de contexto en el abanico
-
-  function fecha(iso: string): Date {
-    return new Date(`${iso}T00:00:00`);
-  }
-
-  function el(
-    nombre: string,
-    attrs: Record<string, string | number> = {},
-  ): SVGElement {
-    const nodo = document.createElementNS(SVG_NS, nombre);
-    for (const [k, v] of Object.entries(attrs)) nodo.setAttribute(k, String(v));
-    return nodo;
-  }
-
-  interface Escalas {
-    x: (t: number) => number;
-    y: (v: number) => number;
-    ancho: number;
-    alto: number;
-    margen: { arriba: number; abajo: number; izq: number; der: number };
-  }
-
-  function crearSvg(
-    ancho: number,
-    alto: number,
-    etiqueta: string,
-  ): SVGSVGElement {
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${ancho} ${alto}`);
-    svg.setAttribute('class', 'w-full');
-    svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', etiqueta);
-    return svg;
-  }
-
-  function ejeY(svg: SVGElement, e: Escalas, maxV: number) {
-    const niveles = [0, maxV / 2, maxV];
-    for (const n of niveles) {
-      const y = e.y(n);
-      svg.appendChild(
-        el('line', {
-          x1: e.margen.izq,
-          x2: e.ancho - e.margen.der,
-          y1: y,
-          y2: y,
-          stroke: 'var(--color-border)',
-          'stroke-width': 1,
-        }),
-      );
-      const txt = el('text', {
-        x: e.margen.izq - 8,
-        y: y + 3,
-        'text-anchor': 'end',
-        'font-family': 'var(--font-sans)',
-        'font-size': 9,
-        fill: 'var(--color-ink-muted)',
-      });
-      (txt as SVGTextElement).style.fontVariantNumeric = 'tabular-nums';
-      txt.textContent = fmtNum.format(Math.round(n));
-      svg.appendChild(txt);
-    }
-  }
-
-  function bandaPath(
-    e: Escalas,
-    puntos: { t: number; lo: number; hi: number }[],
-  ): string {
-    const arriba = puntos.map((p) => `${e.x(p.t)},${e.y(p.hi)}`);
-    const abajo = puntos
-      .slice()
-      .reverse()
-      .map((p) => `${e.x(p.t)},${e.y(p.lo)}`);
-    return `M${arriba.join(' L')} L${abajo.join(' L')} Z`;
-  }
-
-  function linea(
-    e: Escalas,
-    puntos: { t: number; v: number }[],
-    color: string,
-    ancho: number,
-    guiones?: string,
-  ): SVGElement {
-    const pl = el('polyline', {
-      points: puntos.map((p) => `${e.x(p.t)},${e.y(p.v)}`).join(' '),
-      fill: 'none',
-      stroke: color,
-      'stroke-width': ancho,
-      'stroke-linejoin': 'round',
-      'stroke-linecap': 'round',
-    });
-    if (guiones) pl.setAttribute('stroke-dasharray', guiones);
-    return pl;
-  }
 
   // --- revelado animado ---------------------------------------------------
 

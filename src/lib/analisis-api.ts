@@ -6,6 +6,7 @@ import type {
   FiltrosAnalisis,
   IntegridadVigilancia,
   NowcastDengue,
+  NowcastDengueRetrospectivo,
   ProcedenciaAnalitica,
   RespuestaIraDepartamental,
   SerieTemporalIdoneidad,
@@ -21,6 +22,7 @@ let cacheCasosNacionales: Promise<CasoNacionalSemanal[]> | null = null;
 let cacheIraDepartamental: Promise<RespuestaIraDepartamental> | null = null;
 let cacheIntegridad: Promise<IntegridadVigilancia> | null = null;
 let cacheNowcastDengue: Promise<NowcastDengue> | null = null;
+let cacheNowcastRetro: Promise<NowcastDengueRetrospectivo> | null = null;
 const cacheProcedencia = new Map<string, Promise<ProcedenciaAnalitica>>();
 const cacheSerieIdoneidad = new Map<string, Promise<SerieTemporalIdoneidad>>();
 const cacheSeriePresion = new Map<string, Promise<SerieTemporalPresion>>();
@@ -349,4 +351,40 @@ export function obtenerNowcastDengue(): Promise<NowcastDengue> {
     );
   }
   return cacheNowcastDengue;
+}
+
+export function obtenerNowcastRetrospectivo(): Promise<NowcastDengueRetrospectivo> {
+  if (!cacheNowcastRetro) {
+    cacheNowcastRetro = registrarPeticion(
+      fetch(`${API_BASE}/api/nowcast-dengue/retrospectivo`)
+        .then(async (respuesta) => {
+          if (!respuesta.ok) {
+            throw new Error(
+              `No se pudo cargar la predicción retrospectiva (${respuesta.status}).`,
+            );
+          }
+          const datos: unknown = await respuesta.json();
+          if (esNoDisponible(datos)) {
+            return datos as any;
+          }
+          const d = datos as Partial<NowcastDengueRetrospectivo> | null;
+          if (
+            !d ||
+            !Array.isArray(d.observado) ||
+            !Array.isArray(d.origenes) ||
+            !Array.isArray(d.horizontes)
+          ) {
+            throw new Error(
+              'La predicción retrospectiva no tiene el contrato esperado.',
+            );
+          }
+          return d as NowcastDengueRetrospectivo;
+        })
+        .catch((error) => {
+          cacheNowcastRetro = null;
+          throw error;
+        }),
+    );
+  }
+  return cacheNowcastRetro;
 }

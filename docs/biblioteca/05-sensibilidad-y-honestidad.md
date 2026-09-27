@@ -19,7 +19,10 @@ La página de dengue incluye una predicción estadística del número de casos e
 
 - Se calcula sobre la serie nacional de OpenDengue. Da un número y un rango.
 - Parte de la última semana publicada, que va varios meses por detrás de la fecha actual. El gráfico muestra siempre esa fecha de partida.
-- Se validó con las temporadas de 2019 y de 2021 a 2024, usando en cada prueba solo los datos anteriores al punto de corte. En las cinco temporadas tuvo menos error que repetir el último valor observado. Las métricas, el protocolo y una segunda validación hecha desde cero están en el [informe del experimento](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/experimentos/experimento-nowcast-corto-plazo.md).
+- Se validó con las temporadas de 2019 y de 2021 a 2024, usando en cada prueba solo los datos anteriores al punto de corte. En las cinco temporadas tuvo menos error que repetir el último valor observado. El método, las métricas y una segunda validación hecha desde cero están en la [decisión de arquitectura 0020](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/adr/0020-nowcast-corto-plazo.md).
+- En la misma pestaña se puede elegir otra semana de partida y comparar la predicción con lo que se observó después. Cada predicción usa solo los datos anteriores a su semana de partida. De 2014 a marzo de 2017 no hay predicción, porque el modelo necesita unos tres años de datos para entrenarse. 2020 se muestra con un aviso: no se usó para entrenar ni para validar el modelo.
+- Su ventaja depende de que los datos de entrenamiento, que empiezan en 2014, ya incluyan un brote grande. Entrenado solo con datos desde 2016, en 2019 tuvo más error que repetir el último valor. Ante un brote sin precedente en la serie, la predicción puede quedarse corta.
+- El pico de 2014 y 2015 coincidió con una alerta nacional por arbovirosis y con la búsqueda activa de casos de síndrome febril, que pudieron aumentar el número de casos notificados. El modelo aprende de ese pico.
 
 ## Recomendaciones y campos clínicos
 
@@ -31,7 +34,7 @@ Los campos clínicos de una alerta de campo (definición de caso, signos de alar
 
 El sitio conserva como referencia un clasificador que asignaba a cada semana un riesgo de brote alto, medio o bajo a partir del clima de semanas anteriores. Se retiró porque no detectó ninguna semana de riesgo alto en 2019 ni en 2022, los dos años de la ventana que las tuvieron. Se muestra con sus métricas de evaluación y no se usa para ninguna decisión.
 
-Su código sigue en el repositorio para que se puedan repetir las evaluaciones. El [informe de cierre](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/rescate-prediccion/informe-cierre-rescate-prediccion.md) recoge las pruebas y sus resultados.
+Su código sigue en el repositorio para que se puedan repetir las evaluaciones.
 
 ## Datos personales
 

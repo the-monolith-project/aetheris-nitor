@@ -1,12 +1,12 @@
 ---
 import Icono from './Icono.astro';
+import { RUTA_SENSIBILIDAD } from '../lib/enlaces';
 // Clasificador nacional retirado: se muestra como referencia, no como
 // predicción en vivo. Se retiró porque ninguna de las cinco líneas de
-// validación sostuvo capacidad predictiva
-// (docs/rescate-prediccion/informe-cierre-rescate-prediccion.md), así que su
-// salida no se presenta como predicción. Va en una sección colapsable y
-// etiquetada como histórica para que sus métricas y errores sigan
-// consultables desde el panel.
+// validación sostuvo capacidad predictiva (aviso de sensibilidad de la
+// Biblioteca), así que su salida no se presenta como predicción. Va en una
+// sección colapsable y etiquetada como histórica para que sus métricas y
+// errores sigan consultables desde el panel.
 //
 // El endpoint GET /api/riesgo-nacional y el modelo entrenado se conservan sin
 // cambios como referencia.
@@ -35,11 +35,10 @@ import Icono from './Icono.astro';
     <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
       Clasificador piloto de 2024. Al validarlo con los años de brote conocidos
       no detectó las semanas de riesgo alto y se retiró. Se conserva para
-      consultar su evaluación. Ver el
+      consultar su evaluación. Los motivos están en el{' '}
       <a
         class="underline decoration-border underline-offset-2 hover:text-accent"
-        href="https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/rescate-prediccion/informe-cierre-rescate-prediccion.md"
-        >informe de cierre</a
+        href={RUTA_SENSIBILIDAD}>aviso de sensibilidad</a
       >.
     </p>
 

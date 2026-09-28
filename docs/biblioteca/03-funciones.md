@@ -59,7 +59,7 @@ Da tres datos sobre la calidad de la información, por separado:
 
 - Completitud geográfica: cuántos de los 14 departamentos tienen dato esa semana, y cuántas semanas de cada año están completas.
 - Cuadre del boletín: si la suma de los departamentos coincide con el total nacional publicado en el mismo PDF, y por cuánto difiere cuando no.
-- Antigüedad: semanas desde la última observación de cada serie (dengue MINSAL, OpenDengue, clima, IRA, neumonías, virus). Explica por qué la serie de dengue termina en 2023. No mide el retraso entre el caso y la publicación del boletín, porque esa fecha no está en la base.
+- Antigüedad: semanas desde la última observación de cada serie (dengue MINSAL, OpenDengue, tablero de MINSAL, clima, IRA, neumonías, virus). Explica por qué la serie departamental de dengue termina en 2023. No mide el retraso entre el caso y la publicación del boletín, porque esa fecha no está en la base.
 
 Endpoint: `GET /api/v1/vigilancia/integridad`. En el mapa es la capa «Integridad de la vigilancia».
 
@@ -102,6 +102,7 @@ El service worker está escrito a mano (`public/sw.js`), sin dependencias. La es
 - Lectura de las tablas departamentales: hay dos formatos, que se distinguen en cada documento por la presencia de la columna de tasa y no por el año. Las cifras de probables y confirmados vienen acumuladas desde la semana 1 y se pasan a semanales restando. Los huecos y las correcciones retroactivas no se reparten entre semanas.
 - Registro de cada boletín en `boletines_procesados` (ADR 0004 y 0007), con estado `ok`, `ausencia_esperada`, `sin_texto_extraible`, `revision_manual`, `error` o `pendiente`.
 - Carga de la serie nacional de OpenDengue (`clasificacion = 'total'`, ADR 0005) y del clima de Open-Meteo (ERA5-Land y ERA5, ADR 0006).
+- Carga de las series nacionales del tablero de MINSAL desde capturas del tablero guardadas desde el navegador (`clasificacion = 'sospechoso'` para dengue, ADR 0021). No hay descarga programada.
 - Semanas epidemiológicas de OPS/CDC (MMWR) con la librería `epiweeks`.
 
 En esa fuente una celda vacía de MINSAL significa 0 y se carga así. Un hueco por vacaciones no se convierte en una cifra interpolada.

@@ -35,7 +35,7 @@ Licencia y uso: publicación oficial del Ministerio de Salud de El Salvador. El 
 
 Después de 2023 MINSAL publica sus cifras en un tablero web en `boletin.salud.gob.sv` en lugar de los boletines en PDF. Las cifras se toman de capturas del tablero guardadas desde el navegador. No hay descarga programada, así que actualizar la serie exige una captura nueva.
 
-Hay series nacionales de 2025 y de 2026 hasta la última semana capturada: casos sospechosos y confirmados de dengue y casos notificados de IRA y neumonías. No hay datos por departamento ni de 2024. En el sitio, estas series se usan en la predicción de casos de dengue.
+Hay series nacionales de 2025 y de 2026 hasta la última semana capturada: casos sospechosos y confirmados de dengue y casos notificados de IRA y neumonías. No hay datos por departamento ni de 2024. En el sitio, la serie de sospechosos de dengue continúa la de OpenDengue desde 2025 en la curva, el resumen y el calendario nacionales, y se usa en la predicción de casos. Las de IRA y neumonías no se muestran todavía.
 
 Los sospechosos se guardan con `clasificacion = 'sospechoso'`, el nombre que usa la fuente. Es la misma definición que el total de OpenDengue y tiene la misma escala: 5.833 casos en 2025, al nivel de OpenDengue en 2021 y 2023.
 
@@ -47,7 +47,7 @@ Licencia y uso: publicación oficial del Ministerio de Salud de El Salvador, con
 
 Extracto `Spatial_extract_V1_3.csv` de `opendengue.org` (unos 2,8 millones de filas), versión 1.3, distribuido en Figshare con DOI y licencia. Para El Salvador, la serie nacional es semanal desde 2013–2014; la departamental es mensual y solo cubre 2000 a 2009, por lo que no se usa.
 
-El sistema carga 365 filas nacionales de 2018 a 2024 con `clasificacion = 'total'` (ADR 0005). En las 574 filas semanales nacionales, `case_definition_standardised` vale `'Total'`: OpenDengue no separa probables y confirmados a esta escala. Cargar ese total como `confirmado` lo mezclaría con los casos confirmados por laboratorio de MINSAL.
+El sistema carga las 574 filas semanales nacionales, de 2014 a 2024, con `clasificacion = 'total'` (ADR 0005). En todas ellas `case_definition_standardised` vale `'Total'`: OpenDengue no separa probables y confirmados a esta escala. Cargar ese total como `confirmado` lo mezclaría con los casos confirmados por laboratorio de MINSAL.
 
 Cada fila se asigna a su semana epidemiológica comparando `calendar_start_date` con `semanas_epidemiologicas.fecha_inicio` (de domingo a sábado, criterio OPS/CDC).
 

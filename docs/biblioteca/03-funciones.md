@@ -59,7 +59,7 @@ Da tres datos sobre la calidad de la información, por separado:
 
 - Completitud geográfica: cuántos de los 14 departamentos tienen dato esa semana, y cuántas semanas de cada año están completas.
 - Cuadre del boletín: si la suma de los departamentos coincide con el total nacional publicado en el mismo PDF, y por cuánto difiere cuando no.
-- Antigüedad: semanas desde la última observación de cada serie (dengue MINSAL, OpenDengue, tablero de MINSAL, clima, IRA, neumonías, virus). Explica por qué la serie departamental de dengue termina en 2023. No mide el retraso entre el caso y la publicación del boletín, porque esa fecha no está en la base.
+- Antigüedad: semanas desde la última observación de cada serie (dengue MINSAL, OpenDengue, tablero de MINSAL, clima, IRA y neumonías de los boletines y del tablero, virus). Explica por qué la serie departamental de dengue termina en 2023. No mide el retraso entre el caso y la publicación del boletín, porque esa fecha no está en la base.
 
 Endpoint: `GET /api/v1/vigilancia/integridad`. En el mapa es la capa «Integridad de la vigilancia».
 
@@ -73,7 +73,9 @@ El mapa no pinta niveles de riesgo por departamento.
 
 ## Observatorio respiratorio
 
-Usa los mismos boletines de MINSAL, pero otras tablas. Está en `/respiratorio`, con IRA y neumonías como secciones de la página.
+Usa los mismos boletines de MINSAL, pero otras tablas, y desde 2025 el tablero de MINSAL. Está en `/respiratorio`, con IRA y neumonías como secciones de la página.
+
+- Serie nacional de IRA y de neumonías: casos notificados por semana según el tablero de MINSAL, desde 2025, con una línea por año, la última semana comparada con la misma de un año antes, las semanas sin publicar y una tabla con los valores. Endpoints: `GET /api/ira/nacional` y `GET /api/neumonias/nacional`.
 
 - Neumonías: conteo clínico por departamento, acumulado desde la semana 1, con `clasificacion = 'notificado'` y `tipos_evento = 'neumonia'`. No se mezcla con IRA.
 - IRA: el mismo tipo de conteo notificado (ADR 0011), en serie acumulada y semanal, con 2.742 filas en la copia actual de la base.

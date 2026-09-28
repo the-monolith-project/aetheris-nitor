@@ -35,7 +35,7 @@ Licencia y uso: publicación oficial del Ministerio de Salud de El Salvador. El 
 
 Después de 2023 MINSAL publica sus cifras en un tablero web en `boletin.salud.gob.sv` en lugar de los boletines en PDF. Las cifras se toman de capturas del tablero guardadas desde el navegador. No hay descarga programada, así que actualizar la serie exige una captura nueva.
 
-Hay series nacionales de 2025 y de 2026 hasta la última semana capturada: casos sospechosos y confirmados de dengue y casos notificados de IRA y neumonías. No hay datos por departamento ni de 2024. En el sitio, la serie de sospechosos de dengue continúa la de OpenDengue desde 2025 en la curva, el resumen y el calendario nacionales, y se usa en la predicción de casos. Las de IRA y neumonías no se muestran todavía.
+Hay series nacionales de 2025 y de 2026 hasta la última semana capturada: casos sospechosos y confirmados de dengue y casos notificados de IRA y neumonías. No hay datos por departamento ni de 2024. En el sitio, la serie de sospechosos de dengue continúa la de OpenDengue desde 2025 en la curva, el resumen y el calendario nacionales, y se usa en la predicción de casos. Las de IRA y neumonías tienen su propia curva nacional en el observatorio respiratorio y no se unen a las departamentales de los boletines. En neumonías, la suma de los departamentos de los boletines promedia entre 500 y 780 casos por semana según el año, y el tablero publica entre 130 y 430 en 2025 y 2026; no se ha comprobado si las dos fuentes usan la misma definición.
 
 Los sospechosos se guardan con `clasificacion = 'sospechoso'`, el nombre que usa la fuente. Es la misma definición que el total de OpenDengue y tiene la misma escala: 5.833 casos en 2025, al nivel de OpenDengue en 2021 y 2023.
 

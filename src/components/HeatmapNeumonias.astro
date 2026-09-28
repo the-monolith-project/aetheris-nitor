@@ -9,12 +9,13 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   titulo="Mapa de calor de neumonías por departamento y semana"
   descripcion="Unidad: conteo notificado (desacumulado). Celdas claras = hueco de la fuente MINSAL, no un cero."
   data-heatmap-neu
+  controlesAnchos
 >
   <div
     slot="controles"
     class="flex flex-wrap items-center gap-2 font-sans text-sm"
   >
-    <label class="flex items-center gap-2"
+    <label class="flex flex-wrap items-center gap-2"
       >Año
       <select
         data-hm-anio
@@ -27,7 +28,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         <option value="2018">2018</option>
       </select>
     </label>
-    <span class="flex items-center gap-2">
+    <span class="flex flex-wrap items-center gap-2">
       SE
       <input
         id="hm-neu-desde"

@@ -5,6 +5,11 @@ interface Props {
   descripcion?: string;
   idTitulo?: string;
   clase?: string;
+  /** Para barras con varios selectores: pasan a una fila propia bajo el
+   *  título cuando no caben a su lado, y ahí se parten en varias líneas.
+   *  Sin esto los controles van siempre a la derecha y no se encogen, como
+   *  el botón de menú que PanelAnalisis añade en el espacio de dengue. */
+  controlesAnchos?: boolean;
   [key: string]: unknown;
 }
 
@@ -14,6 +19,7 @@ const {
   descripcion,
   idTitulo,
   clase = '',
+  controlesAnchos = false,
   ...resto
 } = Astro.props;
 
@@ -31,7 +37,7 @@ const claseTipo = {
       <slot name="cabecera" />
     ) : (
       (titulo || Astro.slots.has('controles')) && (
-        <header class="panel-cabecera">
+        <header class:list={['panel-cabecera', controlesAnchos && 'flex-wrap']}>
           <div>
             {titulo && (
               <h3 id={idTitulo} class="panel-titulo">
@@ -42,7 +48,10 @@ const claseTipo = {
           </div>
           <div
             data-panel-controles
-            class="relative flex items-center gap-2 shrink-0"
+            class:list={[
+              'relative flex items-center gap-2 shrink-0',
+              controlesAnchos && 'max-w-full',
+            ]}
           >
             <slot name="controles" />
           </div>

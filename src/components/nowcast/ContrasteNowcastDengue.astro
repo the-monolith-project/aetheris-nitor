@@ -2,10 +2,13 @@
 // Contraste de la predicción de dengue con lo observado (ADR 0020).
 //
 // Permite mover el punto de partida de la predicción a cualquier semana de la
-// serie nacional de OpenDengue y ver, junto al abanico de 1 a 8 semanas, lo que
-// se observó después. Cada abanico se calculó solo con los datos anteriores a
-// su semana de partida (GET /api/nowcast-dengue/retrospectivo); la última
-// semana usa la estimación publicada (GET /api/nowcast-dengue).
+// serie nacional (OpenDengue hasta 2024, tablero de MINSAL desde 2025) y ver,
+// junto al abanico de 1 a 8 semanas, lo que se observó después. Cada abanico se
+// calculó solo con los datos anteriores a su semana de partida
+// (GET /api/nowcast-dengue/retrospectivo); la última semana usa la estimación
+// publicada (GET /api/nowcast-dengue). Desde `retro.tablero.inicio` el método
+// es la mezcla con la tendencia amortiguada y la referencia es la persistencia
+// con márgenes aprendidos de la historia promediada.
 //
 // La semana se elige con el año, el deslizador, los botones de semana anterior
 // y siguiente o arrastrando sobre la gráfica. La tabla es la alternativa textual
@@ -107,6 +110,7 @@
   import type {
     NowcastDengue,
     NowcastDengueRetrospectivo,
+    OrigenRetro,
     ValoresHorizonteRetro,
   } from '../../lib/tipos-analisis';
   import {
@@ -132,6 +136,7 @@
 
   const NOMBRE_REFERENCIA: Record<string, string> = {
     persistencia_rw: 'repetir el último valor',
+    persistencia_suavizada: 'repetir el último valor',
     persistencia_estacional:
       'repetir el último valor ajustado a la época del año',
     climatologia_estacional: 'la misma semana de años anteriores',
@@ -144,6 +149,8 @@
     b50: [number, number];
     b95: [number, number];
     observado: number | null;
+    /** la semana está en la serie pero la fuente no la publicó */
+    sinPublicar: boolean;
     wisModelo: number | null;
     wisReferencia: number | null;
   }
@@ -153,16 +160,17 @@
     fecha: string;
     anio: number;
     semana: number;
-    casos: number;
+    casos: number | null;
     /** null: sin predicción desde esta semana. */
     horizontes: (Horizonte | null)[] | null;
+    motivo?: OrigenRetro['motivo'];
     esAncla: boolean;
   }
 
   interface Modelo {
     origenes: Origen[];
     porAnio: Map<number, Origen[]>;
-    observado: { fecha: string; casos: number }[];
+    observado: { fecha: string; casos: number | null }[];
     retro: NowcastDengueRetrospectivo;
   }
 
@@ -187,6 +195,7 @@
       anio: o.anio,
       semana: o.semana,
       casos: observado[idx].casos,
+      motivo: o.motivo,
       esAncla: false,
       horizontes: o.h
         ? o.h.map((v: ValoresHorizonteRetro | null, k) => {
@@ -199,6 +208,7 @@
               b50: [v[1], v[2]],
               b95: [v[3], v[4]],
               observado: obs ? obs.casos : null,
+              sinPublicar: obs !== undefined && obs.casos === null,
               wisModelo: v[5],
               wisReferencia: v[6],
             };
@@ -223,6 +233,7 @@
           b50: e.banda_50,
           b95: e.banda_95,
           observado: null,
+          sinPublicar: false,
           wisModelo: null,
           wisReferencia: null,
         })),
@@ -262,7 +273,7 @@
     const tEje = (iso: string) => (fecha(iso).getTime() - t0) / SEMANA_MS;
 
     // escala fija para todo el año elegido: no salta al arrastrar
-    let maxV = Math.max(...obs.map((p) => p.casos));
+    let maxV = Math.max(...obs.map((p) => p.casos ?? 0));
     let tMax = tEje(obs[obs.length - 1].fecha);
     for (const o of delAnio) {
       for (const hz of o.horizontes ?? []) {
@@ -314,17 +325,18 @@
       svg.appendChild(txt);
     }
 
-    // abanico desde la semana de partida
+    // abanico desde la semana de partida (con predicción, la semana tiene dato)
     const fan = (origen.horizontes ?? []).filter(
       (h): h is Horizonte => h !== null,
     );
+    const casosOrigen = origen.casos ?? 0;
     if (fan.length) {
       const desdeAncla = [
         {
           t: tEje(origen.fecha),
-          med: origen.casos,
-          b50: [origen.casos, origen.casos],
-          b95: [origen.casos, origen.casos],
+          med: casosOrigen,
+          b50: [casosOrigen, casosOrigen],
+          b95: [casosOrigen, casosOrigen],
         },
         ...fan.map((h) => ({
           t: tEje(h.fecha),
@@ -403,16 +415,18 @@
         'stroke-dasharray': '2 2',
       }),
     );
-    svg.appendChild(
-      el('circle', {
-        cx: xO,
-        cy: e.y(origen.casos),
-        r: 3.2,
-        fill: 'var(--color-accent)',
-        stroke: 'var(--color-surface)',
-        'stroke-width': 1.5,
-      }),
-    );
+    if (origen.casos !== null) {
+      svg.appendChild(
+        el('circle', {
+          cx: xO,
+          cy: e.y(origen.casos),
+          r: 3.2,
+          fill: 'var(--color-accent)',
+          stroke: 'var(--color-surface)',
+          'stroke-width': 1.5,
+        }),
+      );
+    }
     // asa: indica que la línea se puede arrastrar
     svg.appendChild(
       el('rect', {
@@ -459,13 +473,26 @@
   // --- texto y tabla -----------------------------------------------------------
 
   function dentro(h: Horizonte): string {
-    if (h.observado === null) return 'sin dato todavía';
+    if (h.observado === null)
+      return h.sinPublicar ? 'semana sin publicar' : 'sin dato todavía';
     if (h.observado >= h.b50[0] && h.observado <= h.b50[1]) return 'rango 50 %';
     if (h.observado >= h.b95[0] && h.observado <= h.b95[1]) return 'rango 95 %';
     return 'fuera';
   }
 
-  function nombreReferencia(retro: NowcastDengueRetrospectivo): string {
+  function enTablero(retro: NowcastDengueRetrospectivo, iso: string): boolean {
+    return Boolean(retro.tablero && iso >= retro.tablero.inicio.fecha);
+  }
+
+  function nombreReferencia(
+    retro: NowcastDengueRetrospectivo,
+    origen: Origen,
+  ): string {
+    if (retro.tablero && enTablero(retro, origen.fecha)) {
+      return (
+        NOMBRE_REFERENCIA[retro.tablero.referencia] ?? retro.tablero.referencia
+      );
+    }
     const nombres = new Set(
       Object.values(retro.referencia_por_horizonte ?? {}),
     );
@@ -480,8 +507,16 @@
     const p = document.createElement('p');
     p.className = 'font-sans text-sm leading-relaxed text-ink';
     p.setAttribute('aria-live', 'polite');
-    const cabeza = `Semana ${origen.semana} de ${origen.anio} (${fmtFecha.format(fecha(origen.fecha))}, ${fmtNum.format(origen.casos)} casos).`;
+    const casos =
+      origen.casos === null
+        ? 'sin dato publicado'
+        : `${fmtNum.format(origen.casos)} casos`;
+    const cabeza = `Semana ${origen.semana} de ${origen.anio} (${fmtFecha.format(fecha(origen.fecha))}, ${casos}).`;
 
+    if (!origen.horizontes && origen.motivo === 'hueco_en_serie') {
+      p.textContent = `${cabeza} Sin predicción desde esta semana: el modelo usa las ocho semanas anteriores y a esa ventana le falta una semana que la fuente no publicó.`;
+      return p;
+    }
     if (!origen.horizontes) {
       const primera = modelo.retro.primera_semana_con_prediccion;
       p.textContent =
@@ -510,7 +545,7 @@
         pares.reduce((s, h) => s + (h.wisModelo ?? 0), 0) / pares.length;
       const wr =
         pares.reduce((s, h) => s + (h.wisReferencia ?? 0), 0) / pares.length;
-      error = ` Error medio del modelo: ${fmtNum.format(wm)}, frente a ${fmtNum.format(wr)} de ${nombreReferencia(modelo.retro)}.`;
+      error = ` Error medio del modelo: ${fmtNum.format(wm)}, frente a ${fmtNum.format(wr)} de ${nombreReferencia(modelo.retro, origen)}.`;
     }
     p.textContent =
       `${cabeza} De ${conDato.length} semanas observadas después, ` +
@@ -572,8 +607,17 @@
     p.className = 'mt-3 font-sans text-xs leading-relaxed text-ink-muted';
     const partes: string[] = [];
 
+    const tablero = retro.tablero?.anios.includes(anio)
+      ? retro.tablero
+      : undefined;
     if (anio === retro.anio_excluido && retro.aviso_anio_excluido) {
       partes.push(retro.aviso_anio_excluido);
+    } else if (tablero) {
+      const { inicio } = tablero.prueba;
+      partes.push(
+        `Desde ${tablero.inicio.anio} la serie es la del tablero de MINSAL y la predicción combina el modelo con una tendencia amortiguada. ` +
+          `${tablero.anios.join(' y ')} sirvieron para elegir ese método; la prueba con semanas nuevas empieza en la semana ${inicio.semana} de ${inicio.anio}.`,
+      );
     } else if (retro.anios_prueba?.includes(anio)) {
       partes.push(
         `${anio} es una de las temporadas de la validación publicada.`,
@@ -581,11 +625,14 @@
     }
 
     const r4 = retro.resumen_por_anio?.[String(anio)]?.['4'];
+    const referencia = tablero
+      ? tablero.referencia
+      : (retro.referencia_por_horizonte?.['4'] ?? '');
     if (r4 && r4.skill !== null) {
       const pct = Math.round(Math.abs(r4.skill) * 100);
       const comparacion = r4.skill >= 0 ? `${pct} % menos` : `${pct} % más`;
       partes.push(
-        `A 4 semanas, en ${anio} el modelo tuvo ${comparacion} error que ${NOMBRE_REFERENCIA[retro.referencia_por_horizonte?.['4'] ?? ''] ?? 'la referencia'}; ` +
+        `A 4 semanas, en ${anio} el modelo tuvo ${comparacion} error que ${NOMBRE_REFERENCIA[referencia] ?? 'la referencia'}; ` +
           `lo observado quedó dentro del rango del 50 % en el ${Math.round(r4.cobertura_50 * 100)} % de las semanas y dentro del 95 % en el ${Math.round(r4.cobertura_95 * 100)} %.`,
       );
     }

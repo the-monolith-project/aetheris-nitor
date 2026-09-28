@@ -86,15 +86,27 @@ export function bandaPath(
   return `M${arriba.join(' L')} L${abajo.join(' L')} Z`;
 }
 
+// Una semana sin dato (v null, como la 53 de 2025 en el tablero) corta la
+// línea en lugar de unirla con las vecinas.
 export function linea(
   e: Escalas,
-  puntos: { t: number; v: number }[],
+  puntos: { t: number; v: number | null }[],
   color: string,
   ancho: number,
   guiones?: string,
 ): SVGElement {
-  const pl = el('polyline', {
-    points: puntos.map((p) => `${e.x(p.t)},${e.y(p.v)}`).join(' '),
+  let d = '';
+  let enTramo = false;
+  for (const p of puntos) {
+    if (p.v === null || !Number.isFinite(p.v)) {
+      enTramo = false;
+      continue;
+    }
+    d += `${enTramo ? 'L' : 'M'}${e.x(p.t)},${e.y(p.v)} `;
+    enTramo = true;
+  }
+  const pl = el('path', {
+    d: d.trim(),
     fill: 'none',
     stroke: color,
     'stroke-width': ancho,

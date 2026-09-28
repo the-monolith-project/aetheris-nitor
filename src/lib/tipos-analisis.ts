@@ -188,13 +188,17 @@ export interface IntegridadVigilancia {
 }
 
 // --- Estimación de horizonte corto de dengue (GET /api/nowcast-dengue) --------
-// Artefacto precomputado por backend/ingestion/nowcast_estimacion_dengue.py.
+// Artefacto precomputado por backend/ingestion/nowcast_tablero_dengue.py sobre
+// la base de nowcast_estimacion_dengue.py. Desde 2025 la serie es la del
+// tablero de MINSAL y el método es la mezcla del experimento
+// docs/experimentos/experimento-nowcast-tendencia.md del monorepo.
 // No es clasificación de riesgo ni aviso epidemiológico; ver
 // docs/biblioteca/05-sensibilidad-y-honestidad.md.
 
 export interface PuntoObservadoNowcast {
   fecha: string;
-  casos: number;
+  /** null: semana que la fuente no publicó (la 53 de 2025 en el tablero). */
+  casos: number | null;
 }
 
 export interface EstimacionHorizonte {
@@ -229,6 +233,16 @@ export interface DesempenoNowcast {
   n_anios: number;
   cobertura_50: number;
   cobertura_95: number;
+  /** true: los años del desempeño se usaron para elegir el método. */
+  dentro_de_muestra?: boolean;
+}
+
+/** Prueba del método con semanas publicadas después de elegirlo. */
+export interface PruebaNowcast {
+  inicio: { fecha: string; anio: number; semana: number };
+  semanas: number;
+  horizontes_decisivos: number[];
+  referencia: string;
 }
 
 export interface NowcastDengue {
@@ -249,13 +263,15 @@ export interface NowcastDengue {
     puntos: PuntoBacktestNowcast[];
   };
   desempeno?: DesempenoNowcast;
+  prueba?: PruebaNowcast;
   nota_alcance?: string;
 }
 
 // --- Predicción retrospectiva (GET /api/nowcast-dengue/retrospectivo) --------
 // Abanico h = 1..8 que el modelo habría dado desde cada semana de la serie con
 // los datos disponibles hasta esa semana. Precomputado por
-// backend/ingestion/nowcast_retrospectivo_dengue.py con el método de ADR 0020.
+// backend/ingestion/nowcast_retrospectivo_dengue.py con el método de ADR 0020
+// hasta 2024 y por nowcast_tablero_dengue.py con la mezcla desde 2025.
 // Formato compacto: los valores de cada horizonte van por posición, en el
 // orden de `campos_horizonte`.
 
@@ -276,7 +292,8 @@ export interface OrigenRetro {
   semana: number;
   /** Ausente cuando `motivo` explica por qué no hay predicción. */
   h?: (ValoresHorizonteRetro | null)[];
-  motivo?: 'historia_insuficiente';
+  /** hueco_en_serie: a las 8 semanas previas les falta una sin publicar. */
+  motivo?: 'historia_insuficiente' | 'hueco_en_serie';
 }
 
 export interface ResumenAnioHorizonteRetro {
@@ -305,8 +322,16 @@ export interface NowcastDengueRetrospectivo {
   };
   campos_horizonte?: string[];
   /** [fecha, casos] de toda la serie, hasta la semana de anclaje. */
-  observado?: [string, number][];
+  observado?: [string, number | null][];
   origenes?: OrigenRetro[];
   /** año del objetivo -> horizonte -> resumen */
   resumen_por_anio?: Record<string, Record<string, ResumenAnioHorizonteRetro>>;
+  /** Tramo del tablero de MINSAL: desde `inicio` el método es la mezcla. */
+  tablero?: {
+    inicio: { fecha: string; anio: number; semana: number };
+    metodo: string;
+    referencia: string;
+    anios: number[];
+    prueba: PruebaNowcast;
+  };
 }

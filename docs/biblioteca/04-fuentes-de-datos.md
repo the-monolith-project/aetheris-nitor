@@ -31,6 +31,18 @@ Los mismos PDF publican IRA, neumonías (conteo notificado por departamento) y l
 
 Licencia y uso: publicación oficial del Ministerio de Salud de El Salvador. El proyecto usa las cifras agregadas y no republica los PDF, que tampoco se guardan en el repositorio.
 
+## Tablero de vigilancia de MINSAL
+
+Después de 2023 MINSAL publica sus cifras en un tablero web en `boletin.salud.gob.sv` en lugar de los boletines en PDF. Las cifras se toman de capturas del tablero guardadas desde el navegador. No hay descarga programada, así que actualizar la serie exige una captura nueva.
+
+Hay series nacionales de 2025 y de 2026 hasta la última semana capturada: casos sospechosos y confirmados de dengue y casos notificados de IRA y neumonías. No hay datos por departamento ni de 2024. En el sitio, estas series se usan en la predicción de casos de dengue.
+
+Los sospechosos se guardan con `clasificacion = 'sospechoso'`, el nombre que usa la fuente. Es la misma definición que el total de OpenDengue y tiene la misma escala: 5.833 casos en 2025, al nivel de OpenDengue en 2021 y 2023.
+
+La serie tiene la forma de un promedio de las seis o siete semanas anteriores: cambia despacio y una subida tarda varias semanas en verse completa. OpenDengue 2024 tiene la misma forma. La semana 53 de 2025 no aparece en el tablero y queda sin dato, y al empezar 2026 los sospechosos pasan de 39 a 214 en una semana.
+
+Licencia y uso: publicación oficial del Ministerio de Salud de El Salvador, con las mismas condiciones que los boletines.
+
 ## OpenDengue
 
 Extracto `Spatial_extract_V1_3.csv` de `opendengue.org` (unos 2,8 millones de filas), versión 1.3, distribuido en Figshare con DOI y licencia. Para El Salvador, la serie nacional es semanal desde 2013–2014; la departamental es mensual y solo cubre 2000 a 2009, por lo que no se usa.

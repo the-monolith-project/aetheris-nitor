@@ -15,14 +15,25 @@ Un color del mapa no indica un brote y un percentil alto no anticipa un ascenso.
 
 ## Predicción de casos a corto plazo
 
-La página de dengue incluye una predicción estadística del número de casos en el país para las 1 a 8 semanas siguientes a la última semana con datos, con un intervalo de incertidumbre.
+La página de dengue incluye una predicción estadística del número de casos en el país para las 1 a 8 semanas siguientes a la última semana publicada, con un intervalo de incertidumbre. Da un número y un rango, y el gráfico muestra siempre la fecha de partida.
 
-- Se calcula sobre la serie nacional de OpenDengue. Da un número y un rango.
-- Parte de la última semana publicada, que va varios meses por detrás de la fecha actual. El gráfico muestra siempre esa fecha de partida.
+En la misma pestaña se puede elegir otra semana de partida y comparar la predicción con lo que se observó después. Cada predicción usa solo los datos anteriores a su semana de partida. De 2014 a marzo de 2017 no hay predicción, porque el modelo necesita unos tres años de datos para entrenarse. 2020 se muestra con un aviso: no se usó para entrenar ni para validar el modelo.
+
+### Hasta 2024: serie de OpenDengue
+
+- Se calcula con la serie nacional de OpenDengue, que termina en diciembre de 2024.
 - Se validó con las temporadas de 2019 y de 2021 a 2024, usando en cada prueba solo los datos anteriores al punto de corte. En las cinco temporadas tuvo menos error que repetir el último valor observado. El método, las métricas y una segunda validación hecha desde cero están en la [decisión de arquitectura 0020](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/adr/0020-nowcast-corto-plazo.md).
-- En la misma pestaña se puede elegir otra semana de partida y comparar la predicción con lo que se observó después. Cada predicción usa solo los datos anteriores a su semana de partida. De 2014 a marzo de 2017 no hay predicción, porque el modelo necesita unos tres años de datos para entrenarse. 2020 se muestra con un aviso: no se usó para entrenar ni para validar el modelo.
 - Su ventaja depende de que los datos de entrenamiento, que empiezan en 2014, ya incluyan un brote grande. Entrenado solo con datos desde 2016, en 2019 tuvo más error que repetir el último valor. Ante un brote sin precedente en la serie, la predicción puede quedarse corta.
 - El pico de 2014 y 2015 coincidió con una alerta nacional por arbovirosis y con la búsqueda activa de casos de síndrome febril, que pudieron aumentar el número de casos notificados. El modelo aprende de ese pico.
+
+### Desde 2025: serie del tablero de MINSAL
+
+- Desde la primera semana de 2025 la serie es la de casos sospechosos del tablero de vigilancia de MINSAL, con la misma definición de caso que OpenDengue. El tablero publica cada semana como un promedio de varias, así que la serie cambia despacio.
+- Con esa serie, el modelo validado con OpenDengue tuvo en 2025 y 2026 más error que repetir el último valor a 1 a 5 semanas. Por eso la predicción lo combina con una tendencia amortiguada, que prolonga la pendiente de las tres últimas semanas y la va frenando.
+- En 2025 y 2026, a cuatro semanas, la combinación tuvo un 14 % menos de error que repetir el último valor. Esos años sirvieron para elegir el método, así que la cifra mide cómo se ajusta a ellos.
+- La prueba usa las 20 semanas que MINSAL publique desde el 20 de septiembre de 2026 (semana 38) y se evalúa una sola vez, hacia febrero de 2027. La combinación se mantiene si, a cuatro y a ocho semanas, tiene menos error que repetir el último valor, no más que el modelo validado con OpenDengue y a lo sumo 3 de las 20 semanas fuera del rango del 95 %. Si no, se vuelve a ese modelo.
+- En 2026 el valor observado quedó fuera del rango del 95 % en una de cada cinco semanas: sobre todo en las primeras del año, cuando la serie del tablero da un salto, y en mayo, cuando la predicción esperaba una subida mayor que la observada. La prueba incluye el cambio de año de 2027.
+- La semana 53 de 2025 no está publicada. No hay predicción con semana de partida entre esa y la 7 de 2026, porque el modelo usa las ocho semanas anteriores.
 
 ## Recomendaciones y campos clínicos
 
@@ -55,6 +66,7 @@ Todos los datos vienen de fuentes públicas y citables, descritas en [De dónde 
 - Las 19 correcciones retroactivas negativas de MINSAL se excluyen de la serie.
 - Las celdas vacías de la tabla departamental de dengue se cargan como 0, porque así lo indica la fuente. Los demás huecos (boletín ausente, tabla no publicada) quedan sin dato.
 - La serie de OpenDengue se guarda como total, porque la fuente no separa casos probables y confirmados.
+- La serie del tablero de MINSAL se guarda como casos sospechosos, el nombre que usa la fuente.
 - Las horas de lluvia se rechazan cuando el modelo climático no calcula precipitación, porque llegarían como 0 sin serlo.
 - La copia de la base incluida en el repositorio (4,4 MB) contiene esas mismas tablas.
 
@@ -71,7 +83,7 @@ El canal endémico y M3 comparan cada departamento con sus otros años, sin incl
 - M1 y M2 muestran el valor continuo, sin semáforo.
 - M3 muestra el percentil y la lectura baja, media o alta. Si no hay al menos tres años de referencia, no calcula percentil y lo indica.
 - El mapa indica la semana y el año que se están viendo.
-- La predicción muestra su intervalo y sus métricas de validación junto al gráfico.
+- La predicción muestra su intervalo y sus métricas junto al gráfico, con los años en que se midieron.
 - El clasificador retirado se muestra con sus métricas de evaluación por año.
 
 ## Qué aporta el proyecto

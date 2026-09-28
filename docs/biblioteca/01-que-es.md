@@ -7,7 +7,7 @@ categoria: "El proyecto"
 
 EPI-Aetheris es un sistema de código abierto que se instala con un solo comando de Docker. Ordena por semana epidemiológica los casos de dengue y de eventos respiratorios junto con datos de clima, y los publica en una API y un mapa.
 
-La primera versión cubre El Salvador: 14 departamentos, las series de MINSAL de 2018 a 2023 (sin 2020 en los datos por departamento) y la serie nacional de OpenDengue. Las enfermedades y las regiones son catálogos de la base (`tipos_evento` y `regiones`), así que se pueden añadir otras sin cambiar el esquema.
+La primera versión cubre El Salvador: 14 departamentos, las series de MINSAL de 2018 a 2023 (sin 2020 en los datos por departamento), la serie nacional de OpenDengue y, desde 2025, las series nacionales del tablero de MINSAL. Las enfermedades y las regiones son catálogos de la base (`tipos_evento` y `regiones`), así que se pueden añadir otras sin cambiar el esquema.
 
 ## Qué resuelve
 
@@ -15,8 +15,8 @@ El dengue es endémico en El Salvador y la respuesta institucional suele llegar 
 
 El sistema incluye:
 
-- Carga de los boletines de MINSAL, OpenDengue, Open-Meteo y NOAA ONI, con un registro de cada boletín procesado.
-- Una base que guarda por separado cada definición de caso (`probable`, `confirmado`, `total`, `notificado`).
+- Carga de los boletines y del tablero de MINSAL, OpenDengue, Open-Meteo y NOAA ONI, con un registro de cada boletín procesado.
+- Una base que guarda por separado cada definición de caso (`probable`, `confirmado`, `total`, `notificado`, `sospechoso`).
 - Módulos descriptivos (idoneidad biofísica, anomalía climática, presión epidemiológica relativa) que se calculan al consultarlos.
 - Un mapa por departamento, un observatorio respiratorio y alertas de campo redactadas por el equipo de vigilancia.
 - Una copia de la base dentro del repositorio: `git clone` y `docker compose up` dejan el sistema funcionando con los mismos datos que el sitio público.

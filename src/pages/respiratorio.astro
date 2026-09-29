@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import NavSecciones from '../components/NavSecciones.astro';
+import AyudaTermino from '../components/AyudaTermino.astro';
 import Icono from '../components/Icono.astro';
 import CurvaIRADepartamental from '../components/CurvaIRADepartamental.astro';
 import CurvaRespiratoriaNacional from '../components/CurvaRespiratoriaNacional.astro';
@@ -31,6 +33,8 @@ import PanelVirus from '../components/PanelVirus.astro';
         boletines. Influenza, VSR y SARS-CoV-2 son vigilancia laboratorial
         nacional (muestras, detecciones, positividad). Cada serie conserva su
         unidad.
+        <AyudaTermino clave="conteo-notificado" />
+        <AyudaTermino clave="positividad" />
       </p>
       <p class="mt-4 font-sans text-sm">
         <a
@@ -42,30 +46,26 @@ import PanelVirus from '../components/PanelVirus.astro';
       </p>
     </header>
 
-    <nav
-      class="mb-6 flex flex-wrap gap-2 font-sans text-sm"
-      aria-label="Serie respiratoria"
-    >
-      <a
-        href="#cobertura"
-        class="rounded-full border border-border bg-surface px-3 py-1.5"
-        >Cobertura</a
+    <div class="mb-4 flex flex-wrap items-center gap-3 font-sans text-xs">
+      <button
+        type="button"
+        data-copiar-enlace
+        class="flex min-h-[44px] items-center rounded-lg border border-border bg-bg px-3 py-2 font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
-      <a
-        href="#ira"
-        class="rounded-full border border-border bg-surface px-3 py-1.5">IRA</a
-      >
-      <a
-        href="#neumonias"
-        class="rounded-full border border-border bg-surface px-3 py-1.5"
-        >Neumonías</a
-      >
-      <a
-        href="#virus"
-        class="rounded-full border border-border bg-surface px-3 py-1.5"
-        >Virus (nacional)</a
-      >
-    </nav>
+        Copiar enlace a esta vista
+      </button>
+      <p data-copiar-estado role="status" class="min-h-4 text-ink-muted"></p>
+    </div>
+
+    <NavSecciones
+      etiqueta="Serie respiratoria"
+      enlaces={[
+        { href: '#cobertura', etiqueta: 'Cobertura' },
+        { href: '#ira', etiqueta: 'IRA' },
+        { href: '#neumonias', etiqueta: 'Neumonías' },
+        { href: '#virus', etiqueta: 'Virus (nacional)' },
+      ]}
+    />
 
     <section id="cobertura" class="mb-10">
       <PanelCobertura />
@@ -111,3 +111,20 @@ import PanelVirus from '../components/PanelVirus.astro';
     </section>
   </main>
 </Layout>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>(
+    '[data-copiar-enlace]',
+  );
+  const estado = document.querySelector<HTMLElement>('[data-copiar-estado]');
+  boton?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      if (estado) estado.textContent = 'Enlace a esta vista copiado.';
+    } catch {
+      if (estado)
+        estado.textContent =
+          'No se pudo copiar el enlace. Cópialo desde la barra de direcciones.';
+    }
+  });
+</script>

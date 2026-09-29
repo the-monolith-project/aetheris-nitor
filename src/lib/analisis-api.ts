@@ -2,6 +2,7 @@ import {
   esNoDisponible,
   type RespuestaNoDisponible,
 } from '../components/estado-async';
+import type { AlertaPublica } from './vista-alertas';
 import type {
   AnioAnalisisDengue,
   CasoNacionalSemanal,
@@ -27,6 +28,7 @@ let cacheCasosNacionales: Promise<CasoNacionalSemanal[]> | null = null;
 let cacheIraDepartamental: Promise<RespuestaIraDepartamental> | null = null;
 let cacheIntegridad: Promise<IntegridadVigilancia> | null = null;
 let cacheNowcastDengue: Promise<NowcastDengue> | null = null;
+let cacheAlertasDengue: Promise<AlertaPublica[]> | null = null;
 let cacheNowcastRetro: Promise<NowcastDengueRetrospectivo> | null = null;
 const cacheProcedencia = new Map<string, Promise<ProcedenciaAnalitica>>();
 const cacheSerieIdoneidad = new Map<string, Promise<SerieTemporalIdoneidad>>();
@@ -430,4 +432,34 @@ export function obtenerNowcastRetrospectivo(): Promise<NowcastDengueRetrospectiv
     );
   }
   return cacheNowcastRetro;
+}
+
+/**
+ * Alertas de dengue activas (sin etiquetadas), nacionales y regionales. El
+ * mapa las usa para marcar los departamentos con alerta vigente (ADR 0022).
+ */
+export function obtenerAlertasDengue(): Promise<AlertaPublica[]> {
+  if (!cacheAlertasDengue) {
+    cacheAlertasDengue = registrarPeticion(
+      fetch(`${API_BASE}/api/alertas?tipo=dengue`)
+        .then(async (respuesta) => {
+          if (!respuesta.ok) {
+            throw new Error(
+              `No se pudieron cargar las alertas de dengue (${respuesta.status}).`,
+            );
+          }
+          const datos: unknown = await respuesta.json();
+          const alertas = (datos as { alertas?: unknown }).alertas;
+          if (!Array.isArray(alertas)) {
+            throw new Error('Las alertas de dengue llegaron con otro formato.');
+          }
+          return alertas as AlertaPublica[];
+        })
+        .catch((error) => {
+          cacheAlertasDengue = null;
+          throw error;
+        }),
+    );
+  }
+  return cacheAlertasDengue;
 }

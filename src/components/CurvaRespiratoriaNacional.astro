@@ -5,6 +5,7 @@
 // con la suma de estas: muchas semanas de los boletines no traen los 14
 // departamentos y en neumonías las escalas no cuadran.
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
+import BotonExportarGrafico from './BotonExportarGrafico.astro';
 import CargadorCurva from './CargadorCurva.astro';
 import { RUTA_FUENTE_TABLERO } from '../lib/enlaces';
 import type { EventoRespiratorio } from '../lib/tipos-analisis';
@@ -34,6 +35,12 @@ const etiquetaMinuscula = evento === 'neumonias' ? 'neumonías' : 'IRA';
   >
     Exportar CSV
   </button>
+
+  <BotonExportarGrafico
+    class="mb-3"
+    titulo={`${etiqueta} en todo el país`}
+    fuente="Tablero de vigilancia de MINSAL"
+  />
 
   <p
     data-nac-resumen

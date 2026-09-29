@@ -53,6 +53,10 @@ Endpoints: `GET /api/v1/presion/current` y `GET /api/v1/presion/temporal/{codigo
 
 M3 no usa el clima ni emite alertas. Un percentil alto compara lo ya ocurrido con los otros años del mismo departamento.
 
+### Canal endémico
+
+El panel «Canal endémico» dibuja los mismos cortes de M3 como tres bandas: casos hasta el P50 (`baja`), entre el P50 y el P75 (`media`) y por encima del P75 (`alta`), con los casos observados encima. Usa la línea base de M3, que deja fuera el año descrito, así que la banda cambia de un año a otro. Las semanas sin línea base suficiente quedan en blanco.
+
 ## M4. Integridad de la vigilancia
 
 Da tres datos sobre la calidad de la información, por separado:

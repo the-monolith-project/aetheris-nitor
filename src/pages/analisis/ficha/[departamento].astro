@@ -702,6 +702,7 @@ const { codigo, nombre } = departamento;
     escapeHtml,
     renderTextoAccionable,
   } from '../../../lib/vista-alertas';
+  import { alertaAplicaA, textoAlcance } from '../../../lib/alcance-alertas';
 
   // Rellena un slot de aviso con el texto `aviso` que ya trae la respuesta del
   // endpoint (los AVISO_HONESTIDAD_* canonicos del backend). La constante local
@@ -1357,8 +1358,13 @@ const { codigo, nombre } = departamento;
         AVISO_DEFECTO_PREVENCION,
       );
 
-      // Filtrar alertas activas
-      const activas = (payload.alertas || []).filter((a) => a.activa);
+      // Solo las activas que aplican a este departamento: las nacionales y las
+      // regionales que lo nombran (ADR 0022).
+      const activas = (payload.alertas || []).filter(
+        (a) =>
+          a.activa &&
+          alertaAplicaA(a as { departamentos?: string[] | null }, codigo),
+      );
       if (activas.length > 0 && prevLista) {
         prevLista.innerHTML = '';
         activas.forEach((alerta) => {
@@ -1403,7 +1409,7 @@ const { codigo, nombre } = departamento;
             <div class="text-ink-muted print:text-black text-xs leading-relaxed space-y-1">${renderTextoAccionable(alerta.indicaciones || alerta.contexto || '')}</div>
             ${bloquesClinicos}
             <div class="border-t border-border/60 pt-1.5 text-[10px] text-ink-muted print:text-black">
-              <strong>Fuente citada:</strong> ${escapeHtml(alerta.fuente)} · Emitida: ${escapeHtml(alerta.vigente_desde)}
+              <strong>Fuente citada:</strong> ${escapeHtml(alerta.fuente)} · Emitida: ${escapeHtml(alerta.vigente_desde)} · Alcance: ${escapeHtml(textoAlcance(alerta as { departamentos?: string[] | null }))}
             </div>
           `;
           prevLista.appendChild(caja);

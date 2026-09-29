@@ -170,6 +170,8 @@ test('mueve la semana de partida de la predicción y la contrasta con lo observa
   const anio = seccion.getByLabel('Año');
   const semana = seccion.getByRole('slider');
   const resumen = seccion.locator('[aria-live="polite"]');
+  // El componente carga al entrar en el viewport.
+  await seccion.scrollIntoViewIfNeeded();
   await expect(anio).toBeEnabled({ timeout: 15_000 });
 
   // arranca en la última semana publicada, sin observado posterior

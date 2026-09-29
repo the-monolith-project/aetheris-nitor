@@ -361,7 +361,9 @@ test('integra el popover con el toolbar y permite cerrarlo', async ({
   expect(cajaDialogo!.x + cajaDialogo!.width).toBeLessThanOrEqual(1440);
   expect(cajaDialogo!.y).toBeGreaterThan(cajaToolbar!.y + cajaToolbar!.height);
 
-  await page.evaluate(() => window.scrollBy(0, 420));
+  // La franja de la última semana empuja el workspace: hay que bajar más para
+  // que el toolbar quede pegado.
+  await page.evaluate(() => window.scrollBy(0, 800));
   const [cajaDialogoSticky, cajaToolbarSticky] = await Promise.all([
     dialogo.boundingBox(),
     toolbar.boundingBox(),

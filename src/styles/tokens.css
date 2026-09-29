@@ -17,6 +17,10 @@
   --color-accent: #183e39;
   --color-accent-ink: #ffffff;
 
+  /* Cabecera del sitio: el acento oscuro de siempre, fijo en ambos temas
+     porque lleva texto y logotipo claros. */
+  --color-header: #183e39;
+
   /* "secundario" -- lavanda clara, para chips/estados suaves. */
   --color-secondary: #dddbff;
   --color-secondary-ink: #183e39;
@@ -70,4 +74,45 @@
      restricción: solo en H1 de página y los 2 H2 de sección de la landing,
      nunca en subtítulos de tarjeta ni en UI funcional. */
   --font-display: var(--font-fraunces), Georgia, serif;
+}
+
+/* Tema oscuro: sigue al sistema salvo que la persona haya elegido uno
+   (data-theme en <html>, guardado en localStorage por el selector del
+   encabezado). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-bg: #0e1412;
+    --color-surface: #161d1b;
+    --color-ink: #eceff1;
+    --color-ink-muted: #a5b3ae;
+    --color-border: #2a3531;
+    --color-accent: #8fd6c9;
+    --color-accent-ink: #04120f;
+    --color-header: #0b2a26;
+    --color-live-ink: #2b0d08;
+    --focus-ring: #dddbff;
+    --shadow-card:
+      0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 32px -20px rgba(0, 0, 0, 0.7);
+    --shadow-card-hover:
+      0 1px 2px rgba(0, 0, 0, 0.35), 0 20px 40px -18px rgba(0, 0, 0, 0.8);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-bg: #0e1412;
+  --color-surface: #161d1b;
+  --color-ink: #eceff1;
+  --color-ink-muted: #a5b3ae;
+  --color-border: #2a3531;
+  --color-accent: #8fd6c9;
+  --color-accent-ink: #04120f;
+  --color-header: #0b2a26;
+  --color-live-ink: #2b0d08;
+  --focus-ring: #dddbff;
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 32px -20px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover:
+    0 1px 2px rgba(0, 0, 0, 0.35), 0 20px 40px -18px rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
 }

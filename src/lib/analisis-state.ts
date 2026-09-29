@@ -1,6 +1,18 @@
-import { aniosClimaPresentacion, type FiltrosAnalisis } from './tipos-analisis';
+import {
+  aniosClimaPresentacion,
+  type CapaAnalitica,
+  type FiltrosAnalisis,
+} from './tipos-analisis';
 
 export const EVENTO_FILTROS_ANALISIS = 'epi:filters-changed';
+
+export const CAPAS_VALIDAS: readonly CapaAnalitica[] = [
+  'minsal_volumen',
+  'iv',
+  'anomalia',
+  'presion',
+  'confianza',
+] as const;
 
 export const FILTROS_ANALISIS_PREDETERMINADOS: FiltrosAnalisis = {
   anio: 2023,
@@ -11,6 +23,7 @@ export const FILTROS_ANALISIS_PREDETERMINADOS: FiltrosAnalisis = {
   departamento: null,
   comparar: [],
   modoMinsal: 'semana',
+  capa: 'minsal_volumen',
 };
 
 function limitarSemana(valor: number): number {
@@ -51,6 +64,9 @@ function normalizarEstado(
   )
     ? candidato.modoMinsal
     : 'semana';
+  candidato.capa = CAPAS_VALIDAS.includes(candidato.capa as CapaAnalitica)
+    ? (candidato.capa as CapaAnalitica)
+    : 'minsal_volumen';
   return candidato;
 }
 
@@ -66,6 +82,7 @@ function leerEstadoDesdeUrl(): Partial<FiltrosAnalisis> {
   const departamento = parametros.get('dept');
   const comparar = parametros.get('compare');
   const modoMinsal = parametros.get('minsal');
+  const capa = parametros.get('capa');
   if (anio !== null) cambios.anio = Number(anio);
   if (semana !== null) cambios.semana = Number(semana);
   if (semanaDesde !== null) cambios.semanaDesde = Number(semanaDesde);
@@ -80,6 +97,9 @@ function leerEstadoDesdeUrl(): Partial<FiltrosAnalisis> {
   ) {
     cambios.modoMinsal = modoMinsal;
   }
+  if (capa && CAPAS_VALIDAS.includes(capa as CapaAnalitica)) {
+    cambios.capa = capa as CapaAnalitica;
+  }
   return cambios;
 }
 
@@ -92,6 +112,11 @@ function sincronizarUrl(filtros: FiltrosAnalisis): void {
   url.searchParams.set('toWeek', String(filtros.semanaHasta));
   url.searchParams.set('serie', filtros.serie);
   url.searchParams.set('minsal', filtros.modoMinsal);
+  if (filtros.capa && filtros.capa !== 'minsal_volumen') {
+    url.searchParams.set('capa', filtros.capa);
+  } else {
+    url.searchParams.delete('capa');
+  }
   if (filtros.departamento) {
     url.searchParams.set('dept', filtros.departamento);
   } else {
@@ -120,6 +145,7 @@ function estadosIguales(a: FiltrosAnalisis, b: FiltrosAnalisis): boolean {
     a.serie === b.serie &&
     a.departamento === b.departamento &&
     a.modoMinsal === b.modoMinsal &&
+    a.capa === b.capa &&
     a.comparar.length === b.comparar.length &&
     a.comparar.every((codigo, indice) => codigo === b.comparar[indice])
   );

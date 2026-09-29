@@ -237,6 +237,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     ANIOS_ANALISIS_DENGUE,
     esAnioAnalisisDengue,
     type AnioAnalisisDengue,
+    type CapaAnalitica,
+    type SerieEpidemiologica,
   } from '../lib/tipos-analisis';
   import { renderErrorFuente } from './estado-async';
   import { escapeHtml } from '../utils/security';
@@ -1254,12 +1256,13 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           ) {
             const serie =
               capa.id === 'presion_probable' ? 'probable' : 'confirmado';
-            if (obtenerFiltrosAnalisis().serie !== serie) {
-              capaActivaId = capa.id;
-              actualizarFiltrosAnalisis({ serie });
-              return;
-            }
+            capaActivaId = capa.id;
+            actualizarFiltrosAnalisis({ capa: 'presion', serie });
+            void activarCapa(capa.id);
+            return;
           }
+          capaActivaId = capa.id;
+          actualizarFiltrosAnalisis({ capa: capa.id as CapaAnalitica });
           void activarCapa(capa.id);
         });
       }
@@ -1462,8 +1465,28 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       resaltarDepartamento(obtenerFiltrosAnalisis().departamento);
     }
 
-    pintarSelector(capaMinsal.id);
-    await activarCapa(capaMinsal.id);
+    const resolverIdCapa = (
+      capaNombre?: string | null,
+      serie?: SerieEpidemiologica,
+    ): IdCapa => {
+      if (capaNombre === 'presion') {
+        return serie === 'confirmado'
+          ? 'presion_confirmado'
+          : 'presion_probable';
+      }
+      if (capaNombre && CAPAS.some((k) => k.id === capaNombre)) {
+        return capaNombre as IdCapa;
+      }
+      return capaMinsal.id;
+    };
+
+    const idCapaInicial = resolverIdCapa(
+      filtrosIniciales.capa,
+      filtrosIniciales.serie,
+    );
+    capaActivaId = idCapaInicial;
+    pintarSelector(idCapaInicial);
+    await activarCapa(idCapaInicial);
 
     let filtrosAplicados = obtenerFiltrosAnalisis();
     suscribirFiltrosAnalisis((filtros) => {
@@ -1475,6 +1498,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         filtros.modoMinsal !== filtrosAplicados.modoMinsal;
       const cambioDepartamento =
         filtros.departamento !== filtrosAplicados.departamento;
+      const idCapaObjetivo = resolverIdCapa(filtros.capa, filtros.serie);
+      const cambioCapa = idCapaObjetivo !== capaActivaId;
       filtrosAplicados = filtros;
 
       if (cambioTiempo) {
@@ -1509,10 +1534,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           filtros.serie === 'probable'
             ? 'presion_probable'
             : 'presion_confirmado';
+      } else if (cambioCapa) {
+        capaActivaId = idCapaObjetivo;
       }
 
       void (async () => {
-        if (cambioTiempo || cambioSerie || cambioModoMinsal)
+        if (cambioTiempo || cambioSerie || cambioModoMinsal || cambioCapa)
           await activarCapa(capaActivaId);
         if (cambioDepartamento || (cambioTiempo && filtros.departamento)) {
           resaltarDepartamento(filtros.departamento);

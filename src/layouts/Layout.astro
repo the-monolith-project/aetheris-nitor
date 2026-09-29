@@ -113,11 +113,13 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <script is:inline>
       // Tema elegido antes del primer pintado, para no parpadear en claro.
       try {
-        var tema = localStorage.getItem('epi:tema');
+        const tema = localStorage.getItem('epi:tema');
         if (tema === 'dark' || tema === 'light') {
           document.documentElement.setAttribute('data-theme', tema);
         }
-      } catch (e) {}
+      } catch {
+        // Sin almacenamiento manda el tema del sistema.
+      }
     </script>
 
     <meta property="og:type" content="website" />

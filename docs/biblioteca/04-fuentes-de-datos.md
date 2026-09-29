@@ -9,7 +9,7 @@ Cada conteo y cada variable de clima de EPI-Aetheris viene de una fuente públic
 
 ## Boletines epidemiológicos de MINSAL
 
-PDF semanales publicados en `salud.gob.sv`, con VIGEPES como fuente citada. Cubren los 14 departamentos. Se cargaron 264 archivos de 2018 a 2023. 2020 no se descargó para la serie departamental por el subregistro durante la covid y por lo difícil de extraer sus tablas. Desde 2024 el panel `boletin.salud.gob.sv` bloquea las descargas automáticas (Cloudflare), así que no hay una fuente departamental que se pueda cargar sin intervención manual.
+PDF semanales publicados en `salud.gob.sv`, con VIGEPES como fuente citada. Cubren los 14 departamentos. Se cargaron 264 archivos de 2018 a 2023. 2020 no se descargó para la serie departamental por el subregistro durante la covid y por lo difícil de extraer sus tablas. Desde 2024 el panel `boletin.salud.gob.sv` bloquea las descargas automáticas (Cloudflare), así que no hay una fuente departamental que se pueda cargar sin intervención manual. Revisado a mano, el tablero de MINSAL tampoco publica dengue por departamento: la serie departamental termina en 2023.
 
 No todas las semanas tienen tabla departamental. Los boletines de Semana Santa, fiestas agostinas y fin de año no la publican, ni algunos de semanas normales (por ejemplo, la semana 18 de 2023). En promedio hay unas 49 semanas de 52 por año (48 en 2023). En 2018 y 2019 hay además semanas que MINSAL marca como «no elaboradas».
 

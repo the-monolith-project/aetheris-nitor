@@ -84,6 +84,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       </div>
     </div>
 
+    <p
+      id="mapa-alertas-nacionales"
+      class="hidden font-sans text-xs text-ink-muted"
+    >
+    </p>
+
     <div id="mapa-leyenda"></div>
 
     <details class="rounded-xl border border-border bg-surface p-3">
@@ -105,8 +111,11 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
               >
               <th
                 scope="col"
-                class="border-b border-border py-1"
+                class="border-b border-border py-1 pr-4"
                 id="mapa-tabla-columna-valor">Valor</th
+              >
+              <th scope="col" class="border-b border-border py-1"
+                >Alerta vigente</th
               >
             </tr>
           </thead>
@@ -227,7 +236,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
   // volviendo a bloquear el render): solo da la URL del archivo, y el
   // <link> se crea a mano dentro de iniciar().
   import leafletCssHref from 'leaflet/dist/leaflet.css?url';
-  import { obtenerDatasetAnalitico } from '../lib/analisis-api';
+  import {
+    obtenerAlertasDengue,
+    obtenerDatasetAnalitico,
+  } from '../lib/analisis-api';
+  import { alertaEstaVigente } from '../lib/vista-alertas';
+  import { esAlertaNacional } from '../lib/alcance-alertas';
   import {
     actualizarFiltrosAnalisis,
     obtenerFiltrosAnalisis,
@@ -1184,6 +1198,57 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       Map<string, number | undefined> | null
     >();
 
+    // Departamentos con una alerta de dengue vigente que los nombra (ADR 0022).
+    // Las nacionales no marcan ninguno: se resumen en un aviso sobre la leyenda.
+    let departamentosConAlerta = new Set<string>();
+
+    function pintarAlertasEnTabla() {
+      tablaCuerpo
+        ?.querySelectorAll<HTMLElement>('[data-celda-alerta]')
+        .forEach((celda) => {
+          const codigo = celda.dataset.celdaAlerta ?? '';
+          if (departamentosConAlerta.has(codigo)) {
+            const enlace = document.createElement('a');
+            enlace.href = `/alertas?tipo=dengue&dept=${encodeURIComponent(codigo)}`;
+            enlace.className = 'font-medium text-accent underline';
+            enlace.textContent = 'Sí, ver alertas';
+            celda.replaceChildren(enlace);
+          } else {
+            celda.textContent = 'No';
+          }
+        });
+    }
+
+    async function cargarAlertasVigentes() {
+      const avisoNacional = document.getElementById('mapa-alertas-nacionales');
+      try {
+        const alertas = (await obtenerAlertasDengue()).filter((a) =>
+          alertaEstaVigente(a),
+        );
+        const nuevas = new Set<string>();
+        let nacionales = 0;
+        for (const alerta of alertas) {
+          if (esAlertaNacional(alerta)) nacionales += 1;
+          else
+            for (const codigo of alerta.departamentos ?? []) nuevas.add(codigo);
+        }
+        departamentosConAlerta = nuevas;
+        if (avisoNacional && nacionales > 0) {
+          avisoNacional.classList.remove('hidden');
+          avisoNacional.innerHTML = `Hay ${nacionales} ${nacionales === 1 ? 'alerta nacional vigente' : 'alertas nacionales vigentes'} de dengue. Los departamentos con contorno punteado tienen además una alerta propia. <a href="/alertas?tipo=dengue" class="font-medium text-accent underline">Ver alertas</a>`;
+        } else if (avisoNacional && nuevas.size > 0) {
+          avisoNacional.classList.remove('hidden');
+          avisoNacional.textContent =
+            'Los departamentos con contorno punteado tienen una alerta de dengue vigente.';
+        }
+      } catch {
+        // Sin alertas el mapa sigue igual: la marca es un añadido.
+        departamentosConAlerta = new Set();
+      }
+      pintarAlertasEnTabla();
+      resaltarDepartamento(obtenerFiltrosAnalisis().departamento);
+    }
+
     function resaltarDepartamento(codigoActivo: string | null) {
       capaGeoJsonActiva?.eachLayer((capa) => {
         const ruta = capa as Leaflet.Path & {
@@ -1192,9 +1257,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         };
         const codigo = ruta.feature?.properties?.codigo ?? '';
         const activa = codigoActivo !== null && codigo === codigoActivo;
+        const conAlerta = departamentosConAlerta.has(codigo);
         ruta.setStyle({
-          color: activa ? 'var(--color-seleccion)' : '#8a8a90',
-          weight: activa ? 2 : 1,
+          color: activa || conAlerta ? 'var(--color-seleccion)' : '#8a8a90',
+          weight: activa ? 2 : conAlerta ? 2.5 : 1,
+          // Contorno punteado: la marca de alerta no depende solo del color.
+          dashArray: conAlerta && !activa ? '5 4' : undefined,
         });
         if (activa) ruta.bringToFront?.();
       });
@@ -1311,7 +1379,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           const nombre = feature.properties?.shapeName
             ? normalizarNombreDepto(feature.properties.shapeName)
             : codigo;
-          return { nombre, valor: valores?.get(codigo) };
+          return { codigo, nombre, valor: valores?.get(codigo) };
         })
         .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
       for (const fila of filas) {
@@ -1321,11 +1389,15 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         th.className = 'border-b border-border py-1 pr-4 text-left font-normal';
         th.textContent = fila.nombre;
         const td = document.createElement('td');
-        td.className = 'border-b border-border py-1';
+        td.className = 'border-b border-border py-1 pr-4';
         td.textContent = capa.tooltipValor(fila.valor);
-        tr.append(th, td);
+        const tdAlerta = document.createElement('td');
+        tdAlerta.className = 'border-b border-border py-1';
+        tdAlerta.dataset.celdaAlerta = fila.codigo;
+        tr.append(th, td, tdAlerta);
         tablaCuerpo.appendChild(tr);
       }
+      pintarAlertasEnTabla();
     }
 
     async function activarCapa(id: IdCapa) {
@@ -1463,6 +1535,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     }
 
     pintarSelector(capaMinsal.id);
+    void cargarAlertasVigentes();
     await activarCapa(capaMinsal.id);
 
     let filtrosAplicados = obtenerFiltrosAnalisis();

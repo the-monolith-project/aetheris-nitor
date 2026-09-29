@@ -377,11 +377,11 @@ const STACK = [
             >
               <Icono nombre="bell" class="h-6 w-6" />
             </span>
-            <h3 class="titular-seccion text-ink">Alertas de campo</h3>
+            <h3 class="titular-seccion text-ink">Alertas por departamento</h3>
             <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
               Avisos redactados por el equipo de vigilancia, con lo que conviene
-              hacer. Se leen desde el teléfono, se imprimen y funcionan sin
-              señal.
+              hacer en cada departamento. Se leen desde el teléfono, se imprimen
+              y funcionan sin señal.
             </p>
             <span class="mt-6 font-sans text-sm font-semibold text-accent">
               <span class="enlace-filete">Ver alertas</span>
@@ -607,6 +607,8 @@ const STACK = [
     ETIQUETAS_TIPO,
     type PayloadAlertas,
   } from '../lib/vista-alertas';
+  import { alertaAplicaA, esAlertaNacional } from '../lib/alcance-alertas';
+  import { leerDepartamentoRecordado } from '../lib/departamento-recordado';
   import { iniciarMovimiento } from '../lib/movimiento';
 
   iniciarMovimiento();
@@ -624,7 +626,20 @@ const STACK = [
         const datos = (await respuesta.json()) as PayloadAlertas;
         if (!Array.isArray(datos.alertas) || datos.alertas.length === 0) return;
 
-        for (const alerta of datos.alertas.slice(0, 3)) {
+        // Con un departamento recordado se muestran las que le aplican, las
+        // propias primero; sin él, la lista completa (ADR 0022).
+        const recordado = leerDepartamentoRecordado();
+        const ordenadas = recordado
+          ? datos.alertas
+              .filter((a) => alertaAplicaA(a, recordado))
+              .sort(
+                (a, b) =>
+                  Number(esAlertaNacional(a)) - Number(esAlertaNacional(b)),
+              )
+          : datos.alertas;
+        if (ordenadas.length === 0) return;
+
+        for (const alerta of ordenadas.slice(0, 3)) {
           const item = document.createElement('li');
           item.className =
             'flex flex-wrap items-baseline gap-x-2.5 font-sans text-sm leading-relaxed';

@@ -139,6 +139,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={descripcion} />
     <meta name="twitter:image" content={urlImagen} />
+    <slot name="head" />
   </head>
   <body class="min-h-screen bg-bg text-ink">
     <a

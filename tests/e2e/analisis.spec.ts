@@ -252,19 +252,16 @@ test('optimiza la vista general y conserva el layout responsive', async ({
   ).toBe(true);
 
   await page.setViewportSize({ width: 390, height: 844 });
-  const cajasMoviles = await Promise.all([
-    workspace.boundingBox(),
-    mapa.boundingBox(),
-    presion.boundingBox(),
-  ]);
-  expect(cajasMoviles[0]).not.toBeNull();
-  expect(cajasMoviles[1]).not.toBeNull();
-  expect(cajasMoviles[2]).not.toBeNull();
-  expect(cajasMoviles[0]!.x).toBeGreaterThanOrEqual(0);
-  expect(cajasMoviles[0]!.x + cajasMoviles[0]!.width).toBeLessThanOrEqual(390);
-  expect(cajasMoviles[2]!.y).toBeGreaterThan(
-    cajasMoviles[1]!.y + cajasMoviles[1]!.height,
-  );
+  // En teléfono el workspace muestra un panel a la vez (F6.2).
+  await expect(mapa).toBeVisible();
+  await expect(presion).toBeHidden();
+  const cajaMovil = await workspace.boundingBox();
+  expect(cajaMovil).not.toBeNull();
+  expect(cajaMovil!.x).toBeGreaterThanOrEqual(0);
+  expect(cajaMovil!.x + cajaMovil!.width).toBeLessThanOrEqual(390);
+  await page.locator('[data-panel-movil="presion"]').click();
+  await expect(presion).toBeVisible();
+  await expect(mapa).toBeHidden();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

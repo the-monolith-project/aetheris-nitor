@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import NavSecciones from '../components/NavSecciones.astro';
 import AyudaTermino from '../components/AyudaTermino.astro';
 import Icono from '../components/Icono.astro';
 import CurvaIRADepartamental from '../components/CurvaIRADepartamental.astro';
@@ -56,30 +57,15 @@ import PanelVirus from '../components/PanelVirus.astro';
       <p data-copiar-estado role="status" class="min-h-4 text-ink-muted"></p>
     </div>
 
-    <nav
-      class="mb-6 flex flex-wrap gap-2 font-sans text-sm"
-      aria-label="Serie respiratoria"
-    >
-      <a
-        href="#cobertura"
-        class="rounded-full border border-border bg-surface px-3 py-1.5"
-        >Cobertura</a
-      >
-      <a
-        href="#ira"
-        class="rounded-full border border-border bg-surface px-3 py-1.5">IRA</a
-      >
-      <a
-        href="#neumonias"
-        class="rounded-full border border-border bg-surface px-3 py-1.5"
-        >Neumonías</a
-      >
-      <a
-        href="#virus"
-        class="rounded-full border border-border bg-surface px-3 py-1.5"
-        >Virus (nacional)</a
-      >
-    </nav>
+    <NavSecciones
+      etiqueta="Serie respiratoria"
+      enlaces={[
+        { href: '#cobertura', etiqueta: 'Cobertura' },
+        { href: '#ira', etiqueta: 'IRA' },
+        { href: '#neumonias', etiqueta: 'Neumonías' },
+        { href: '#virus', etiqueta: 'Virus (nacional)' },
+      ]}
+    />
 
     <section id="cobertura" class="mb-10">
       <PanelCobertura />

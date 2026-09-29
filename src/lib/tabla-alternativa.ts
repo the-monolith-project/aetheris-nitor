@@ -98,7 +98,7 @@ export class TablaAlternativa<T = any> {
       .join('');
 
     this.contenedor.innerHTML = `
-      <div class="mt-2 max-h-64 overflow-y-auto overflow-x-auto rounded-lg border border-border">
+      <div tabindex="0" role="region" aria-label="${textoSeguro(this.caption)}" class="mt-2 max-h-64 overflow-y-auto overflow-x-auto rounded-lg border border-border">
         <table class="w-full border-collapse text-left font-sans">
           <caption class="sr-only">${textoSeguro(this.caption)}</caption>
           <thead class="sticky top-0 bg-surface border-b border-border">

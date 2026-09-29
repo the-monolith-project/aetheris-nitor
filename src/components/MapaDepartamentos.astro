@@ -1,4 +1,5 @@
 ---
+import AyudaTermino from './AyudaTermino.astro';
 import Icono from './Icono.astro';
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
 // Mapa departamental -- selector de capas descriptivas (módulos M1–M3,
@@ -45,6 +46,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         > el significado del color depende de la capa seleccionada. La explicación
         específica aparece en el aviso de la capa. El gris indica ausencia de dato.
       </p>
+      <div class="flex shrink-0 items-start gap-2" data-ayudas-mapa>
+        <AyudaTermino clave="iv" />
+        <AyudaTermino clave="anomalia" />
+        <AyudaTermino clave="percentil-presion" />
+        <AyudaTermino clave="integridad" />
+      </div>
     </div>
 
     <div

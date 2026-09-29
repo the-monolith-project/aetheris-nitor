@@ -1,4 +1,5 @@
 ---
+import { ANIOS_ANALISIS_DENGUE } from '../../lib/tipos-analisis';
 import Icono from '../Icono.astro';
 import CalendarioEpidemico from './CalendarioEpidemico.astro';
 import ComparacionDepartamentos from './ComparacionDepartamentos.astro';
@@ -12,6 +13,8 @@ import ScatterClimaPresion from './ScatterClimaPresion.astro';
 import SelectorPaneles from './SelectorPaneles.astro';
 import SerieDepartamento from './SerieDepartamento.astro';
 import ToolbarAnalisis from './ToolbarAnalisis.astro';
+
+const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...ANIOS_ANALISIS_DENGUE)}`;
 ---
 
 <section
@@ -38,8 +41,8 @@ import ToolbarAnalisis from './ToolbarAnalisis.astro';
       temporadas y territorios.
     </p>
     <p class="mt-2 font-sans text-xs text-ink-muted">
-      Series históricas por departamento y semana, contra la propia historia de
-      cada uno.
+      Histórico por departamento, {aniosHistorico} (boletines). Cada uno se compara
+      contra su propia historia.
     </p>
   </header>
 

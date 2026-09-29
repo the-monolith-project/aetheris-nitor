@@ -1,4 +1,5 @@
 ---
+import AyudaTermino from '../AyudaTermino.astro';
 // Predicción de casos de dengue a corto plazo (GET /api/nowcast-dengue).
 // Artefacto precomputado por backend/ingestion/nowcast_tablero_dengue.py. Sobre
 // la serie del tablero de MINSAL (desde 2025) el método es la mezcla del modelo
@@ -36,8 +37,12 @@ const { variante = 'completo', demo = false } = Astro.props;
       class="mt-1 h-6 w-1 shrink-0 rounded-full bg-accent"
       aria-hidden="true"></span>
     <div>
-      <h2 class="font-sans text-base font-semibold text-ink sm:text-lg">
+      <h2
+        class="flex items-center gap-1 font-sans text-base font-semibold text-ink sm:text-lg"
+      >
         Predicción de casos a corto plazo
+        <AyudaTermino clave="bandas" />
+        <AyudaTermino clave="sospechoso" />
       </h2>
       <p class="mt-1 font-sans text-sm leading-relaxed text-ink-muted">
         Predicción estadística del conteo nacional de dengue para las próximas 1

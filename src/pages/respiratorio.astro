@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import AyudaTermino from '../components/AyudaTermino.astro';
 import Icono from '../components/Icono.astro';
 import CurvaIRADepartamental from '../components/CurvaIRADepartamental.astro';
 import CurvaRespiratoriaNacional from '../components/CurvaRespiratoriaNacional.astro';
@@ -31,6 +32,8 @@ import PanelVirus from '../components/PanelVirus.astro';
         boletines. Influenza, VSR y SARS-CoV-2 son vigilancia laboratorial
         nacional (muestras, detecciones, positividad). Cada serie conserva su
         unidad.
+        <AyudaTermino clave="conteo-notificado" />
+        <AyudaTermino clave="positividad" />
       </p>
       <p class="mt-4 font-sans text-sm">
         <a

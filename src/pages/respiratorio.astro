@@ -42,6 +42,17 @@ import PanelVirus from '../components/PanelVirus.astro';
       </p>
     </header>
 
+    <div class="mb-4 flex flex-wrap items-center gap-3 font-sans text-xs">
+      <button
+        type="button"
+        data-copiar-enlace
+        class="flex min-h-[44px] items-center rounded-lg border border-border bg-bg px-3 py-2 font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        Copiar enlace a esta vista
+      </button>
+      <p data-copiar-estado role="status" class="min-h-4 text-ink-muted"></p>
+    </div>
+
     <nav
       class="mb-6 flex flex-wrap gap-2 font-sans text-sm"
       aria-label="Serie respiratoria"
@@ -111,3 +122,20 @@ import PanelVirus from '../components/PanelVirus.astro';
     </section>
   </main>
 </Layout>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>(
+    '[data-copiar-enlace]',
+  );
+  const estado = document.querySelector<HTMLElement>('[data-copiar-estado]');
+  boton?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      if (estado) estado.textContent = 'Enlace a esta vista copiado.';
+    } catch {
+      if (estado)
+        estado.textContent =
+          'No se pudo copiar el enlace. Cópialo desde la barra de direcciones.';
+    }
+  });
+</script>

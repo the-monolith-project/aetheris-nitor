@@ -29,6 +29,12 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     titulo de abajo ya lo dice. La seccion se anuncia por aria-labelledby, asi
     que tampoco le aportaba nada a un lector de pantalla. */
   }
+  <p
+    data-cabecera-impresion
+    class="mb-3 hidden font-sans text-sm font-semibold text-ink print:block"
+  >
+  </p>
+
   <header class="mb-4 max-w-3xl">
     <h2
       id="panel-analisis-titulo"
@@ -114,6 +120,37 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     margin-inline-start: calc((100% - min(calc(100vw - 2rem), 1840px)) / 2);
   }
 
+  /* Impresión de /dengue: sin cromo de navegación, paneles a ancho completo
+     y sin cortes a mitad de gráfico. */
+  @media print {
+    :global(body > header),
+    :global(body > footer),
+    :global([data-pagina-dengue] [data-tabs]),
+    :global([data-pagina-dengue] [data-nav-secciones]),
+    :global([data-pagina-dengue] [data-exportar-grafico]),
+    :global([data-pagina-dengue] #toolbar-analisis-contenedor),
+    :global([data-pagina-dengue] [data-selector-movil]),
+    :global([data-pagina-dengue] [data-boton-menu-panel]),
+    :global([data-pagina-dengue] [data-menu-panel]) {
+      display: none !important;
+    }
+    .workspace-analitico {
+      width: 100%;
+      margin-inline-start: 0;
+    }
+    :global(#workspace-analitico-grid) {
+      display: block;
+    }
+    :global(#workspace-analitico-grid [data-panel-workspace]) {
+      grid-column: auto;
+      margin-bottom: 1rem;
+      break-inside: avoid;
+    }
+    :global(#workspace-analitico-grid [data-panel-workspace] > *) {
+      overflow: visible;
+    }
+  }
+
   /* En teléfono el workspace muestra un panel a la vez: sin tamaños, foco ni
      zoom temporal, que solo tienen sentido con varias columnas. */
   @media (max-width: 639px) {
@@ -141,7 +178,10 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     PanelAnalitico,
     TamanoPanel,
   } from '../../lib/analisis-layout-state';
-  import { obtenerFiltrosAnalisis } from '../../lib/analisis-state';
+  import {
+    obtenerFiltrosAnalisis,
+    suscribirFiltrosAnalisis,
+  } from '../../lib/analisis-state';
   import {
     encontrarGraficoPlot,
     exportarPng,
@@ -338,6 +378,26 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
       cerrarMenus();
     }
   });
+
+  // Cabecera que solo se ve al imprimir: los filtros activos.
+  const cabeceraImpresion = document.querySelector<HTMLElement>(
+    '[data-cabecera-impresion]',
+  );
+  function pintarCabeceraImpresion(): void {
+    if (!cabeceraImpresion) return;
+    const f = obtenerFiltrosAnalisis();
+    cabeceraImpresion.textContent = [
+      'EPI-Aetheris · dengue',
+      f.departamento ?? 'todos los departamentos',
+      `año ${f.anio}`,
+      `serie ${f.serie}`,
+      `SE${f.semanaDesde}–SE${f.semanaHasta}`,
+      new Date().toISOString().slice(0, 10),
+    ].join(' · ');
+  }
+  pintarCabeceraImpresion();
+  suscribirFiltrosAnalisis(pintarCabeceraImpresion);
+  window.addEventListener('beforeprint', pintarCabeceraImpresion);
 
   // Modo teléfono: derivado del ancho, no se guarda en el estado del layout.
   const consultaMovil = window.matchMedia('(max-width: 639px)');

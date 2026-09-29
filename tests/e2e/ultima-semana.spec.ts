@@ -95,3 +95,79 @@ test.describe('última semana de dengue', () => {
     ).toBeVisible({ timeout: 15_000 });
   });
 });
+
+const INSTANTANEA = {
+  generado: '2026-07-20',
+  casos: [
+    {
+      semana_inicio: '2025-07-13',
+      anio: 2025,
+      semana_epi: 29,
+      conteo: 90,
+      fuente: 'minsal_tablero',
+    },
+    {
+      semana_inicio: '2026-07-12',
+      anio: 2026,
+      semana_epi: 29,
+      conteo: 120,
+      fuente: 'minsal_tablero',
+    },
+  ],
+};
+
+// El servidor de desarrollo no toma la copia del build (import.meta.env.DEV);
+// aquí se inyecta en el HTML como lo haría un build de producción.
+async function conInstantanea(page: import('@playwright/test').Page) {
+  await page.route('**/dengue', async (ruta) => {
+    const respuesta = await ruta.fetch();
+    const html = (await respuesta.text()).replace(
+      /(<script[^>]*id="ultima-semana-instantanea"[^>]*>)[^<]*(<\/script>)/,
+      `$1${JSON.stringify(INSTANTANEA)}$2`,
+    );
+    await ruta.fulfill({ response: respuesta, body: html });
+  });
+}
+
+test('la franja se pinta con la copia del build mientras llega la API', async ({
+  page,
+}) => {
+  await conInstantanea(page);
+  await page.route('**/api/casos-nacional', async (ruta) => {
+    await new Promise((r) => setTimeout(r, 1500));
+    await ruta.fulfill({ json: CASOS });
+  });
+  await page.route('**/api/nowcast-dengue*', (r) =>
+    r.fulfill({ json: NOWCAST }),
+  );
+  await page.route('**/api/v1/vigilancia/integridad', (r) =>
+    r.fulfill({ json: INTEGRIDAD }),
+  );
+  await page.goto('/dengue');
+  const franja = page.locator('#ultima-semana');
+  await expect(franja).toContainText('SE29/2026');
+  await expect(franja).toContainText('Cifras guardadas al publicar el sitio');
+  await expect(franja).toContainText('Actualizando la estimación');
+  // Cuando llega la API la copia se reemplaza por la serie vigente.
+  await expect(franja).toContainText('SE30/2026');
+  await expect(franja).not.toContainText('Cifras guardadas');
+});
+
+test('si la API falla se conserva la copia del build con su aviso', async ({
+  page,
+}) => {
+  await conInstantanea(page);
+  await page.route('**/api/casos-nacional', (r) =>
+    r.fulfill({ status: 500, body: 'error' }),
+  );
+  await page.route('**/api/nowcast-dengue*', (r) =>
+    r.fulfill({ json: NOWCAST }),
+  );
+  await page.route('**/api/v1/vigilancia/integridad', (r) =>
+    r.fulfill({ json: INTEGRIDAD }),
+  );
+  await page.goto('/dengue');
+  const franja = page.locator('#ultima-semana');
+  await expect(franja).toContainText('No se pudo actualizar');
+  await expect(franja).toContainText('SE29/2026');
+});

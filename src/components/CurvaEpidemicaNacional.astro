@@ -8,6 +8,7 @@
 // corte de percentil sigue abierto (docs/contexto/02-decisiones-abiertas.md,
 // punto A).
 import BotonExportarGrafico from './BotonExportarGrafico.astro';
+import BotonIncrustar from './BotonIncrustar.astro';
 import CargadorCurva from './CargadorCurva.astro';
 ---
 
@@ -40,11 +41,17 @@ import CargadorCurva from './CargadorCurva.astro';
       Descargar CSV
     </button>
   </div>
-  <BotonExportarGrafico
-    class="mt-3"
-    titulo="Curva epidémica nacional de dengue"
-    fuente="OpenDengue hasta 2024; tablero de MINSAL desde 2025"
-  />
+  <div class="mt-3 flex flex-wrap items-center gap-2">
+    <BotonExportarGrafico
+      titulo="Curva epidémica nacional de dengue"
+      fuente="OpenDengue hasta 2024; tablero de MINSAL desde 2025"
+    />
+    <BotonIncrustar
+      ruta="/incrustar/curva-nacional"
+      titulo="Curva epidémica nacional de dengue en El Salvador"
+      alto={520}
+    />
+  </div>
   <div class="mt-4 flex items-center gap-2 font-sans text-xs text-ink-muted">
     <span>Detalle</span>
     <button

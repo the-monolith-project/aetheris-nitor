@@ -11,12 +11,20 @@ import {
   SIGNIFICADO_NIVEL,
 } from '../../lib/vista-alertas';
 
+const urlFeed = `${import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000'}/api/alertas/feed.xml`;
 const tipoPedido = Astro.url.searchParams.get('tipo');
 const filtroDengue = tipoPedido === 'dengue';
 const filtroRespiratorio = tipoPedido === 'respiratorio';
 ---
 
 <Layout title="EPI-Aetheris — Alertas de campo">
+  <link
+    slot="head"
+    rel="alternate"
+    type="application/atom+xml"
+    title="Alertas de campo vigentes"
+    href={urlFeed}
+  />
   <main
     id="contenido-principal"
     class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
@@ -101,6 +109,12 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
         href="/alertas/archivo"
         class="rounded-full border border-border bg-surface px-3 py-1.5"
         >Archivo de alertas emitidas</a
+      >
+      <a
+        href={urlFeed}
+        data-enlace-feed
+        class="rounded-full border border-border bg-surface px-3 py-1.5"
+        >Suscribirse por feed (Atom)</a
       >
     </nav>
 

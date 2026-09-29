@@ -290,3 +290,23 @@ test('archive non-vigente row shows NO VIGENTE', async ({ page }) => {
     '31/08/2026',
   );
 });
+
+test('/alertas anuncia el feed Atom en la cabecera y con un enlace visible', async ({
+  page,
+}) => {
+  await page.route('**/api/alertas?**', (ruta) =>
+    ruta.fulfill({
+      json: {
+        aviso: AVISO_HONESTIDAD_ALERTAS,
+        ultima_revision: null,
+        alertas: [],
+      },
+    }),
+  );
+  await page.goto('/alertas');
+  const cabecera = page.locator(
+    'head link[rel="alternate"][type="application/atom+xml"]',
+  );
+  await expect(cabecera).toHaveAttribute('href', /\/api\/alertas\/feed\.xml$/);
+  await expect(page.locator('[data-enlace-feed]')).toBeVisible();
+});

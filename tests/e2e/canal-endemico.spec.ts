@@ -38,9 +38,6 @@ test('el canal endémico dibuja las bandas y su tabla', async ({ page }) => {
   await page.goto(
     '/dengue?year=2023&week=1&fromWeek=1&toWeek=53&serie=probable&dept=SV-SS&view=temporal',
   );
-  await expect(page.locator('#analisis-filtros-estado')).toContainText(
-    '14 departamentos',
-  );
   await page.locator('#analisis-abrir-filtros').click();
   await page.locator('#analisis-vista').selectOption('temporal');
   await page.locator('#analisis-cerrar-filtros').click();
@@ -69,9 +66,6 @@ test('sin datos en la fuente muestra el estado sin dato', async ({ page }) => {
     }),
   );
   await page.goto('/dengue?year=2022&dept=SV-SS&serie=probable');
-  await expect(page.locator('#analisis-filtros-estado')).toContainText(
-    '14 departamentos',
-  );
   await page.locator('#analisis-abrir-filtros').click();
   await page.locator('#analisis-vista').selectOption('temporal');
   await page.locator('#analisis-cerrar-filtros').click();

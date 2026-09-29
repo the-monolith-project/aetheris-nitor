@@ -129,9 +129,17 @@ const TABS = [
 </Layout>
 
 <script>
+  import { actualizarFiltrosAnalisis } from '../lib/analisis-state';
+  import { leerDepartamentoRecordado } from '../lib/departamento-recordado';
   import { iniciarMovimiento } from '../lib/movimiento';
 
   iniciarMovimiento();
+
+  // El departamento recordado es el inicial solo si el enlace no trae uno.
+  const recordado = leerDepartamentoRecordado();
+  if (recordado && !new URLSearchParams(location.search).has('dept')) {
+    actualizarFiltrosAnalisis({ departamento: recordado });
+  }
 
   const tablist = document.querySelector<HTMLElement>('[data-tabs]');
   if (tablist) {

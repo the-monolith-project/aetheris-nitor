@@ -73,6 +73,11 @@ test.describe('tema oscuro', () => {
       await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
       await page.goto(ruta);
       await page.waitForLoadState('load');
+      // Los cargadores atenuados de una recarga no son el estado final: con
+      // una API lenta axe los medía a media carga.
+      await expect(page.locator('.ea-comet-cargador:visible')).toHaveCount(0, {
+        timeout: 20_000,
+      });
       const resultados = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa'])
         .analyze();

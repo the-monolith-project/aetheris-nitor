@@ -88,6 +88,12 @@ test.describe('última semana de dengue', () => {
       r.fulfill({ status: 500 }),
     );
     await page.goto('/dengue');
+    // Con la copia del build (sitio compilado) el fallo conserva la copia y
+    // muestra un aviso, sin botón: lo cubre la prueba de la copia del build.
+    test.skip(
+      (await page.locator('#ultima-semana-instantanea').count()) > 0,
+      'el sitio compilado conserva la copia del build',
+    );
     await expect(
       page
         .locator('#ultima-semana')

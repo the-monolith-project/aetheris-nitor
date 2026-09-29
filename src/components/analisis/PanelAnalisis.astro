@@ -53,6 +53,15 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
   </ToolbarAnalisis>
 
   <div
+    data-selector-movil
+    role="group"
+    aria-label="Panel visible"
+    class="mt-4 flex flex-wrap gap-2 sm:hidden"
+    hidden
+  >
+  </div>
+
+  <div
     id="workspace-analitico-grid"
     class="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-12"
   >
@@ -105,6 +114,14 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     margin-inline-start: calc((100% - min(calc(100vw - 2rem), 1840px)) / 2);
   }
 
+  /* En teléfono el workspace muestra un panel a la vez: sin tamaños, foco ni
+     zoom temporal, que solo tienen sentido con varias columnas. */
+  @media (max-width: 639px) {
+    :global([data-solo-escritorio]) {
+      display: none;
+    }
+  }
+
   @media (min-width: 640px) {
     .workspace-analitico {
       width: min(calc(100vw - 3rem), 1840px);
@@ -124,6 +141,12 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     PanelAnalitico,
     TamanoPanel,
   } from '../../lib/analisis-layout-state';
+  import { obtenerFiltrosAnalisis } from '../../lib/analisis-state';
+  import {
+    encontrarGraficoPlot,
+    exportarPng,
+    exportarSvg,
+  } from '../../lib/exportar-grafico';
 
   const paneles = document.querySelectorAll<HTMLElement>(
     '[data-panel-workspace]',
@@ -223,10 +246,17 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     menu.hidden = true;
     menu.className =
       'absolute right-0 top-full z-30 mt-1 w-44 rounded-lg border border-border bg-surface p-2 shadow-lg';
-    menu.innerHTML = `<p class="px-2 py-1 font-sans text-xs font-semibold text-ink-muted">Tamaño</p><div class="grid gap-1"><button type="button" role="menuitem" data-accion-panel="tamano" data-valor="pequeno" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Pequeño</button><button type="button" role="menuitem" data-accion-panel="tamano" data-valor="mediano" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Mediano</button><button type="button" role="menuitem" data-accion-panel="tamano" data-valor="grande" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Grande</button><button type="button" role="menuitem" data-accion-panel="foco" class="mt-1 rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Abrir en foco</button><button type="button" role="menuitem" data-accion-panel="ocultar" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Ocultar panel</button></div>`;
+    menu.innerHTML = `<p data-solo-escritorio class="px-2 py-1 font-sans text-xs font-semibold text-ink-muted">Tamaño</p><div class="grid gap-1"><button type="button" role="menuitem" data-solo-escritorio data-accion-panel="tamano" data-valor="pequeno" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Pequeño</button><button type="button" role="menuitem" data-solo-escritorio data-accion-panel="tamano" data-valor="mediano" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Mediano</button><button type="button" role="menuitem" data-solo-escritorio data-accion-panel="tamano" data-valor="grande" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Grande</button><button type="button" role="menuitem" data-solo-escritorio data-accion-panel="foco" class="mt-1 rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Abrir en foco</button><button type="button" role="menuitem" data-accion-panel="ocultar" class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Ocultar panel</button><button type="button" role="menuitem" data-accion-panel="exportar-svg" hidden class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Descargar SVG</button><button type="button" role="menuitem" data-accion-panel="exportar-png" hidden class="rounded px-2 py-1 text-left font-sans text-xs hover:bg-secondary/30">Descargar PNG</button></div>`;
     boton.addEventListener('click', () => {
       const abierto = menu.hidden;
       cerrarMenus();
+      // El mapa (Leaflet) no se exporta; solo los paneles con un gráfico SVG.
+      const hayGrafico = encontrarGraficoPlot(panel) !== null;
+      menu
+        .querySelectorAll<HTMLElement>('[data-accion-panel^="exportar"]')
+        .forEach((item) => {
+          item.hidden = !hayGrafico;
+        });
       menu.hidden = !abierto;
       boton.setAttribute('aria-expanded', String(abierto));
     });
@@ -245,6 +275,24 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
         actualizarLayoutAnalisis({
           panelEnFoco: panelEnFoco === id ? null : id,
         });
+      }
+      if (accion === 'exportar-svg' || accion === 'exportar-png') {
+        const svg = encontrarGraficoPlot(panel);
+        const f = obtenerFiltrosAnalisis();
+        if (svg) {
+          const opciones = {
+            titulo: etiqueta,
+            fuente: 'EPI-Aetheris, boletines epidemiológicos de MINSAL',
+            filtros: [
+              f.departamento ?? 'todos los departamentos',
+              String(f.anio),
+              f.serie,
+              `SE${f.semanaDesde}–SE${f.semanaHasta}`,
+            ].join(' · '),
+          };
+          if (accion === 'exportar-svg') exportarSvg(svg, opciones);
+          else void exportarPng(svg, opciones);
+        }
       }
       if (accion === 'ocultar') {
         actualizarLayoutAnalisis({
@@ -291,6 +339,58 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     }
   });
 
+  // Modo teléfono: derivado del ancho, no se guarda en el estado del layout.
+  const consultaMovil = window.matchMedia('(max-width: 639px)');
+  const selectorMovil = document.querySelector<HTMLElement>(
+    '[data-selector-movil]',
+  );
+  let panelMovil: PanelAnalitico | null = null;
+  let layoutActual = obtenerLayoutAnalisis();
+
+  function aplicarModoMovil(): void {
+    if (!selectorMovil) return;
+    const movil = consultaMovil.matches;
+    selectorMovil.hidden = !movil;
+    if (!movil) {
+      // Al volver a escritorio manda de nuevo el layout guardado.
+      paneles.forEach((panel) => {
+        const id = panel.dataset.panelWorkspace as PanelAnalitico;
+        panel.hidden = !layoutActual.panelesVisibles.includes(id);
+      });
+      return;
+    }
+    const visibles = layoutActual.panelesVisibles;
+    if (!panelMovil || !visibles.includes(panelMovil)) {
+      panelMovil = visibles[0] ?? null;
+    }
+    selectorMovil.replaceChildren(
+      ...visibles.map((id) => {
+        const boton = document.createElement('button');
+        boton.type = 'button';
+        boton.dataset.panelMovil = id;
+        boton.setAttribute('aria-pressed', String(id === panelMovil));
+        boton.className =
+          'min-h-[44px] rounded-full border border-border bg-surface px-3 font-sans text-xs font-semibold text-ink aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-ink';
+        boton.textContent =
+          PANELES_ANALITICOS.find((item) => item.id === id)?.etiqueta ?? id;
+        boton.addEventListener('click', () => {
+          panelMovil = id;
+          aplicarModoMovil();
+          window.dispatchEvent(new Event('resize'));
+        });
+        return boton;
+      }),
+    );
+    paneles.forEach((panel) => {
+      const id = panel.dataset.panelWorkspace as PanelAnalitico;
+      panel.hidden = !(visibles.includes(id) && id === panelMovil);
+    });
+  }
+  consultaMovil.addEventListener('change', () => {
+    aplicarModoMovil();
+    window.dispatchEvent(new Event('resize'));
+  });
+
   let primerPaseLayout = true;
 
   suscribirLayoutAnalisis((layout) => {
@@ -329,6 +429,8 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
       }
     });
     primerPaseLayout = false;
+    layoutActual = layout;
+    aplicarModoMovil();
     aplicarZoomTemporal(layout.zoomTemporal);
   });
 

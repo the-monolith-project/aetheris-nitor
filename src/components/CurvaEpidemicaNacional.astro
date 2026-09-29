@@ -7,6 +7,7 @@
 // su `fuente`). No es clasificación de riesgo: el
 // corte de percentil sigue abierto (docs/contexto/02-decisiones-abiertas.md,
 // punto A).
+import BotonExportarGrafico from './BotonExportarGrafico.astro';
 import CargadorCurva from './CargadorCurva.astro';
 ---
 
@@ -39,6 +40,11 @@ import CargadorCurva from './CargadorCurva.astro';
       Descargar CSV
     </button>
   </div>
+  <BotonExportarGrafico
+    class="mt-3"
+    titulo="Curva epidémica nacional de dengue"
+    fuente="OpenDengue hasta 2024; tablero de MINSAL desde 2025"
+  />
   <div class="mt-4 flex items-center gap-2 font-sans text-xs text-ink-muted">
     <span>Detalle</span>
     <button

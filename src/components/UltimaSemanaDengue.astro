@@ -4,6 +4,7 @@
 // sale de endpoints que ya usan otros paneles (casos-nacional, nowcast-dengue,
 // vigilancia/integridad); no hay lectura de riesgo ni umbral.
 import { RUTA_SENSIBILIDAD } from '../lib/enlaces';
+import BotonIncrustar from './BotonIncrustar.astro';
 ---
 
 <section
@@ -11,12 +12,19 @@ import { RUTA_SENSIBILIDAD } from '../lib/enlaces';
   data-ultima-semana
   class="mt-6 rounded-2xl border border-border bg-surface p-4 sm:p-6"
 >
-  <h2
-    id="ultima-semana-titulo"
-    class="font-display text-xl font-semibold text-ink"
-  >
-    Última semana publicada
-  </h2>
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <h2
+      id="ultima-semana-titulo"
+      class="font-display text-xl font-semibold text-ink"
+    >
+      Última semana publicada
+    </h2>
+    <BotonIncrustar
+      ruta="/incrustar/ultima-semana"
+      titulo="Última semana publicada de dengue en El Salvador"
+      alto={320}
+    />
+  </div>
   <div
     id="ultima-semana"
     class="mt-4"

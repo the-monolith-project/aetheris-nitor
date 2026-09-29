@@ -339,6 +339,23 @@ const STACK = [
           y el unico lugar donde aparece el coral de la marca. Si el backend
           no responde, la seccion entera se queda oculta. */
       }
+      <section data-tu-departamento hidden class="mt-6">
+        <div
+          class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-6"
+        >
+          <h2 class="font-sans text-sm font-semibold text-ink">
+            Tu departamento
+          </h2>
+          <a
+            href="/analisis"
+            data-tu-departamento-enlace
+            class="font-sans text-sm font-medium text-accent"
+          >
+            <span class="enlace-filete" data-tu-departamento-texto></span>
+          </a>
+        </div>
+      </section>
+
       <section data-tira-alertas hidden class="mt-6">
         <div class="rounded-2xl border border-live/40 bg-surface p-6 sm:p-8">
           <div class="flex flex-wrap items-center justify-between gap-3">
@@ -608,10 +625,29 @@ const STACK = [
     type PayloadAlertas,
   } from '../lib/vista-alertas';
   import { alertaAplicaA, esAlertaNacional } from '../lib/alcance-alertas';
+  import { DEPARTAMENTOS_POR_CODIGO } from '../lib/departamentos';
   import { leerDepartamentoRecordado } from '../lib/departamento-recordado';
   import { iniciarMovimiento } from '../lib/movimiento';
 
   iniciarMovimiento();
+
+  const tuDepartamento = document.querySelector<HTMLElement>(
+    '[data-tu-departamento]',
+  );
+  const departamentoRecordado = leerDepartamentoRecordado();
+  if (tuDepartamento && departamentoRecordado) {
+    const enlace = tuDepartamento.querySelector<HTMLAnchorElement>(
+      '[data-tu-departamento-enlace]',
+    );
+    const texto = tuDepartamento.querySelector<HTMLElement>(
+      '[data-tu-departamento-texto]',
+    );
+    if (enlace && texto) {
+      enlace.href = `/departamento/${departamentoRecordado}`;
+      texto.textContent = `Ver ${DEPARTAMENTOS_POR_CODIGO[departamentoRecordado].nombre}: alertas, dengue y respiratorio`;
+      tuDepartamento.hidden = false;
+    }
+  }
 
   const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
   const seccion = document.querySelector<HTMLElement>('[data-tira-alertas]');

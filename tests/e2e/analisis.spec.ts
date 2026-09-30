@@ -584,3 +584,111 @@ test('el panel "Serie del departamento" dibuja los tres módulos del departament
   await expect(page.locator('#serie-anomalia svg')).toBeVisible();
   await expect(page.locator('#serie-departamento-aviso')).not.toBeEmpty();
 });
+
+test('centro de control del workspace: selectores directos y reproductor temporal interactivo', async ({
+  page,
+}) => {
+  await page.goto(URL_INICIAL);
+  await esperarPanel(page);
+
+  // 1. Controles del reproductor temporal interactivo
+  const botonPlay = page.locator('#analisis-reproductor-play');
+  const botonNext = page.locator('#analisis-reproductor-next');
+  const botonPrev = page.locator('#analisis-reproductor-prev');
+  const botonVelocidad = page.locator('#analisis-reproductor-velocidad');
+  const badgeSemana = page.locator('#analisis-reproductor-badge');
+  const cinta = page.locator('#analisis-cinta-semana');
+
+  await expect(botonPlay).toBeVisible();
+  await expect(badgeSemana).toHaveText('SE01');
+
+  // Paso adelante
+  await botonNext.click();
+  await expect(badgeSemana).toHaveText('SE02');
+  await expect(cinta).toHaveValue('2');
+  await expect(page).toHaveURL(/week=2/);
+
+  // Paso atrás
+  await botonPrev.click();
+  await expect(badgeSemana).toHaveText('SE01');
+  await expect(cinta).toHaveValue('1');
+
+  // Velocidad toggle
+  await expect(botonVelocidad).toHaveText('1x');
+  await botonVelocidad.click();
+  await expect(botonVelocidad).toHaveText('2x');
+  await botonVelocidad.click();
+  await expect(botonVelocidad).toHaveText('1x');
+
+  // Iniciar reproducción y pausar
+  await botonPlay.click();
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#analisis-icono-pausa')).toBeVisible();
+
+  // Esperar a que avance de semana automáticamente (con timeout explícito)
+  await expect
+    .poll(async () => Number(await cinta.inputValue()), { timeout: 5000 })
+    .toBeGreaterThan(1);
+
+  // Pausar
+  await botonPlay.click();
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#analisis-icono-play')).toBeVisible();
+
+  // Atajo de teclado: Espacio en el slider para alternar reproducción
+  await cinta.focus();
+  await page.keyboard.press('Space');
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('Space');
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'false');
+
+  // Aislamiento de teclado: Espacio con foco en el botón Siguiente activa el botón, no el reproductor
+  await botonNext.focus();
+  await page.keyboard.press('Space');
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'false');
+
+  // 2. Selector de Año directo y pausa automática de reproducción
+  await botonPlay.click();
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'true');
+  const selectorAnio = page.locator('#toolbar-analisis-anio');
+  await expect(selectorAnio).toBeVisible();
+  await selectorAnio.selectOption('2022');
+  await expect(botonPlay).toHaveAttribute('aria-pressed', 'false');
+  await expect(page).toHaveURL(/year=2022/);
+  await expect(page.locator('#heatmap-resumen')).toContainText('2022');
+
+  // 3. Selector de Serie directo y reactividad de curva/tooltip
+  const selectorSerie = page.locator('#toolbar-analisis-serie');
+  await expect(selectorSerie).toBeVisible();
+  await selectorSerie.selectOption('confirmado');
+  await expect(page).toHaveURL(/serie=confirmado/);
+  await expect(page.locator('#heatmap-resumen')).toContainText('confirmado');
+  const tooltip = page.locator('#analisis-cinta-tooltip');
+  await cinta.hover();
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip).toContainText('conf.');
+
+  // 4. Selector de Capa Analítica directo (sincronizado con mapa y URL)
+  const selectorCapa = page.locator('#toolbar-analisis-capa');
+  await expect(selectorCapa).toBeVisible();
+  await selectorCapa.selectOption('iv');
+  await expect(page).toHaveURL(/capa=iv/);
+  await expect(page.locator('#mapa-aviso')).toContainText(
+    'condición biofísica',
+  );
+
+  // Sincronización inversa: al pulsar otra capa en el mapa, el selector del toolbar se actualiza
+  const botonAnomalia = page.locator('#mapa-boton-anomalia');
+  await botonAnomalia.click();
+  await expect(selectorCapa).toHaveValue('anomalia');
+  await expect(page).toHaveURL(/capa=anomalia/);
+
+  // 5. Año sin dengue departamental (2025, solo clima): limpia curva y pico sin errores
+  await selectorAnio.selectOption('2025');
+  await expect(page).toHaveURL(/year=2025/);
+  await expect(page.locator('#analisis-cinta-curva-path')).toHaveAttribute(
+    'd',
+    '',
+  );
+  await expect(page.locator('#analisis-cinta-pico')).toBeHidden();
+});

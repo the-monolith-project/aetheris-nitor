@@ -89,4 +89,23 @@ test.describe('tema oscuro', () => {
       ).toEqual([]);
     });
   }
+
+  test('#toolbar-analisis cumple contraste y accesibilidad WCAG A y AA en oscuro', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
+    await page.goto('/dengue');
+    await page.waitForLoadState('load');
+    await expect(page.locator('#toolbar-analisis')).toBeVisible();
+    const resultados = await new AxeBuilder({ page })
+      .include('#toolbar-analisis')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      resultados.violations.map((v) => ({
+        id: v.id,
+        nodos: v.nodes.map((n) => n.target.join(' ')),
+      })),
+    ).toEqual([]);
+  });
 });

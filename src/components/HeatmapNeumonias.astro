@@ -1,5 +1,6 @@
 ---
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
+import { ANIOS_RESPIRATORIO } from '../lib/respiratorio-state';
 // Heatmap departamento × semana de Neumonías. Una métrica: conteo notificado.
 // Celda sin dato = hueco, nunca cero.
 ---
@@ -21,11 +22,7 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         data-hm-anio
         class="rounded-lg border border-border bg-bg px-3 py-1.5"
       >
-        <option value="2023">2023</option>
-        <option value="2022">2022</option>
-        <option value="2021">2021</option>
-        <option value="2019">2019</option>
-        <option value="2018">2018</option>
+        {ANIOS_RESPIRATORIO.map((a) => <option value={String(a)}>{a}</option>)}
       </select>
     </label>
     <span class="flex flex-wrap items-center gap-2">
@@ -99,6 +96,13 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
 </PanelWorkspace>
 
 <script>
+  import {
+    ANIOS_RESPIRATORIO,
+    actualizarFiltrosRespiratorio,
+    obtenerFiltrosRespiratorio,
+    suscribirFiltrosRespiratorio,
+    type FiltrosRespiratorio,
+  } from '../lib/respiratorio-state';
   import {
     esNoDisponible,
     motivoNoDisponible,
@@ -204,11 +208,20 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       const tbody = document.createElement('tbody');
       for (const d of departamentos) {
         const tr = document.createElement('tr');
+        // Fila del departamento elegido en el mapa o en las curvas.
+        if (d.codigo === obtenerFiltrosRespiratorio().departamento) {
+          tr.setAttribute('data-fila-seleccionada', '');
+          tr.style.outline = '2px solid var(--color-seleccion)';
+          tr.style.outlineOffset = '-1px';
+        }
         const name = document.createElement('th');
         name.scope = 'row';
         name.className =
           'pr-2 text-left font-sans text-xs font-medium text-ink sticky left-0 bg-surface';
         name.textContent = d.nombre;
+        if (tr.hasAttribute('data-fila-seleccionada')) {
+          name.textContent = `${d.nombre} (seleccionado)`;
+        }
         tr.appendChild(name);
         for (let s = desde; s <= hasta; s++) {
           const td = document.createElement('td');
@@ -267,17 +280,49 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     URL.revokeObjectURL(a.href);
   }
 
+  // El mapa de calor necesita un año concreto: con "todos" (curvas) muestra el
+  // más reciente.
+  function anioParaMapa(f: FiltrosRespiratorio): string {
+    return String(f.anio === 'todos' ? ANIOS_RESPIRATORIO[0] : f.anio);
+  }
+
   const root = document.querySelector<HTMLElement>('[data-heatmap-neu]');
   if (root) {
-    root
-      .querySelector('[data-hm-anio]')
-      ?.addEventListener('change', () => void pintar());
-    root
-      .querySelector('[data-hm-desde]')
-      ?.addEventListener('input', () => void pintar());
-    root
-      .querySelector('[data-hm-hasta]')
-      ?.addEventListener('input', () => void pintar());
+    const selAnio = root.querySelector<HTMLSelectElement>('[data-hm-anio]')!;
+    const inpDesde = root.querySelector<HTMLInputElement>('[data-hm-desde]')!;
+    const inpHasta = root.querySelector<HTMLInputElement>('[data-hm-hasta]')!;
+
+    const sincronizar = (f: FiltrosRespiratorio) => {
+      selAnio.value = anioParaMapa(f);
+      const actualDesde = Math.min(
+        Number(inpDesde.value),
+        Number(inpHasta.value),
+      );
+      const actualHasta = Math.max(
+        Number(inpDesde.value),
+        Number(inpHasta.value),
+      );
+      if (actualDesde !== f.semanaDesde || actualHasta !== f.semanaHasta) {
+        inpDesde.value = String(f.semanaDesde);
+        inpHasta.value = String(f.semanaHasta);
+      }
+    };
+    sincronizar(obtenerFiltrosRespiratorio());
+
+    const alCambiar = () => {
+      actualizarFiltrosRespiratorio({
+        anio: Number(selAnio.value),
+        semanaDesde: Number(inpDesde.value),
+        semanaHasta: Number(inpHasta.value),
+      });
+    };
+    selAnio.addEventListener('change', alCambiar);
+    inpDesde.addEventListener('input', alCambiar);
+    inpHasta.addEventListener('input', alCambiar);
+    suscribirFiltrosRespiratorio((f) => {
+      sincronizar(f);
+      void pintar();
+    }, false);
     root.querySelector('[data-hm-export]')?.addEventListener('click', exportar);
     root
       .querySelector('[data-hm-reintentar]')

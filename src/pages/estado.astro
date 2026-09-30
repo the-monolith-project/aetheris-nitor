@@ -104,6 +104,31 @@ const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
       </div>
     </div>
 
+    <section
+      data-frescura
+      aria-labelledby="frescura-titulo"
+      class="mt-10 rounded-2xl border border-border bg-surface p-6"
+    >
+      <h2
+        id="frescura-titulo"
+        class="font-sans text-xs font-semibold uppercase tracking-wider text-ink"
+      >
+        Última semana con dato
+      </h2>
+      <p class="mt-2 font-sans text-xs leading-relaxed text-ink-muted">
+        Hasta qué semana epidemiológica llega cada serie que usa el sitio. Una
+        serie con rezago no está rota: la fuente publica con retraso.
+      </p>
+      <div
+        data-frescura-contenido
+        role="status"
+        aria-busy="true"
+        class="mt-4 font-sans text-xs text-ink-muted"
+      >
+        Consultando las series…
+      </div>
+    </section>
+
     <!-- Explicación de arquitectura y arranque en frío -->
     <section
       class="mt-10 rounded-2xl border border-border bg-surface-raised p-6"
@@ -228,4 +253,69 @@ const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
   }
 
   verificarSalud();
+</script>
+
+<script>
+  import { obtenerIntegridadVigilancia } from '../lib/analisis-api';
+  import { nombreSerie, textoRezago, textoUltimaSemana } from '../lib/frescura';
+
+  const contenido = document.querySelector<HTMLElement>(
+    '[data-frescura-contenido]',
+  );
+
+  async function cargar(): Promise<void> {
+    if (!contenido) return;
+    try {
+      const integridad = await obtenerIntegridadVigilancia();
+      contenido.setAttribute('aria-busy', 'false');
+      const filas = Object.entries(integridad.antiguedad ?? {});
+      if (filas.length === 0) {
+        contenido.textContent =
+          'La API no informa la antigüedad de las series.';
+        return;
+      }
+      const tabla = document.createElement('table');
+      tabla.className = 'w-full border-collapse text-left';
+      const titulo = document.createElement('caption');
+      titulo.className = 'sr-only';
+      titulo.textContent = 'Última semana con dato de cada serie';
+      const cabecera = tabla.createTHead().insertRow();
+      for (const texto of ['Serie', 'Última semana', 'Rezago']) {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.className = 'py-2 pr-3 font-semibold text-ink';
+        th.textContent = texto;
+        cabecera.appendChild(th);
+      }
+      const cuerpo = tabla.createTBody();
+      for (const [clave, antiguedad] of filas) {
+        const fila = cuerpo.insertRow();
+        fila.className = 'border-t border-border/60';
+        const valores = [
+          nombreSerie(clave),
+          textoUltimaSemana(antiguedad) ?? 'sin datos',
+          textoRezago(antiguedad) ?? '—',
+        ];
+        valores.forEach((valor, i) => {
+          const celda =
+            i === 0 ? document.createElement('th') : fila.insertCell();
+          if (celda instanceof HTMLTableCellElement && i === 0) {
+            celda.scope = 'row';
+            fila.appendChild(celda);
+          }
+          celda.className =
+            'py-2 pr-3 ' + (i === 0 ? 'font-medium text-ink' : 'tabular-nums');
+          celda.textContent = valor;
+        });
+      }
+      tabla.prepend(titulo);
+      contenido.replaceChildren(tabla);
+    } catch {
+      contenido.setAttribute('aria-busy', 'false');
+      contenido.textContent =
+        'No se pudo consultar la antigüedad de las series. Vuelve a intentarlo en unos segundos.';
+    }
+  }
+
+  void cargar();
 </script>

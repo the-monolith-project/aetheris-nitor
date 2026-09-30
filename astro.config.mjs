@@ -78,7 +78,8 @@ export default defineConfig({
       filter: (pagina) =>
         !pagina.includes('/alertas/nueva') &&
         !pagina.includes('/panel') &&
-        !pagina.includes('/demos'),
+        !pagina.includes('/demos') &&
+        !pagina.includes('/incrustar'),
     }),
   ],
   server: {

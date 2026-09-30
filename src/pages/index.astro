@@ -339,6 +339,23 @@ const STACK = [
           y el unico lugar donde aparece el coral de la marca. Si el backend
           no responde, la seccion entera se queda oculta. */
       }
+      <section data-tu-departamento hidden class="mt-6">
+        <div
+          class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-6"
+        >
+          <h2 class="font-sans text-sm font-semibold text-ink">
+            Tu departamento
+          </h2>
+          <a
+            href="/analisis"
+            data-tu-departamento-enlace
+            class="font-sans text-sm font-medium text-accent"
+          >
+            <span class="enlace-filete" data-tu-departamento-texto></span>
+          </a>
+        </div>
+      </section>
+
       <section data-tira-alertas hidden class="mt-6">
         <div class="rounded-2xl border border-live/40 bg-surface p-6 sm:p-8">
           <div class="flex flex-wrap items-center justify-between gap-3">
@@ -377,11 +394,11 @@ const STACK = [
             >
               <Icono nombre="bell" class="h-6 w-6" />
             </span>
-            <h3 class="titular-seccion text-ink">Alertas de campo</h3>
+            <h3 class="titular-seccion text-ink">Alertas por departamento</h3>
             <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
               Avisos redactados por el equipo de vigilancia, con lo que conviene
-              hacer. Se leen desde el teléfono, se imprimen y funcionan sin
-              señal.
+              hacer en cada departamento. Se leen desde el teléfono, se imprimen
+              y funcionan sin señal.
             </p>
             <span class="mt-6 font-sans text-sm font-semibold text-accent">
               <span class="enlace-filete">Ver alertas</span>
@@ -468,7 +485,7 @@ const STACK = [
           superficie elevada. */
       }
       <section
-        class="aparece mt-16 rounded-2xl bg-accent p-8 sm:mt-20 sm:p-10 lg:p-12"
+        class="aparece mt-16 rounded-2xl bg-header p-8 sm:mt-20 sm:p-10 lg:p-12"
         aria-labelledby="modulos-titulo"
       >
         <h2 id="modulos-titulo" class="titular-seccion max-w-2xl text-white">
@@ -607,9 +624,30 @@ const STACK = [
     ETIQUETAS_TIPO,
     type PayloadAlertas,
   } from '../lib/vista-alertas';
+  import { alertaAplicaA, esAlertaNacional } from '../lib/alcance-alertas';
+  import { DEPARTAMENTOS_POR_CODIGO } from '../lib/departamentos';
+  import { leerDepartamentoRecordado } from '../lib/departamento-recordado';
   import { iniciarMovimiento } from '../lib/movimiento';
 
   iniciarMovimiento();
+
+  const tuDepartamento = document.querySelector<HTMLElement>(
+    '[data-tu-departamento]',
+  );
+  const departamentoRecordado = leerDepartamentoRecordado();
+  if (tuDepartamento && departamentoRecordado) {
+    const enlace = tuDepartamento.querySelector<HTMLAnchorElement>(
+      '[data-tu-departamento-enlace]',
+    );
+    const texto = tuDepartamento.querySelector<HTMLElement>(
+      '[data-tu-departamento-texto]',
+    );
+    if (enlace && texto) {
+      enlace.href = `/departamento/${departamentoRecordado}`;
+      texto.textContent = `Ver ${DEPARTAMENTOS_POR_CODIGO[departamentoRecordado].nombre}: alertas, dengue y respiratorio`;
+      tuDepartamento.hidden = false;
+    }
+  }
 
   const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
   const seccion = document.querySelector<HTMLElement>('[data-tira-alertas]');
@@ -624,7 +662,20 @@ const STACK = [
         const datos = (await respuesta.json()) as PayloadAlertas;
         if (!Array.isArray(datos.alertas) || datos.alertas.length === 0) return;
 
-        for (const alerta of datos.alertas.slice(0, 3)) {
+        // Con un departamento recordado se muestran las que le aplican, las
+        // propias primero; sin él, la lista completa (ADR 0022).
+        const recordado = leerDepartamentoRecordado();
+        const ordenadas = recordado
+          ? datos.alertas
+              .filter((a) => alertaAplicaA(a, recordado))
+              .sort(
+                (a, b) =>
+                  Number(esAlertaNacional(a)) - Number(esAlertaNacional(b)),
+              )
+          : datos.alertas;
+        if (ordenadas.length === 0) return;
+
+        for (const alerta of ordenadas.slice(0, 3)) {
           const item = document.createElement('li');
           item.className =
             'flex flex-wrap items-baseline gap-x-2.5 font-sans text-sm leading-relaxed';

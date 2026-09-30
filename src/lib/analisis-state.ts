@@ -2,7 +2,7 @@ import {
   aniosClimaPresentacion,
   type CapaAnalitica,
   type FiltrosAnalisis,
-} from './tipos-analisis';
+} from './tipos-analisis.ts';
 
 export const EVENTO_FILTROS_ANALISIS = 'epi:filters-changed';
 
@@ -39,7 +39,7 @@ function clonarEstado(valor: FiltrosAnalisis): FiltrosAnalisis {
   return { ...valor, comparar: [...valor.comparar] };
 }
 
-function normalizarEstado(
+export function normalizarEstado(
   base: FiltrosAnalisis,
   cambios: Partial<FiltrosAnalisis>,
 ): FiltrosAnalisis {
@@ -64,8 +64,8 @@ function normalizarEstado(
   )
     ? candidato.modoMinsal
     : 'semana';
-  candidato.capa = CAPAS_VALIDAS.includes(candidato.capa as CapaAnalitica)
-    ? (candidato.capa as CapaAnalitica)
+  candidato.capa = CAPAS_VALIDAS.includes(candidato.capa)
+    ? candidato.capa
     : 'minsal_volumen';
   return candidato;
 }
@@ -103,31 +103,50 @@ function leerEstadoDesdeUrl(): Partial<FiltrosAnalisis> {
   return cambios;
 }
 
-function sincronizarUrl(filtros: FiltrosAnalisis): void {
+let timerSincronizarUrl: ReturnType<typeof setTimeout> | null = null;
+
+function sincronizarUrl(filtros: FiltrosAnalisis, diferir = false): void {
   if (typeof window === 'undefined') return;
-  const url = new URL(window.location.href);
-  url.searchParams.set('year', String(filtros.anio));
-  url.searchParams.set('week', String(filtros.semana));
-  url.searchParams.set('fromWeek', String(filtros.semanaDesde));
-  url.searchParams.set('toWeek', String(filtros.semanaHasta));
-  url.searchParams.set('serie', filtros.serie);
-  url.searchParams.set('minsal', filtros.modoMinsal);
-  if (filtros.capa && filtros.capa !== 'minsal_volumen') {
-    url.searchParams.set('capa', filtros.capa);
+  const ejecutar = () => {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('year', String(filtros.anio));
+      url.searchParams.set('week', String(filtros.semana));
+      url.searchParams.set('fromWeek', String(filtros.semanaDesde));
+      url.searchParams.set('toWeek', String(filtros.semanaHasta));
+      url.searchParams.set('serie', filtros.serie);
+      url.searchParams.set('minsal', filtros.modoMinsal);
+      if (filtros.capa && filtros.capa !== 'minsal_volumen') {
+        url.searchParams.set('capa', filtros.capa);
+      } else {
+        url.searchParams.delete('capa');
+      }
+      if (filtros.departamento) {
+        url.searchParams.set('dept', filtros.departamento);
+      } else {
+        url.searchParams.delete('dept');
+      }
+      if (filtros.comparar.length > 0) {
+        url.searchParams.set('compare', filtros.comparar.join(','));
+      } else {
+        url.searchParams.delete('compare');
+      }
+      window.history.replaceState(null, '', url);
+    } catch {
+      // Ignorar SecurityError en navegadores con cuotas estrictas de replaceState (ej. Safari)
+    }
+  };
+
+  if (diferir) {
+    if (timerSincronizarUrl) clearTimeout(timerSincronizarUrl);
+    timerSincronizarUrl = setTimeout(ejecutar, 200);
   } else {
-    url.searchParams.delete('capa');
+    if (timerSincronizarUrl) {
+      clearTimeout(timerSincronizarUrl);
+      timerSincronizarUrl = null;
+    }
+    ejecutar();
   }
-  if (filtros.departamento) {
-    url.searchParams.set('dept', filtros.departamento);
-  } else {
-    url.searchParams.delete('dept');
-  }
-  if (filtros.comparar.length > 0) {
-    url.searchParams.set('compare', filtros.comparar.join(','));
-  } else {
-    url.searchParams.delete('compare');
-  }
-  window.history.replaceState(null, '', url);
 }
 
 let estado = normalizarEstado(
@@ -157,6 +176,7 @@ export function obtenerFiltrosAnalisis(): FiltrosAnalisis {
 
 export function actualizarFiltrosAnalisis(
   cambios: Partial<FiltrosAnalisis>,
+  opciones?: { diferirUrl?: boolean },
 ): FiltrosAnalisis {
   const siguiente = normalizarEstado(estado, cambios);
   if (estadosIguales(estado, siguiente)) return obtenerFiltrosAnalisis();
@@ -164,7 +184,7 @@ export function actualizarFiltrosAnalisis(
   estado = siguiente;
   const detalle = obtenerFiltrosAnalisis();
   if (typeof window !== 'undefined') {
-    sincronizarUrl(detalle);
+    sincronizarUrl(detalle, opciones?.diferirUrl ?? false);
     window.dispatchEvent(
       new CustomEvent<FiltrosAnalisis>(EVENTO_FILTROS_ANALISIS, {
         detail: detalle,

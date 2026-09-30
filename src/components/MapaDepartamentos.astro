@@ -1331,14 +1331,12 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           ) {
             const serie =
               capa.id === 'presion_probable' ? 'probable' : 'confirmado';
-            capaActivaId = capa.id;
+            if (capaActivaId === capa.id) return;
             actualizarFiltrosAnalisis({ capa: 'presion', serie });
-            void activarCapa(capa.id);
             return;
           }
-          capaActivaId = capa.id;
+          if (capaActivaId === capa.id) return;
           actualizarFiltrosAnalisis({ capa: capa.id as CapaAnalitica });
-          void activarCapa(capa.id);
         });
       }
     }

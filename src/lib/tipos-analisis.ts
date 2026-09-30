@@ -37,7 +37,7 @@ export interface FiltrosAnalisis {
   departamento: string | null;
   comparar: string[];
   modoMinsal: ModoMinsal;
-  capa?: CapaAnalitica | null;
+  capa: CapaAnalitica;
 }
 
 export interface PresionAnalitica {

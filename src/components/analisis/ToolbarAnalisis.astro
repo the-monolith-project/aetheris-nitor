@@ -19,11 +19,11 @@ import BarraActividad from '../BarraActividad.astro';
       etiqueta="Actualizando datos del análisis…"
     />
     <div
-      class="flex flex-col gap-2.5 xl:flex-row xl:items-center xl:justify-between xl:gap-4"
+      class="flex flex-col gap-2.5 2xl:flex-row 2xl:items-center 2xl:justify-between 2xl:gap-4"
     >
       <div
         id="toolbar-analisis-resumen"
-        class="min-w-0 font-sans text-xs leading-relaxed text-ink-muted"
+        class="min-w-0 flex-1 font-sans text-xs leading-relaxed text-ink-muted"
         aria-live="polite"
       >
         Cargando estado del análisis…
@@ -208,7 +208,7 @@ import BarraActividad from '../BarraActividad.astro';
             <button
               id="analisis-reproductor-prev"
               type="button"
-              class="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-lg border border-border bg-bg text-ink transition-colors hover:border-accent/50 hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-border bg-bg text-ink transition-colors hover:border-accent/50 hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               aria-label="Semana anterior (Flecha Izquierda)"
               title="Semana anterior (←)"
             >
@@ -231,13 +231,14 @@ import BarraActividad from '../BarraActividad.astro';
             <button
               id="analisis-reproductor-play"
               type="button"
-              class="flex min-h-[36px] items-center justify-center gap-1.5 rounded-lg border border-accent bg-accent px-3 py-1 font-sans text-xs font-semibold text-white shadow-sm transition-all hover:brightness-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              class="flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-lg border border-accent bg-accent px-3.5 py-1.5 font-sans text-xs font-semibold text-accent-ink shadow-sm transition-all hover:opacity-90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               aria-label="Reproducir evolución temporal (Espacio)"
+              aria-pressed="false"
               title="Reproducir / Pausar (Espacio)"
             >
               <svg
                 id="analisis-icono-play"
-                class="h-3.5 w-3.5 fill-current"
+                class="h-4 w-4 fill-current text-accent-ink"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
@@ -245,13 +246,15 @@ import BarraActividad from '../BarraActividad.astro';
               </svg>
               <svg
                 id="analisis-icono-pausa"
-                class="h-3.5 w-3.5 fill-current hidden"
+                class="h-4 w-4 fill-current text-accent-ink hidden"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
                 <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
               </svg>
-              <span id="analisis-texto-play" class="hidden sm:inline">Play</span
+              <span
+                id="analisis-texto-play"
+                class="hidden text-accent-ink sm:inline">Play</span
               >
             </button>
 
@@ -259,7 +262,7 @@ import BarraActividad from '../BarraActividad.astro';
             <button
               id="analisis-reproductor-next"
               type="button"
-              class="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-lg border border-border bg-bg text-ink transition-colors hover:border-accent/50 hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-border bg-bg text-ink transition-colors hover:border-accent/50 hover:bg-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               aria-label="Semana siguiente (Flecha Derecha)"
               title="Semana siguiente (→)"
             >
@@ -282,8 +285,9 @@ import BarraActividad from '../BarraActividad.astro';
             <button
               id="analisis-reproductor-velocidad"
               type="button"
-              class="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-lg border border-border bg-bg px-2 py-1 font-mono text-xs font-semibold text-ink-muted transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              aria-label="Velocidad de reproducción (actual: 1x)"
+              class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-border bg-bg px-2.5 py-1.5 font-mono text-xs font-semibold text-ink-muted transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              aria-label="Velocidad: 1x"
+              aria-pressed="false"
               title="Cambiar velocidad (1x / 2x)"
             >
               1x
@@ -292,7 +296,7 @@ import BarraActividad from '../BarraActividad.astro';
             <!-- Badge de semana activa -->
             <span
               id="analisis-reproductor-badge"
-              class="inline-flex min-h-[36px] items-center rounded-lg border border-accent/30 bg-accent/10 px-2.5 py-1 font-mono text-xs font-bold text-accent"
+              class="inline-flex min-h-[44px] items-center rounded-lg border border-accent/30 bg-accent/10 px-3 py-1.5 font-mono text-xs font-bold text-accent"
               aria-hidden="true"
             >
               SE01
@@ -410,10 +414,12 @@ import BarraActividad from '../BarraActividad.astro';
     EstadoLayoutAnalisis,
     VistaAnalisis,
   } from '../../lib/analisis-layout-state';
-  import type {
-    CapaAnalitica,
-    FiltrosAnalisis,
-    SerieEpidemiologica,
+  import {
+    esAnioAnalisisDengue,
+    type AnioAnalisisDengue,
+    type CapaAnalitica,
+    type FiltrosAnalisis,
+    type SerieEpidemiologica,
   } from '../../lib/tipos-analisis';
 
   const selectorVista = document.getElementById(
@@ -484,16 +490,21 @@ import BarraActividad from '../BarraActividad.astro';
   let layoutActual: EstadoLayoutAnalisis | null = null;
   let timerThrottleCinta: ReturnType<typeof setTimeout> | null = null;
 
-  // Cache analítico de la serie nacional agregada
-  const sumasPorSemanaCache = new Array(53).fill(0);
+  // Cache analítico de la serie nacional agregada: null indica semana sin observación
+  const sumasPorSemanaCache: (number | null)[] = new Array(53).fill(null);
   let semanaPicoCalculada = 0;
   let maxCasosCalculado = 0;
+  let cacheCurvaClave: string | null = null;
+  let cargaCurvaActual = 0;
 
   function etiquetaSemana(semana: number): string {
     return `SE${String(semana).padStart(2, '0')}`;
   }
 
   function actualizarResumen(semanaManual?: number): void {
+    // Durante la reproducción continua no saturamos lectores de pantalla;
+    // se anuncia el resumen completo al pausar o terminar.
+    if (reproduciendo) return;
     if (!resumen || !filtrosActuales || !layoutActual) return;
     const semana = semanaManual ?? filtrosActuales.semana;
     const deptoObj = filtrosActuales.departamento
@@ -505,15 +516,14 @@ import BarraActividad from '../BarraActividad.astro';
     const semanaTexto = etiquetaSemana(semana);
     const rangoTexto = `${etiquetaSemana(filtrosActuales.semanaDesde)}–${etiquetaSemana(filtrosActuales.semanaHasta)}`;
 
-    const capaEtiquetas: Record<string, string> = {
+    const capaEtiquetas: Record<CapaAnalitica, string> = {
       minsal_volumen: 'Casos MINSAL',
       iv: 'M1 Idoneidad',
       anomalia: 'M2 Clima',
       presion: 'M3 Presión',
       confianza: 'Integridad',
     };
-    const capaTexto =
-      capaEtiquetas[filtrosActuales.capa ?? 'minsal_volumen'] ?? 'Casos MINSAL';
+    const capaTexto = capaEtiquetas[filtrosActuales.capa] ?? 'Casos MINSAL';
 
     resumen.innerHTML =
       `<span class="font-semibold text-accent">[${capaTexto}]</span> Dengue ${serie} en <span class="font-medium text-ink">${donde}</span>, ` +
@@ -532,54 +542,114 @@ import BarraActividad from '../BarraActividad.astro';
 
   function actualizarTooltipCinta(semana: number): void {
     if (!cintaTooltip) return;
-    const casos = sumasPorSemanaCache[semana - 1] ?? 0;
+    const datoSemana = sumasPorSemanaCache[semana - 1];
     const esPico = semana === semanaPicoCalculada && semanaPicoCalculada > 0;
     const serieNom =
       filtrosActuales?.serie === 'confirmado' ? 'conf.' : 'prob.';
-    const texto = `${etiquetaSemana(semana)} · ${casos} casos ${serieNom}${esPico ? ' (Pico anual)' : ''}`;
+
+    let textoCasos: string;
+    if (typeof datoSemana === 'number') {
+      textoCasos = `${datoSemana.toLocaleString()} casos ${serieNom}`;
+    } else {
+      textoCasos = 'Sin dato';
+    }
+
+    const texto = `${etiquetaSemana(semana)} · ${textoCasos}${esPico ? ' (Pico anual)' : ''}`;
 
     cintaTooltip.textContent = texto;
     const pct = ((semana - 1) / 52) * 100;
     cintaTooltip.style.left = `${pct}%`;
   }
 
-  let anioCurvaCargado: number | null = null;
-  async function cargarCurvaNacionalCinta(anio: number): Promise<void> {
-    if (anio === anioCurvaCargado || !cintaCurvaPath) return;
-    anioCurvaCargado = anio;
+  function limpiarCurvaCinta(): void {
+    sumasPorSemanaCache.fill(null);
+    semanaPicoCalculada = 0;
+    maxCasosCalculado = 0;
+    cacheCurvaClave = null;
+    cintaCurvaPath?.setAttribute('d', '');
+    if (cintaPico) {
+      cintaPico.classList.add('hidden');
+      cintaPico.classList.remove('flex');
+    }
+    if (cintaPicoEtiqueta) cintaPicoEtiqueta.classList.add('hidden');
+    if (cintaAlertaZona) cintaAlertaZona.classList.add('hidden');
+  }
+
+  async function cargarCurvaNacionalCinta(
+    anio: number,
+    serie: SerieEpidemiologica,
+  ): Promise<void> {
+    const clave = `${anio}-${serie}`;
+    if (clave === cacheCurvaClave || !cintaCurvaPath) return;
+
+    // Años sin vigilancia departamental de dengue (p. ej. 2020 o >= 2024 que solo tienen clima)
+    if (!esAnioAnalisisDengue(anio)) {
+      limpiarCurvaCinta();
+      cacheCurvaClave = clave;
+      return;
+    }
+
+    const idCarga = ++cargaCurvaActual;
     try {
-      const datos = await obtenerDatasetAnalitico(anio as any);
+      const datos = await obtenerDatasetAnalitico(anio as AnioAnalisisDengue);
+      if (idCarga !== cargaCurvaActual) return;
+
       if (
         !datos ||
         !datos.departamentos ||
         !Array.isArray(datos.departamentos)
       ) {
-        cintaCurvaPath.setAttribute('d', '');
-        if (cintaPico) cintaPico.classList.add('hidden');
-        if (cintaPicoEtiqueta) cintaPicoEtiqueta.classList.add('hidden');
-        if (cintaAlertaZona) cintaAlertaZona.classList.add('hidden');
+        limpiarCurvaCinta();
         return;
       }
 
-      sumasPorSemanaCache.fill(0);
+      sumasPorSemanaCache.fill(null);
+      const conteoConDatoPorSemana = new Array(53).fill(0);
+      const sumasTemp = new Array(53).fill(0);
+
       for (const d of datos.departamentos) {
         for (const s of d.semanas) {
-          const valor =
-            filtrosActuales?.serie === 'confirmado'
-              ? (s.presion_confirmado?.casos_observados ?? 0)
-              : (s.presion_probable?.casos_observados ?? 0);
           if (s.semana_epi >= 1 && s.semana_epi <= 53) {
-            sumasPorSemanaCache[s.semana_epi - 1] += valor;
+            const idx = s.semana_epi - 1;
+            const metrica =
+              serie === 'confirmado'
+                ? s.presion_confirmado?.casos_observados
+                : s.presion_probable?.casos_observados;
+            if (typeof metrica === 'number') {
+              sumasTemp[idx] += metrica;
+              conteoConDatoPorSemana[idx]++;
+            }
           }
         }
       }
 
-      maxCasosCalculado = Math.max(...sumasPorSemanaCache, 1);
-      semanaPicoCalculada = sumasPorSemanaCache.indexOf(maxCasosCalculado) + 1;
+      for (let i = 0; i < 53; i++) {
+        sumasPorSemanaCache[i] =
+          conteoConDatoPorSemana[i] > 0 ? sumasTemp[i] : null;
+      }
+
+      const valoresValidos = sumasPorSemanaCache.filter(
+        (v): v is number => typeof v === 'number',
+      );
+      maxCasosCalculado =
+        valoresValidos.length > 0 ? Math.max(...valoresValidos, 1) : 1;
+
+      // Calcular semana pico solo sobre semanas con observación
+      let maxIdx = -1;
+      let maxVal = -1;
+      for (let i = 0; i < 53; i++) {
+        const val = sumasPorSemanaCache[i];
+        if (typeof val === 'number' && val > maxVal) {
+          maxVal = val;
+          maxIdx = i;
+        }
+      }
+      semanaPicoCalculada = maxIdx >= 0 ? maxIdx + 1 : 0;
 
       const puntos = sumasPorSemanaCache.map((suma, idx) => {
         const x = idx;
-        const y = 100 - (suma / maxCasosCalculado) * 90;
+        const val = suma ?? 0;
+        const y = 100 - (val / maxCasosCalculado) * 90;
         return `${x},${y.toFixed(1)}`;
       });
       cintaCurvaPath.setAttribute(
@@ -588,16 +658,22 @@ import BarraActividad from '../BarraActividad.astro';
       );
 
       // Posicionar marcador del pico anual
-      if (cintaPico && semanaPicoCalculada > 0 && maxCasosCalculado > 1) {
+      if (cintaPico && semanaPicoCalculada > 0 && maxVal > 0) {
         const picoPct = ((semanaPicoCalculada - 1) / 52) * 100;
         cintaPico.style.left = `${picoPct}%`;
-        cintaPico.title = `Pico anual: ${etiquetaSemana(semanaPicoCalculada)} con ${maxCasosCalculado} casos`;
+        cintaPico.title = `Pico anual: ${etiquetaSemana(semanaPicoCalculada)} con ${maxVal.toLocaleString()} casos ${serie === 'confirmado' ? 'confirmados' : 'probables'}`;
         cintaPico.classList.remove('hidden');
         cintaPico.classList.add('flex');
         if (cintaPicoEtiqueta) {
           cintaPicoEtiqueta.textContent = `Pico: ${etiquetaSemana(semanaPicoCalculada)}`;
           cintaPicoEtiqueta.classList.remove('hidden');
         }
+      } else {
+        if (cintaPico) {
+          cintaPico.classList.add('hidden');
+          cintaPico.classList.remove('flex');
+        }
+        if (cintaPicoEtiqueta) cintaPicoEtiqueta.classList.add('hidden');
       }
 
       // Delimitar zona de estacionalidad epidémica (históricamente SE22–SE40 en El Salvador)
@@ -610,11 +686,11 @@ import BarraActividad from '../BarraActividad.astro';
         cintaAlertaZona.style.width = `${zonaAncho}%`;
         cintaAlertaZona.classList.remove('hidden');
       }
+
+      cacheCurvaClave = clave;
     } catch {
-      cintaCurvaPath.setAttribute('d', '');
-      if (cintaPico) cintaPico.classList.add('hidden');
-      if (cintaPicoEtiqueta) cintaPicoEtiqueta.classList.add('hidden');
-      if (cintaAlertaZona) cintaAlertaZona.classList.add('hidden');
+      if (idCarga !== cargaCurvaActual) return;
+      limpiarCurvaCinta();
     }
   }
 
@@ -627,7 +703,7 @@ import BarraActividad from '../BarraActividad.astro';
 
   function actualizarEstadoVisualPlay(): void {
     if (!botonPlay) return;
-    botonPlay.setAttribute('aria-expanded', String(reproduciendo));
+    botonPlay.setAttribute('aria-pressed', String(reproduciendo));
     if (reproduciendo) {
       iconoPlay?.classList.add('hidden');
       iconoPausa?.classList.remove('hidden');
@@ -657,20 +733,42 @@ import BarraActividad from '../BarraActividad.astro';
     reproduciendo = false;
     actualizarEstadoVisualPlay();
     cintaTooltip?.classList.add('hidden');
+    actualizarResumen();
+  }
+
+  function obtenerUltimaSemanaConDato(): number {
+    for (let sem = 53; sem >= 1; sem--) {
+      if (typeof sumasPorSemanaCache[sem - 1] === 'number') {
+        return sem;
+      }
+    }
+    return 52;
   }
 
   function avanzarSemana(): void {
     if (!cintaSemana) return;
     const actual = Number(cintaSemana.value) || 1;
-    const siguiente = actual >= 53 ? 1 : actual + 1;
+    const maxSem = obtenerUltimaSemanaConDato();
+    const siguiente = actual >= maxSem ? 1 : actual + 1;
     aplicarCambioSemana(siguiente);
   }
 
   function retrocederSemana(): void {
     if (!cintaSemana) return;
     const actual = Number(cintaSemana.value) || 1;
-    const siguiente = actual <= 1 ? 53 : actual - 1;
+    const maxSem = obtenerUltimaSemanaConDato();
+    const siguiente = actual <= 1 ? maxSem : actual - 1;
     aplicarCambioSemana(siguiente);
+  }
+
+  function obtenerIntervaloReproduccion(): number {
+    const prefiereReduccion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefiereReduccion) {
+      return 1500;
+    }
+    return velocidadReproduccion === 1 ? 500 : 250;
   }
 
   function iniciarReproduccion(): void {
@@ -679,7 +777,7 @@ import BarraActividad from '../BarraActividad.astro';
     actualizarEstadoVisualPlay();
     cintaTooltip?.classList.remove('hidden');
 
-    const ms = velocidadReproduccion === 1 ? 500 : 250;
+    const ms = obtenerIntervaloReproduccion();
     intervaloReproduccion = setInterval(() => {
       avanzarSemana();
     }, ms);
@@ -689,7 +787,8 @@ import BarraActividad from '../BarraActividad.astro';
     if (reproduciendo) {
       pausarReproduccion();
     } else {
-      if (cintaSemana && Number(cintaSemana.value) >= 53) {
+      const maxSem = obtenerUltimaSemanaConDato();
+      if (cintaSemana && Number(cintaSemana.value) >= maxSem) {
         aplicarCambioSemana(1);
       }
       iniciarReproduccion();
@@ -706,7 +805,7 @@ import BarraActividad from '../BarraActividad.astro';
 
     if (timerThrottleCinta) clearTimeout(timerThrottleCinta);
     timerThrottleCinta = setTimeout(() => {
-      actualizarFiltrosAnalisis({ semana: sem });
+      actualizarFiltrosAnalisis({ semana: sem }, { diferirUrl: reproduciendo });
     }, 80);
   }
 
@@ -725,7 +824,11 @@ import BarraActividad from '../BarraActividad.astro';
       botonVelocidad.textContent = `${velocidadReproduccion}x`;
       botonVelocidad.setAttribute(
         'aria-label',
-        `Velocidad de reproducción (actual: ${velocidadReproduccion}x)`,
+        `Velocidad: ${velocidadReproduccion}x`,
+      );
+      botonVelocidad.setAttribute(
+        'aria-pressed',
+        String(velocidadReproduccion === 2),
       );
     }
     if (reproduciendo) {
@@ -734,29 +837,13 @@ import BarraActividad from '../BarraActividad.astro';
     }
   });
 
-  // Atajos de teclado en la cinta temporal y reproductor
-  const contenedorCinta = document.querySelector('.cinta-semanas');
-  contenedorCinta?.addEventListener('keydown', (evento: Event) => {
-    const ke = evento as KeyboardEvent;
-    if (ke.key === ' ') {
+  // Atajo de teclado: Espacio en la cinta temporal para alternar reproducción.
+  // No interceptamos flechas ni Home/End: el input range las gestiona de forma
+  // nativa y dispara el evento 'input'. Tampoco capturamos eventos sobre botones.
+  cintaSemana?.addEventListener('keydown', (ke: KeyboardEvent) => {
+    if (ke.key === ' ' || ke.code === 'Space') {
       ke.preventDefault();
       alternarReproduccion();
-    } else if (ke.key === 'ArrowLeft') {
-      ke.preventDefault();
-      pausarReproduccion();
-      retrocederSemana();
-    } else if (ke.key === 'ArrowRight') {
-      ke.preventDefault();
-      pausarReproduccion();
-      avanzarSemana();
-    } else if (ke.key === 'Home') {
-      ke.preventDefault();
-      pausarReproduccion();
-      aplicarCambioSemana(1);
-    } else if (ke.key === 'End') {
-      ke.preventDefault();
-      pausarReproduccion();
-      aplicarCambioSemana(53);
     }
   });
 
@@ -874,6 +961,9 @@ import BarraActividad from '../BarraActividad.astro';
   botonAbrirFiltros?.addEventListener('click', () => {
     if (!popoverFiltros) return;
     if (popoverFiltros.hidden) {
+      // Los paneles abren los filtros desde su estado vacío con .click() sobre
+      // este botón, también con la barra contraída: se expande antes para que
+      // el botón sea visible y el foco pueda volver a él al cerrar.
       if (botonContraer?.getAttribute('aria-expanded') === 'false') {
         fijarToolbarExpandida(true);
       }
@@ -909,7 +999,10 @@ import BarraActividad from '../BarraActividad.astro';
     cerrarFiltros();
   });
 
-  // Contraer / Expandir controles
+  // Contraer deja solo la frase de resumen: la barra es pegajosa y en
+  // pantallas bajas (o en movil) la cinta y los controles tapan buena parte
+  // de los paneles mientras se recorre el workspace. aria-expanded, el texto
+  // del boton y el giro del chevron se mueven juntos para no divergir.
   const botonContraer = document.getElementById('toolbar-analisis-contraer');
   const iconoContraer = document.getElementById(
     'toolbar-analisis-contraer-icono',
@@ -944,6 +1037,11 @@ import BarraActividad from '../BarraActividad.astro';
     );
   });
 
+  // En pantallas estrechas (< sm), arrancar con el toolbar contraído para no tapar la pantalla
+  if (typeof window !== 'undefined' && window.innerWidth < 640) {
+    fijarToolbarExpandida(false);
+  }
+
   function cambiarZoom(direccion: -1 | 1): void {
     const niveles = [100, 150, 200] as const;
     const actual = layoutActual?.zoomTemporal ?? 100;
@@ -958,6 +1056,10 @@ import BarraActividad from '../BarraActividad.astro';
   zoomMas?.addEventListener('click', () => cambiarZoom(1));
 
   suscribirFiltrosAnalisis((filtros) => {
+    const cambioAnioOSerie =
+      !filtrosActuales ||
+      filtrosActuales.anio !== filtros.anio ||
+      filtrosActuales.serie !== filtros.serie;
     filtrosActuales = filtros;
     if (selectorAnio && Number(selectorAnio.value) !== filtros.anio) {
       selectorAnio.value = String(filtros.anio);
@@ -965,11 +1067,8 @@ import BarraActividad from '../BarraActividad.astro';
     if (selectorSerie && selectorSerie.value !== filtros.serie) {
       selectorSerie.value = filtros.serie;
     }
-    if (
-      selectorCapa &&
-      selectorCapa.value !== (filtros.capa ?? 'minsal_volumen')
-    ) {
-      selectorCapa.value = filtros.capa ?? 'minsal_volumen';
+    if (selectorCapa && selectorCapa.value !== filtros.capa) {
+      selectorCapa.value = filtros.capa;
     }
     if (cintaSemana && Number(cintaSemana.value) !== filtros.semana) {
       cintaSemana.value = String(filtros.semana);
@@ -982,7 +1081,9 @@ import BarraActividad from '../BarraActividad.astro';
       badgeSemana.textContent = etiquetaSemana(filtros.semana);
     }
     actualizarRangoCinta(filtros.semanaDesde, filtros.semanaHasta);
-    void cargarCurvaNacionalCinta(filtros.anio);
+    if (cambioAnioOSerie) {
+      void cargarCurvaNacionalCinta(filtros.anio, filtros.serie);
+    }
     actualizarResumen();
     actualizarTooltipCinta(filtros.semana);
   });
@@ -1009,6 +1110,8 @@ import BarraActividad from '../BarraActividad.astro';
       if (!barraActividad) return;
       const activa = evento.detail.enVuelo;
       barraActividad.dataset.activa = activa ? 'true' : 'false';
+      // Rellenar y vaciar el texto, no ocultar la región: es el cambio de
+      // contenido lo que el lector de pantalla anuncia.
       if (barraTexto) {
         barraTexto.textContent = activa
           ? (barraActividad.dataset.etiqueta ?? 'Actualizando datos…')

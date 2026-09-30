@@ -32,7 +32,7 @@ import BarraActividad from '../BarraActividad.astro';
       <div class="flex items-start gap-2 sm:shrink-0 sm:items-center">
         <div
           id="toolbar-analisis-controles"
-          class="flex flex-1 flex-wrap items-center gap-2"
+          class="flex flex-1 flex-wrap items-center gap-2 data-[contraido]:sm:hidden data-[contraido]:[&>:not(#analisis-abrir-filtros)]:hidden"
         >
           <!-- Selector directo de Año -->
           <label
@@ -964,7 +964,12 @@ import BarraActividad from '../BarraActividad.astro';
       // Los paneles abren los filtros desde su estado vacío con .click() sobre
       // este botón, también con la barra contraída: se expande antes para que
       // el botón sea visible y el foco pueda volver a él al cerrar.
-      if (botonContraer?.getAttribute('aria-expanded') === 'false') {
+      // Solo si el botón quedó oculto (escritorio contraído); en móvil sigue
+      // visible y expandir taparía el mapa sin necesidad.
+      if (
+        botonContraer?.getAttribute('aria-expanded') === 'false' &&
+        botonAbrirFiltros.offsetParent === null
+      ) {
         fijarToolbarExpandida(true);
       }
       popoverFiltros.hidden = false;
@@ -1018,7 +1023,10 @@ import BarraActividad from '../BarraActividad.astro';
       pausarReproduccion();
       if (popoverFiltros?.hidden === false) cerrarFiltros();
     }
-    if (controlesToolbar) controlesToolbar.hidden = !expandida;
+    // Contraído no se oculta el contenedor entero: en móvil (< sm) el botón
+    // "Filtros" sigue a la vista, en la misma fila que el botón de expandir,
+    // sin sumar altura. En escritorio el atributo oculta todo el bloque.
+    controlesToolbar?.toggleAttribute('data-contraido', !expandida);
     if (detalleToolbar) detalleToolbar.hidden = !expandida;
     botonContraer.setAttribute('aria-expanded', String(expandida));
     const texto = expandida

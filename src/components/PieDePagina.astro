@@ -7,6 +7,8 @@
  * Todo el pie va sobre bg-deep, que es oscuro en ambos temas, así que los
  * colores salen de los tokens deep-ink y no dependen de data-theme.
  */
+import { RUTA_PREDICCION } from '../lib/enlaces';
+
 const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
 
 interface Enlace {
@@ -35,6 +37,7 @@ const COLUMNAS: { id: string; titulo: string; enlaces: Enlace[] }[] = [
     titulo: 'Herramientas',
     enlaces: [
       { href: '/dengue', etiqueta: 'Dengue' },
+      { href: RUTA_PREDICCION, etiqueta: 'Predicción de dengue' },
       { href: '/respiratorio', etiqueta: 'Respiratorio' },
       { href: '/analisis', etiqueta: 'Análisis' },
       { href: '/analisis#fichas-titulo', etiqueta: 'Fichas departamentales' },

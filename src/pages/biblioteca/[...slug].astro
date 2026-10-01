@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import DocumentoTexto from '../../components/DocumentoTexto.astro';
+import { navegacionBiblioteca } from '../../lib/navegacion-documentos';
 
 export async function getStaticPaths() {
   const entradas = await getCollection('biblioteca');
@@ -18,12 +19,17 @@ interface Props {
 const { entrada } = Astro.props;
 const { Content } = await render(entrada);
 const { titulo, descripcion } = entrada.data;
+const navegacion = navegacionBiblioteca(
+  await getCollection('biblioteca'),
+  entrada.id,
+);
 ---
 
 <DocumentoTexto
   titulo={titulo}
   descripcion={descripcion}
   volver={{ href: '/biblioteca', etiqueta: 'Volver a la biblioteca' }}
+  navegacion={navegacion}
 >
   <Content />
 </DocumentoTexto>

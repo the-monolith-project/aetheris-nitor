@@ -1,0 +1,88 @@
+# Mantiene web/ del monorepo EPI-Aetheris igual que este repo. Cada vez que
+# cambia el frontend en main, copia los archivos con scripts/sincronizar-monorepo.sh
+# y abre (o actualiza) un único PR en el monorepo; nunca hace merge por su
+# cuenta. Si no hay diferencias, no hace nada.
+#
+# Requiere el secreto MONOREPO_SYNC_TOKEN: un token con permiso de escritura en
+# contenido y pull requests del repositorio EPI-Aetheris.
+name: Sincronizar monorepo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'public/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'astro.config.mjs'
+      - 'eslint.config.js'
+      - 'playwright.config.ts'
+      - 'tsconfig.json'
+      - 'Dockerfile*'
+      - '.dockerignore'
+      - '.prettier*'
+      - 'scripts/sincronizar-monorepo.sh'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sincronizar-monorepo
+  cancel-in-progress: true
+
+env:
+  MONOREPO: the-monolith-project/EPI-Aetheris
+  RAMA: chore/web-sincronizado-auto
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar el secreto
+        env:
+          TOKEN: ${{ secrets.MONOREPO_SYNC_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Falta el secreto MONOREPO_SYNC_TOKEN"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          path: nitor
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.MONOREPO }}
+          ref: main
+          token: ${{ secrets.MONOREPO_SYNC_TOKEN }}
+          path: monorepo
+
+      - name: Copiar el frontend
+        run: nitor/scripts/sincronizar-monorepo.sh monorepo
+
+      - name: Abrir o actualizar el PR
+        working-directory: monorepo
+        env:
+          GH_TOKEN: ${{ secrets.MONOREPO_SYNC_TOKEN }}
+        run: |
+          git add -A web
+          if git diff --cached --quiet; then
+            echo "web/ ya coincide con aetheris-nitor; nada que sincronizar."
+            exit 0
+          fi
+          corto="$(git -C ../nitor rev-parse --short HEAD)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$RAMA"
+          git commit -q -m "chore(web): sincronizar el frontend con aetheris-nitor@$corto"
+          git push --force origin "$RAMA"
+          if [ -z "$(gh pr list --repo "$MONOREPO" --head "$RAMA" --state open --json number -q '.[0].number')" ]; then
+            gh pr create --repo "$MONOREPO" --base main --head "$RAMA" \
+              --title "chore(web): sincronizar el frontend con aetheris-nitor" \
+              --body "Copia automática de web/ desde main de aetheris-nitor (workflow Sincronizar monorepo). Se actualiza sola con cada cambio del frontend; revisar y hacer merge."
+          fi

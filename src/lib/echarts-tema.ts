@@ -160,3 +160,32 @@ export function tooltipPorSemana<T>(
     return fila ? texto(fila) : '';
   };
 }
+
+/**
+ * Tooltip de ejes de semanas con varias series: encabezado con la semana y
+ * una fila por serie con dato. `unidad` va tras el valor ("casos probable").
+ */
+export function tooltipSeries(
+  encabezado: (semana: number) => string,
+  unidad: string,
+): (params: unknown) => string {
+  interface ItemTooltip {
+    seriesName?: string;
+    marker?: string;
+    value?: unknown;
+    axisValue?: number;
+  }
+  return (params) => {
+    const lista = (Array.isArray(params) ? params : [params]) as ItemTooltip[];
+    const filas = lista.filter(
+      (item) => Array.isArray(item.value) && item.value[1] !== null,
+    );
+    if (filas.length === 0) return '';
+    const semana = Math.round(Number(lista[0]?.axisValue));
+    const detalle = filas.map(
+      (item) =>
+        `${item.marker ?? ''} ${item.seriesName}: ${(item.value as unknown[])[1]} ${unidad}`,
+    );
+    return [encabezado(semana), ...detalle].join('<br/>');
+  };
+}

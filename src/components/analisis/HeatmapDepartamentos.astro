@@ -62,11 +62,6 @@ import { RAMPA_PRESION } from '../../lib/colores';
 </PanelWorkspace>
 
 <script>
-  // Plot entra por import dinamico, como en el resto de paneles: cuando
-  // un solo componente lo importa de forma estatica, Vite lo arrastra al
-  // grafo inicial y anula los await import de los demas -- 391 KB de Plot
-  // y d3 quedaban en la carga critica de /dengue.
-  let Plot: typeof import('@observablehq/plot') | null = null;
   import {
     esNoDisponible,
     motivoNoDisponible,
@@ -81,8 +76,8 @@ import { RAMPA_PRESION } from '../../lib/colores';
     suscribirFiltrosAnalisis,
   } from '../../lib/analisis-state';
   import { colorPresion, gradienteCss, RAMPA_PRESION } from '../../lib/colores';
-  import { ESTILO_PLOT, MARGENES, marcoPlot } from '../../lib/plot-tema';
-  import { vincularMarcasPlot } from '../../lib/plot-interacciones';
+  import { montarMatriz } from '../../lib/echarts-matriz';
+  import type { GraficoMontado } from '../../lib/echarts-montaje';
   import { TablaAlternativa } from '../../lib/tabla-alternativa';
   import {
     esAnioAnalisisDengue,
@@ -106,6 +101,7 @@ import { RAMPA_PRESION } from '../../lib/colores';
   if (leyenda) leyenda.style.background = gradienteCss(RAMPA_PRESION);
 
   let revision = 0;
+  let grafico: GraficoMontado | null = null;
   let filtrosActuales = obtenerFiltrosAnalisis();
   let datosTabla: any[] = [];
 
@@ -164,6 +160,8 @@ import { RAMPA_PRESION } from '../../lib/colores';
   async function renderizar(filtros: FiltrosAnalisis) {
     if (!contenedor) return;
     const idRevision = ++revision;
+    grafico?.destruir();
+    grafico = null;
     if (resumen)
       resumen.textContent = `Cargando ${filtros.anio}, serie ${filtros.serie}…`;
 
@@ -218,61 +216,37 @@ import { RAMPA_PRESION } from '../../lib/colores';
       }));
       tablaAlternativa?.marcarCaducada();
 
-      Plot ??= await import('@observablehq/plot');
-      const grafica = Plot!.plot({
-        width: Math.max(contenedor.clientWidth, 760),
-        height: 430,
-        marginLeft: MARGENES.matriz.marginLeft,
-        marginBottom: MARGENES.matriz.marginBottom,
-        x: {
-          domain: Array.from(
+      contenedor.style.height = '430px';
+      const montado = await montarMatriz(
+        contenedor,
+        () => ({
+          semanas: Array.from(
             { length: filtros.semanaHasta - filtros.semanaDesde + 1 },
             (_, indice) => filtros.semanaDesde + indice,
           ),
-          label: 'Semana epidemiológica',
-          tickFormat: (valor) => `SE${String(valor).padStart(2, '0')}`,
-          ticks: 10,
-        },
-        y: {
-          domain: datos.departamentos.map(
-            (departamento) => departamento.nombre,
-          ),
-          label: null,
-        },
-        style: ESTILO_PLOT,
-        marks: [
-          Plot.cell(celdas, {
-            className: 'epi-heatmap-celdas',
-            x: 'semana',
-            y: 'departamento',
-            fill: (celda: CeldaHeatmap) => colorPresion(celda.percentil),
-            inset: 0.5,
-            title: (celda: CeldaHeatmap) => textoCelda(celda, filtros),
-          }),
-          Plot.cell(seleccion, {
-            x: 'semana',
-            y: 'departamento',
-            fill: 'none',
-            stroke: 'var(--color-seleccion)',
-            strokeWidth: 2,
-            inset: 0.5,
-            pointerEvents: 'none',
-          }),
-          marcoPlot(Plot!),
-        ],
-      });
-      vincularMarcasPlot(
-        grafica,
-        '.epi-heatmap-celdas rect',
-        celdas,
-        (celda) => textoCelda(celda, filtros).replaceAll('\n', '. '),
-        (celda) =>
-          actualizarFiltrosAnalisis({
-            departamento: celda.codigo,
+          filas: datos.departamentos.map((departamento) => departamento.nombre),
+          celdas: celdas.map((celda) => ({
             semana: celda.semana,
+            fila: celda.departamento,
+            color: colorPresion(celda.percentil),
+            activa: seleccion.includes(celda),
+          })),
+          izquierda: 110,
+          etiquetasX: 10,
+          texto: (indice) => textoCelda(celdas[indice], filtros),
+        }),
+        'Presión epidemiológica relativa por departamento y semana',
+        (indice) =>
+          actualizarFiltrosAnalisis({
+            departamento: celdas[indice].codigo,
+            semana: celdas[indice].semana,
           }),
       );
-      contenedor.replaceChildren(grafica);
+      if (idRevision !== revision) {
+        montado.destruir();
+        return;
+      }
+      grafico = montado;
 
       if (resumen) {
         const celdaActiva = filtros.departamento
@@ -315,20 +289,4 @@ import { RAMPA_PRESION } from '../../lib/colores';
     filtrosActuales = filtros;
     void renderizar(filtros);
   });
-
-  let ultimoAncho = 0;
-  let timerResize: ReturnType<typeof setTimeout> | null = null;
-  if (contenedor) {
-    new ResizeObserver((entradas) => {
-      const entrada = entradas[0];
-      if (!entrada) return;
-      const nuevoAncho = Math.round(entrada.contentRect.width);
-      if (nuevoAncho === ultimoAncho) return;
-      ultimoAncho = nuevoAncho;
-      if (timerResize) clearTimeout(timerResize);
-      timerResize = setTimeout(() => {
-        void renderizar(filtrosActuales);
-      }, 150);
-    }).observe(contenedor);
-  }
 </script>

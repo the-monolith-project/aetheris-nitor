@@ -511,8 +511,10 @@ test('amplía paneles en foco y cambia la densidad temporal', async ({
   await temporadas
     .locator('[data-accion-panel="tamano"][data-valor="grande"]')
     .click();
-  await expect(temporadas).toHaveClass(/xl:col-span-6/);
-  await expect(departamentos).toHaveClass(/xl:col-span-6/);
+  // Con los tamaños predeterminados vuelve la composición optimizada de la
+  // vista general, donde los paneles no llevan clases de ancho propias.
+  await expect(temporadas).not.toHaveClass(/col-span/);
+  await expect(departamentos).not.toHaveClass(/col-span/);
 });
 
 test('mantiene una sola curva nacional al cambiar su detalle', async ({

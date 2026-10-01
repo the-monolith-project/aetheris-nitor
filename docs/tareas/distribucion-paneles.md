@@ -28,6 +28,16 @@ Implementa la Propuesta 1 del diagnóstico (algoritmo de fila completa) más el 
 - Playwright usa 1 worker a propósito. No lo cambies.
 - Si `fichas-departamentales.spec.ts` falla con "resolved to 5 elements", es la barra de desarrollo de Astro (hay paneles con su propio `h1`), no tu cambio. Desactívala con `pnpm exec astro preferences disable devToolbar --global`.
 
+## Sin backend: qué comprobar y cómo
+
+La distribución horizontal (anchos, huecos al final de fila, presets, ocultar y mostrar paneles) depende del estado de la distribución y de CSS, no de la API. Con los paneles en su estado de error o de carga puedes medir cada caja con Playwright (`boundingBox`) y comprobar, a 1440 y a 768 px, que cada fila llena el ancho disponible y que ningún panel queda solo con la mitad de la fila vacía. Eso cubre las causas A, B y C del diagnóstico.
+
+La altura real de los paneles (causa D) y el aspecto con datos no se pueden comprobar así: un panel con error mide menos que uno con el mapa o un heatmap cargado.
+
+- Si quieres acercarte a lo real, simula la API con `page.route` como hacen `tests/e2e/respiratorio.spec.ts` y `tests/e2e/fichas-departamentales.spec.ts`, con respuestas mínimas para los endpoints que consume `/dengue` (`src/lib/analisis-api.ts`).
+- Limita el tiempo que dedicas a eso. Si los mocks no salen en un tiempo razonable, quédate con la verificación geométrica con paneles en estado de error y dilo en la descripción del PR, indicando qué no pudiste ver (alturas y aspecto con datos).
+- No intentes levantar el backend real: necesita FastAPI y base de datos y no está disponible aquí.
+
 ## Verificación
 
 Ejecuta y deja pasar: `pnpm check`, `pnpm lint`, `pnpm format:check`, `pnpm test:unit`, `pnpm build`. Si puedes abrir un navegador, captura `/dengue` a 1440 px y a 768 px con distintos presets y paneles ocultos. Si no puedes, dilo en el PR.

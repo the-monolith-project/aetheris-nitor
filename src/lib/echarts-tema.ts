@@ -59,6 +59,10 @@ export function crearOpcionBase(
   return {
     animation: !reducirMovimiento(),
     animationDuration: 400,
+    // Transición al cambiar la semana: corta y sin rebote (ver
+    // GraficoMontado.actualizar con `suave`).
+    animationDurationUpdate: 300,
+    animationEasingUpdate: 'cubicOut',
     backgroundColor: 'transparent',
     textStyle: { color: tokens.tintaSuave, fontFamily: tokens.fuente },
     // Decals desactivados por defecto: en rampas ordenadas (bandas, mapas de

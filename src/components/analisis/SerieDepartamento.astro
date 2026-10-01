@@ -116,6 +116,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
   } from '../../lib/analisis-api';
   import {
     obtenerFiltrosAnalisis,
+    soloCambiaSemana,
     suscribirFiltrosAnalisis,
   } from '../../lib/analisis-state';
   import type { OpcionEcharts } from '../../lib/echarts-base';
@@ -156,12 +157,21 @@ import PanelWorkspace from './PanelWorkspace.astro';
 
   let revision = 0;
   let filtrosActuales = obtenerFiltrosAnalisis();
+  /** Filtros con los que se pintaron las gráficas vigentes. */
+  let filtrosPintados: FiltrosAnalisis | null = null;
+  /** Falso mientras una carga completa sigue en curso. */
+  let listo = false;
   /** Lo que necesita montarGrafico: se vuelve a evaluar al cambiar el tema. */
   interface EspecificacionGrafica {
     construir: (tokens: TokensGrafico) => OpcionEcharts;
     descripcion: string;
   }
-  let graficos: GraficoMontado[] = [];
+  /** `regenerar` reconstruye la opción con otra semana sin volver a pedir datos. */
+  interface GraficoVigente {
+    montado: GraficoMontado;
+    regenerar: (filtros: FiltrosAnalisis) => EspecificacionGrafica | null;
+  }
+  let graficos: GraficoVigente[] = [];
   let datosTabla: any[] = [];
 
   const detailsTabla = document.getElementById(
@@ -287,6 +297,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
         ),
         series: [
           {
+            id: 'probable',
             name: 'Probable',
             type: 'line',
             symbolSize: 5,
@@ -313,6 +324,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
           {
             // Trazo discontinuo: la serie confirmada se distingue sin depender
             // solo del color.
+            id: 'confirmado',
             name: 'Confirmado',
             type: 'line',
             symbol: 'none',
@@ -364,6 +376,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
           {
             // Base invisible de la banda: la serie siguiente aporta el tramo
             // entre P25 y P75.
+            id: 'base-banda',
             name: 'Base de la banda',
             type: 'line',
             stack: 'banda',
@@ -373,6 +386,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
             data: banda.map((s) => par(s.semana_epi, s.p25_baseline)),
           },
           {
+            id: 'banda',
             name: 'Banda histórica P25 a P75',
             type: 'line',
             stack: 'banda',
@@ -389,6 +403,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
             ),
           },
           {
+            id: 'iv',
             name: 'Iv observado',
             type: 'line',
             symbolSize: 5,
@@ -436,6 +451,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
         ),
         series: [
           {
+            id: 'anomalia',
             name: 'Anomalía',
             type: 'line',
             symbolSize: 5,
@@ -470,6 +486,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
     esError: boolean,
     mensaje: string,
     idRevision: number,
+    regenerar?: GraficoVigente['regenerar'],
   ): Promise<void> {
     if (!nodo) return;
     nodo.setAttribute('aria-busy', 'false');
@@ -483,7 +500,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
         montado.destruir();
         return;
       }
-      graficos.push(montado);
+      graficos.push({ montado, regenerar: regenerar ?? (() => grafica) });
       return;
     }
     if (esError) {
@@ -495,8 +512,24 @@ import PanelWorkspace from './PanelWorkspace.astro';
 
   async function renderizar(filtros: FiltrosAnalisis): Promise<void> {
     if (!marco || !resumen) return;
+    // Solo cambió la semana: se mueve la marca con transición, sin recrear
+    // las gráficas ni volver a mostrar el esqueleto de carga.
+    if (
+      listo &&
+      graficos.length > 0 &&
+      soloCambiaSemana(filtrosPintados, filtros)
+    ) {
+      filtrosPintados = filtros;
+      for (const g of graficos) {
+        const nueva = g.regenerar(filtros);
+        if (nueva) g.montado.actualizar(nueva.construir, { suave: true });
+      }
+      return;
+    }
     const idRevision = ++revision;
-    graficos.forEach((g) => g.destruir());
+    filtrosPintados = filtros;
+    listo = false;
+    graficos.forEach((g) => g.montado.destruir());
     graficos = [];
 
     if (!filtros.departamento) {
@@ -572,6 +605,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
           false,
           'Sin presión epidemiológica para este año (los casos MINSAL se detienen en 2023).',
           idRevision,
+          presion ? (f) => graficaPresion(presion.semanas, f) : undefined,
         ),
       );
     }
@@ -625,6 +659,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
           false,
           'Sin idoneidad biofísica para este departamento y año.',
           idRevision,
+          idoneidad ? (f) => graficaIdoneidad(idoneidad.semanas, f) : undefined,
         ),
       );
       pendientes.push(
@@ -634,12 +669,14 @@ import PanelWorkspace from './PanelWorkspace.astro';
           false,
           'Sin anomalía climática para este departamento y año.',
           idRevision,
+          idoneidad ? (f) => graficaAnomalia(idoneidad.semanas, f) : undefined,
         ),
       );
     }
 
     await Promise.all(pendientes);
     if (idRevision !== revision) return;
+    listo = true;
 
     // Preparar datos para tabla alternativa
     const filasTabla: any[] = [];

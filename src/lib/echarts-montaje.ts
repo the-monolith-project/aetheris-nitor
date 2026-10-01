@@ -22,8 +22,17 @@ export function cargarEcharts(): Promise<Echarts> {
 
 export interface GraficoMontado {
   instancia: Instancia;
-  /** Sustituye la opción (p. ej. al cambiar filtros) sin recrear la instancia. */
-  actualizar(construir: (tokens: TokensGrafico) => OpcionEcharts): void;
+  /**
+   * Sustituye la opción (p. ej. al cambiar filtros) sin recrear la instancia.
+   * Con `{ suave: true }` se fusiona con la opción vigente en vez de
+   * reemplazarla: ECharts anima la marca de semana y las celdas activas
+   * (animationDurationUpdate). Las series deben llevar `id` estable y el
+   * mismo número de series y de datos que la opción anterior.
+   */
+  actualizar(
+    construir: (tokens: TokensGrafico) => OpcionEcharts,
+    opciones?: { suave?: boolean },
+  ): void;
   destruir(): void;
 }
 
@@ -42,12 +51,15 @@ export async function montarGrafico(
   const instancia = echarts.init(contenedor, undefined, { renderer: 'svg' });
   let constructor = construir;
 
-  const pintar = (): void => {
-    instancia.setOption(constructor(leerTokens()), true);
+  const etiquetar = (): void => {
     // exportar-grafico.ts busca svg[role="img"]; ECharts solo marca el div.
     const svg = contenedor.querySelector('svg');
     svg?.setAttribute('role', 'img');
     svg?.setAttribute('aria-label', descripcion);
+  };
+  const pintar = (): void => {
+    instancia.setOption(constructor(leerTokens()), true);
+    etiquetar();
   };
   pintar();
 
@@ -65,9 +77,14 @@ export async function montarGrafico(
 
   return {
     instancia,
-    actualizar(nuevo) {
+    actualizar(nuevo, opciones) {
       constructor = nuevo;
-      pintar();
+      if (opciones?.suave) {
+        instancia.setOption(nuevo(leerTokens()));
+        etiquetar();
+      } else {
+        pintar();
+      }
     },
     destruir() {
       observadorTamano.disconnect();

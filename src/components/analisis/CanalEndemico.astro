@@ -88,6 +88,7 @@ const { departamento, anio } = Astro.props;
   import { obtenerSeriePresion } from '../../lib/analisis-api';
   import {
     obtenerFiltrosAnalisis,
+    soloCambiaSemana,
     suscribirFiltrosAnalisis,
   } from '../../lib/analisis-state';
   import { categoriaCanal, construirCanal } from '../../lib/canal-endemico';
@@ -132,6 +133,7 @@ const { departamento, anio } = Astro.props;
     let revision = 0;
     let grafico: GraficoMontado | null = null;
     let filtrosActuales = obtenerFiltrosAnalisis();
+    let filtrosPintados: FiltrosAnalisis | null = null;
     let filasTabla: PuntoCanal[] = [];
 
     const tabla =
@@ -179,6 +181,13 @@ const { departamento, anio } = Astro.props;
     async function renderizar(filtros: FiltrosAnalisis): Promise<void> {
       const departamento = fijo ?? filtros.departamento;
       const anio = fijo && anioFijo ? anioFijo : filtros.anio;
+      // El canal no depende de la semana seleccionada: al moverla no hay
+      // nada que repintar (antes se destruía y recreaba la gráfica).
+      if (grafico && soloCambiaSemana(filtrosPintados, filtros)) {
+        filtrosPintados = filtros;
+        return;
+      }
+      filtrosPintados = filtros;
       const idRevision = ++revision;
       grafico?.destruir();
       grafico = null;

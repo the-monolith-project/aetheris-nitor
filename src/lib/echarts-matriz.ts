@@ -83,6 +83,7 @@ export function opcionMatriz(
         // `heatmap` exige visualMap en ejes cartesianos; como cada celda trae
         // su color ya resuelto, se dibuja con una serie custom de rectángulos.
         type: 'custom',
+        id: 'matriz',
         renderItem: (
           _params: unknown,
           api: {
@@ -103,6 +104,9 @@ export function opcionMatriz(
               height: alto,
             },
             style: api.style(),
+            // Al cambiar la celda activa el borde y el color se funden en
+            // vez de saltar (solo anima en actualizaciones suaves).
+            transition: ['style'],
           };
         },
         emphasis: { itemStyle: { borderColor: t.tinta, borderWidth: 1 } },
@@ -142,4 +146,15 @@ export async function montarMatriz(
     }
   });
   return montado;
+}
+
+/**
+ * Mueve la selección (celda o columna activa) sin recrear la matriz: el borde
+ * y el color de las celdas se funden en animationDurationUpdate.
+ */
+export function moverSeleccionMatriz(
+  montado: GraficoMontado,
+  config: ConfigMatriz,
+): void {
+  montado.actualizar((t) => opcionMatriz(t, config), { suave: true });
 }

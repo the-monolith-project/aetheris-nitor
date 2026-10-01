@@ -55,7 +55,7 @@ test('las tres legales se enlazan entre sí y con contacto', async ({
 
 test('el pie expone la sección legal en cualquier página', async ({ page }) => {
   await page.goto('/');
-  const navFooter = page.locator('nav[aria-label="Pie de página"]');
+  const navFooter = page.locator('footer');
   await expect(
     navFooter.getByRole('link', { name: 'Privacidad' }),
   ).toHaveAttribute('href', '/legal/privacidad');

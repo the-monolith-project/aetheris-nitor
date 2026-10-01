@@ -56,15 +56,14 @@ test('en escritorio el selector móvil no aparece y los paneles conviven', async
   await expect(page.locator('#analisis-zoom-mas')).toBeVisible();
 });
 
-test('las anclas de /dengue apuntan a secciones que existen', async ({
-  page,
-}) => {
+test('/dengue enlaza a la predicción y no la repite', async ({ page }) => {
   await page.goto('/dengue');
-  const enlaces = page.locator('[data-nav-secciones] a');
-  const total = await enlaces.count();
-  expect(total).toBe(5);
-  for (let i = 0; i < total; i += 1) {
-    const href = await enlaces.nth(i).getAttribute('href');
-    await expect(page.locator(href as string)).toHaveCount(1);
-  }
+  await expect(page.locator('[data-enlace-prediccion]')).toHaveAttribute(
+    'href',
+    '/prediccion',
+  );
+  await expect(page.locator('[data-nowcast]')).toHaveCount(0);
+  await expect(page.locator('[data-contraste-nowcast]')).toHaveCount(0);
+  await expect(page.locator('[data-tabs]')).toHaveCount(0);
+  await expect(page.locator('#curva')).toHaveCount(1);
 });

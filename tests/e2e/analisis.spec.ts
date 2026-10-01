@@ -57,12 +57,20 @@ test('sincroniza filtros, mapa, scatter, departamento, heatmap y serie', async (
   );
   await expect(page.locator('#comparacion-temporadas-grafica')).toBeVisible();
 
-  const celdaHeatmap = page
-    .locator(
-      '.epi-heatmap-celdas rect[aria-label*="Ahuachapán"][aria-label*="SE12"]',
-    )
-    .first();
-  await celdaHeatmap.click();
+  // ECharts pinta la matriz como un solo SVG: se pulsa la celda de Ahuachapán
+  // (primera fila) en SE12 por posición. La rejilla ocupa 110 px a la
+  // izquierda, 20 a la derecha, 12 arriba y 56 abajo, con 53 semanas y 14 filas.
+  const heatmap = page.locator('#heatmap-departamentos');
+  await heatmap.scrollIntoViewIfNeeded();
+  await expect(heatmap.locator('svg').first()).toBeVisible();
+  const caja = await heatmap.boundingBox();
+  if (!caja) throw new Error('El mapa de calor no tiene caja');
+  await heatmap.click({
+    position: {
+      x: 110 + (11.5 * (caja.width - 130)) / 53,
+      y: 12 + 0.5 * ((caja.height - 68) / 14),
+    },
+  });
   await expect(page.locator('#analisis-departamento')).toHaveValue('SV-AH');
   await expect(page.locator('#analisis-semana')).toHaveValue('12');
   await expect(page).toHaveURL(/week=12/);

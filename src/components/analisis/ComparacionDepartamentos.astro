@@ -26,6 +26,7 @@ import PanelWorkspace from './PanelWorkspace.astro';
   <div
     id="comparacion-departamentos-grafica"
     class="mt-4 max-h-[560px] overflow-auto scroll-shadow-x"
+    tabindex="0"
     hidden
   >
     <div
@@ -68,10 +69,6 @@ import PanelWorkspace from './PanelWorkspace.astro';
 </PanelWorkspace>
 
 <script>
-  // Plot entra por import dinamico, como en el resto de paneles: cuando
-  // un solo componente lo importa de forma estatica, Vite lo arrastra al
-  // grafo inicial y anula los await import de los demas -- 391 KB de Plot
-  // y d3 quedaban en la carga critica de /dengue.
   import {
     esNoDisponible,
     motivoNoDisponible,

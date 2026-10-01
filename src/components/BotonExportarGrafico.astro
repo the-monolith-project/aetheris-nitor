@@ -1,5 +1,5 @@
 ---
-// Botones "Descargar SVG" y "Descargar PNG" para el primer gráfico de Plot
+// Botones "Descargar SVG" y "Descargar PNG" para el primer gráfico
 // de la sección (article o section) que los contiene. Ver exportar-grafico.ts.
 interface Props {
   titulo: string;
@@ -33,7 +33,7 @@ const estiloBoton =
 <script>
   import { obtenerFiltrosAnalisis } from '../lib/analisis-state';
   import {
-    encontrarGraficoPlot,
+    encontrarGrafico,
     exportarPng,
     exportarSvg,
   } from '../lib/exportar-grafico';
@@ -57,7 +57,7 @@ const estiloBoton =
     if (!boton || !caja) return;
     const estado = caja.querySelector<HTMLElement>('[data-exportar-estado]');
     const seccion = caja.closest('section, article');
-    const svg = seccion ? encontrarGraficoPlot(seccion) : null;
+    const svg = seccion ? encontrarGrafico(seccion) : null;
     if (!svg) {
       if (estado) estado.textContent = 'El gráfico todavía no está disponible.';
       return;

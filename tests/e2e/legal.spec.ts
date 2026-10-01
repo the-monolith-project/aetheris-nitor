@@ -41,6 +41,8 @@ test('las tres legales se enlazan entre sí y con contacto', async ({
   page,
 }) => {
   await page.goto('/legal/privacidad');
+  // Los enlaces viven dentro de secciones plegadas: se despliega todo antes.
+  await page.getByRole('button', { name: 'Expandir todo' }).click();
   const documento = page.locator('main');
   await expect(
     documento.getByRole('link', { name: 'términos de uso' }),
@@ -123,4 +125,53 @@ test('la página de contacto no presenta violaciones automáticas WCAG A o AA', 
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
   expect(resultados.violations).toEqual([]);
+});
+
+test('las páginas de texto largo se leen por secciones desplegables', async ({
+  page,
+}) => {
+  await page.goto('/legal/terminos');
+  const secciones = page.locator('.doc-texto details.acordeon');
+  expect(await secciones.count()).toBeGreaterThan(5);
+  // Solo la primera arranca abierta, y el título sigue siendo un h2.
+  await expect(secciones.first()).toHaveAttribute('open', '');
+  await expect(secciones.nth(1)).not.toHaveAttribute('open', '');
+  await expect(
+    secciones.nth(1).locator('summary').getByRole('heading', { level: 2 }),
+  ).toBeVisible();
+
+  await secciones.nth(1).locator('summary').click();
+  await expect(secciones.nth(1)).toHaveAttribute('open', '');
+
+  const alternar = page.getByRole('button', { name: /Expandir todo/ });
+  await alternar.click();
+  for (const seccion of await secciones.all()) {
+    await expect(seccion).toHaveAttribute('open', '');
+  }
+  await expect(
+    page.getByRole('button', { name: 'Contraer todo' }),
+  ).toBeVisible();
+});
+
+test('un enlace con ancla abre la sección cerrada que lo contiene', async ({
+  page,
+}) => {
+  await page.goto('/legal/terminos#licencias');
+  const seccion = page.locator('details.acordeon:has(#licencias)');
+  await expect(seccion).toHaveAttribute('open', '');
+  await expect(page.locator('#licencias')).toBeInViewport();
+});
+
+test('la documentación no usa la etiqueta code en el texto', async ({
+  page,
+}) => {
+  for (const ruta of [
+    '/biblioteca/01-que-es',
+    '/biblioteca/03-funciones',
+    '/biblioteca/04-fuentes-de-datos',
+    '/legal/privacidad',
+  ]) {
+    await page.goto(ruta);
+    await expect(page.locator('.doc-texto :not(pre) > code')).toHaveCount(0);
+  }
 });

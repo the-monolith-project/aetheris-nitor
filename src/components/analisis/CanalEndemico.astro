@@ -98,6 +98,7 @@ const { departamento, anio } = Astro.props;
     crearOpcionBase,
     ejeSemana,
     etiquetaSemana,
+    tooltipPorSemana,
   } from '../../lib/echarts-tema';
   import { TablaAlternativa } from '../../lib/tabla-alternativa';
   import {
@@ -302,12 +303,7 @@ const { departamento, anio } = Astro.props;
               ],
             },
             tooltip: {
-              formatter: (params: unknown) => {
-                const lista = Array.isArray(params) ? params : [params];
-                const eje = (lista[0] as { axisValue?: number })?.axisValue;
-                const punto = porSemana.get(Math.round(Number(eje)));
-                return punto ? textoPunto(punto) : '';
-              },
+              formatter: tooltipPorSemana(porSemana, textoPunto),
             },
           }),
           xAxis: ejeSemana(tokens, desde, hasta),

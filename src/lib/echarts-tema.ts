@@ -9,6 +9,8 @@ export interface TokensGrafico {
   borde: string;
   superficie: string;
   acento: string;
+  secundario: string;
+  seleccion: string;
   fuente: string;
 }
 
@@ -27,6 +29,8 @@ export function leerTokens(): TokensGrafico {
     borde: token('--color-border', '#e0e0e6'),
     superficie: token('--color-surface', '#ffffff'),
     acento: token('--color-accent', '#183e39'),
+    secundario: token('--color-secondary', '#dddbff'),
+    seleccion: token('--color-seleccion', '#183e39'),
     fuente: token('--font-mono', 'ui-monospace, monospace'),
   };
 }
@@ -102,5 +106,57 @@ export function ejeSemana(
     },
     axisLine: { lineStyle: { color: tokens.borde } },
     splitLine: { show: false },
+  };
+}
+
+/** Eje Y de valores con rejilla, alineado con el eje de semanas. */
+export function ejeValores(
+  tokens: TokensGrafico,
+  nombre: string,
+  extra: Record<string, unknown> = {},
+): OpcionEcharts {
+  return {
+    type: 'value',
+    name: nombre,
+    nameTextStyle: { color: tokens.tintaSuave, align: 'left' },
+    axisLabel: { color: tokens.tintaSuave },
+    splitLine: { lineStyle: { color: tokens.borde } },
+    ...extra,
+  };
+}
+
+/** Línea vertical punteada en la semana seleccionada (markLine de una serie). */
+export function marcaSemana(
+  tokens: TokensGrafico,
+  semana: number,
+): OpcionEcharts {
+  return {
+    silent: true,
+    symbol: 'none',
+    label: { show: false },
+    lineStyle: {
+      type: 'dashed',
+      width: 2,
+      color: tokens.seleccion,
+      opacity: 0.6,
+    },
+    data: [{ xAxis: semana }],
+  };
+}
+
+/**
+ * Formateador de tooltip para ejes de semanas: toma la semana bajo el cursor
+ * y devuelve el texto de esa fila, así el tooltip no lista series apiladas
+ * ni valores intermedios.
+ */
+export function tooltipPorSemana<T>(
+  filas: ReadonlyMap<number, T>,
+  texto: (fila: T) => string,
+): (params: unknown) => string {
+  return (params) => {
+    const lista = Array.isArray(params) ? params : [params];
+    const eje = (lista[0] as { axisValue?: number } | undefined)?.axisValue;
+    const fila = filas.get(Math.round(Number(eje)));
+    return fila ? texto(fila) : '';
   };
 }

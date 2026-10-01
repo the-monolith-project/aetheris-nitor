@@ -33,9 +33,11 @@
  * lea sola.
  */
 import DocumentoTexto from '../../components/DocumentoTexto.astro';
+import { navegacionLegal } from '../../lib/navegacion-documentos';
 ---
 
 <DocumentoTexto
+  navegacion={navegacionLegal('/legal/privacidad')}
   seccion="Documento legal"
   titulo="Política de privacidad"
   descripcion="Qué datos se tratan al usar EPI-Aetheris, para qué, quién más los recibe y cómo ejercer los derechos que reconoce la ley."

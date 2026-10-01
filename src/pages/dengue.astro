@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import CurvaEpidemicaNacional from '../components/CurvaEpidemicaNacional.astro';
 import PanelAnalisis from '../components/analisis/PanelAnalisis.astro';
+import UltimaSemanaDengue from '../components/UltimaSemanaDengue.astro';
 import {
   RUTA_FUENTES,
   RUTA_PREDICCION,
@@ -59,6 +60,10 @@ import {
       >
     </p>
 
+    <div data-franja-ultima-semana>
+      <UltimaSemanaDengue />
+    </div>
+
     <PanelAnalisis />
 
     <div id="curva" class="mt-8 scroll-mt-24">
@@ -97,6 +102,9 @@ import {
 <style is:global>
   /* Modo presentación (solo /dengue, solo con ?demo). Sin la clase en <html>
      la página queda idéntica. */
+  html.demo-presentacion [data-franja-ultima-semana] {
+    display: none;
+  }
   html.demo-presentacion body > header,
   html.demo-presentacion body > footer {
     display: none !important;

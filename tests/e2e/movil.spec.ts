@@ -67,3 +67,12 @@ test('/dengue enlaza a la predicción y no la repite', async ({ page }) => {
   await expect(page.locator('[data-tabs]')).toHaveCount(0);
   await expect(page.locator('#curva')).toHaveCount(1);
 });
+
+test('/dengue muestra la última semana publicada sin la semana siguiente', async ({
+  page,
+}) => {
+  await page.goto('/dengue');
+  const franja = page.locator('[data-franja-ultima-semana] #ultima-semana');
+  await expect(franja).toHaveCount(1);
+  await expect(franja).not.toContainText('Semana siguiente');
+});

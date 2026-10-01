@@ -15,9 +15,9 @@ Un color del mapa no indica un brote y un percentil alto no anticipa un ascenso.
 
 ## Predicción de casos a corto plazo
 
-La página de dengue incluye una predicción estadística del número de casos en el país para las 1 a 8 semanas siguientes a la última semana publicada, con un intervalo de incertidumbre. Da un número y un rango, y el gráfico muestra siempre la fecha de partida.
+La página de predicción muestra una predicción estadística del número de casos en el país para las 1 a 8 semanas siguientes a la última semana publicada, con un intervalo de incertidumbre. Da un número y un rango, y el gráfico muestra siempre la fecha de partida.
 
-En la misma pestaña se puede elegir otra semana de partida y comparar la predicción con lo que se observó después. Cada predicción usa solo los datos anteriores a su semana de partida. De 2014 a marzo de 2017 no hay predicción, porque el modelo necesita unos tres años de datos para entrenarse. 2020 se muestra con un aviso: no se usó para entrenar ni para validar el modelo.
+En la misma página se puede elegir otra semana de partida y comparar la predicción con lo que se observó después. Cada predicción usa solo los datos anteriores a su semana de partida. De 2014 a marzo de 2017 no hay predicción, porque el modelo necesita unos tres años de datos para entrenarse. 2020 se muestra con un aviso: no se usó para entrenar ni para validar el modelo.
 
 ### Hasta 2024: serie de OpenDengue
 

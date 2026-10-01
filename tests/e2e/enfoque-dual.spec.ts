@@ -306,6 +306,10 @@ test('el pie expone las cuatro columnas y el aviso de sensibilidad', async ({
     'href',
     '/acerca-de',
   );
+  await expect(enlace('Herramientas', 'Predicción de dengue')).toHaveAttribute(
+    'href',
+    '/prediccion',
+  );
   await expect(enlace('Herramientas', 'Alertas')).toHaveAttribute(
     'href',
     '/alertas',

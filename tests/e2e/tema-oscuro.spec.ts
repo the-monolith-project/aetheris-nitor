@@ -10,6 +10,7 @@ const PAGINAS = [
   '/analisis',
   '/departamento/SV-SS',
   '/dengue',
+  '/prediccion',
 ];
 
 test.describe('tema oscuro', () => {

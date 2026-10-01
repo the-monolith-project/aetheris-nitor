@@ -4,6 +4,7 @@ import {
   CAPAS_VALIDAS,
   FILTROS_ANALISIS_PREDETERMINADOS as PRED,
   normalizarEstado,
+  soloCambiaSemana,
 } from '../../src/lib/analisis-state.ts';
 import type { CapaAnalitica } from '../../src/lib/tipos-analisis.ts';
 
@@ -48,5 +49,22 @@ describe('analisis-state normalizacion', () => {
   it('rechaza años no disponibles y regresa al predeterminado', () => {
     const estado = normalizarEstado(PRED, { anio: 1990 });
     assert.strictEqual(estado.anio, PRED.anio);
+  });
+});
+
+describe('soloCambiaSemana', () => {
+  const base = { ...PRED, semana: 10 };
+
+  it('es verdadero si solo cambia la semana', () => {
+    assert.strictEqual(soloCambiaSemana(base, { ...base, semana: 11 }), true);
+  });
+
+  it('es falso si cambia otro filtro o no hay estado previo', () => {
+    assert.strictEqual(
+      soloCambiaSemana(base, { ...base, semana: 11, anio: 2022 }),
+      false,
+    );
+    assert.strictEqual(soloCambiaSemana(base, { ...base }), false);
+    assert.strictEqual(soloCambiaSemana(null, base), false);
   });
 });

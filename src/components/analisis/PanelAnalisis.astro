@@ -183,7 +183,7 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     suscribirFiltrosAnalisis,
   } from '../../lib/analisis-state';
   import {
-    encontrarGraficoPlot,
+    encontrarGrafico,
     exportarPng,
     exportarSvg,
   } from '../../lib/exportar-grafico';
@@ -291,7 +291,7 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
       const abierto = menu.hidden;
       cerrarMenus();
       // El mapa (Leaflet) no se exporta; solo los paneles con un gráfico SVG.
-      const hayGrafico = encontrarGraficoPlot(panel) !== null;
+      const hayGrafico = encontrarGrafico(panel) !== null;
       menu
         .querySelectorAll<HTMLElement>('[data-accion-panel^="exportar"]')
         .forEach((item) => {
@@ -317,7 +317,7 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
         });
       }
       if (accion === 'exportar-svg' || accion === 'exportar-png') {
-        const svg = encontrarGraficoPlot(panel);
+        const svg = encontrarGrafico(panel);
         const f = obtenerFiltrosAnalisis();
         if (svg) {
           const opciones = {

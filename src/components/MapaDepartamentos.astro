@@ -206,6 +206,13 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
        apilamiento, sin tocar los valores internos de la librería. */
     isolation: isolate;
   }
+  /* Al cambiar la semana los departamentos se recolorean con un fundido corto
+     (ver activarCapa). Con reduced-motion el color cambia de golpe. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.leaflet-container path.leaflet-interactive) {
+      transition: fill 300ms ease-out;
+    }
+  }
   :global(.leaflet-control-zoom) {
     border: 1px solid var(--color-border) !important;
     box-shadow: var(--shadow-card) !important;
@@ -1201,6 +1208,8 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
     }).addTo(mapa);
 
     let capaGeoJsonActiva: Leaflet.GeoJSON | null = null;
+    /** Capa de datos que dibuja `capaGeoJsonActiva` (para fundir solo recoloreos). */
+    let idCapaPintada: IdCapa | null = null;
     let capaActivaId: IdCapa = capaMinsal.id;
     const cacheValoresPorCapa = new Map<
       IdCapa,
@@ -1437,10 +1446,30 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
         await Promise.all([obtenerDatosEspaciales(), obtenerDatosPresion()]);
       }
 
+      // Colores vigentes por departamento: si solo cambia el dato de la misma
+      // capa (semana, año, serie) la capa nueva nace con el color anterior y
+      // pasa al nuevo en el siguiente cuadro, para que el CSS lo funda.
+      const colorPrevio = new Map<string, string>();
+      if (
+        capaGeoJsonActiva &&
+        idCapaPintada === id &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        capaGeoJsonActiva.eachLayer((l) => {
+          const ruta = l as Leaflet.Path & {
+            feature?: { properties?: { codigo?: string } };
+          };
+          const codigo = ruta.feature?.properties?.codigo;
+          if (codigo && ruta.options.fillColor) {
+            colorPrevio.set(codigo, ruta.options.fillColor);
+          }
+        });
+      }
       if (capaGeoJsonActiva) {
         mapa.removeLayer(capaGeoJsonActiva);
         capaGeoJsonActiva = null;
       }
+      idCapaPintada = null;
 
       if (!valores) {
         contenedorNoDisponible!.classList.remove('hidden');
@@ -1482,19 +1511,22 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
       dibujarLeyenda(contenedorLeyenda!, capa, cortes);
       pintarTablaValores(capa, valores);
 
-      capaGeoJsonActiva = L.geoJSON(geojson, {
+      const destinos = new Map<string, string>();
+      const capaNueva = L.geoJSON(geojson, {
         style: (feature) => {
           const codigo = feature?.properties?.codigo ?? '';
           const valor = valores!.get(codigo);
+          const fillColor = colorGenerico(
+            valor,
+            cortes,
+            capa.rampa,
+            capa.sinDatoColor,
+          );
+          destinos.set(codigo, fillColor);
           return {
             color: '#8a8a90',
             weight: 1,
-            fillColor: colorGenerico(
-              valor,
-              cortes,
-              capa.rampa,
-              capa.sinDatoColor,
-            ),
+            fillColor: colorPrevio.get(codigo) ?? fillColor,
             fillOpacity: 0.75,
           };
         },
@@ -1539,7 +1571,26 @@ import PanelWorkspace from './analisis/PanelWorkspace.astro';
           );
         },
       }).addTo(mapa);
+      capaGeoJsonActiva = capaNueva;
+      idCapaPintada = id;
       resaltarDepartamento(obtenerFiltrosAnalisis().departamento);
+      if (colorPrevio.size > 0) {
+        // Dos cuadros: el primero deja pintado el color previo.
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            if (capaGeoJsonActiva !== capaNueva) return;
+            capaNueva.eachLayer((l) => {
+              const ruta = l as Leaflet.Path & {
+                feature?: { properties?: { codigo?: string } };
+              };
+              const destino = destinos.get(
+                ruta.feature?.properties?.codigo ?? '',
+              );
+              if (destino) ruta.setStyle({ fillColor: destino });
+            });
+          }),
+        );
+      }
     }
 
     const resolverIdCapa = (

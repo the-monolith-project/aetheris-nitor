@@ -194,6 +194,22 @@ export function actualizarFiltrosAnalisis(
   return detalle;
 }
 
+/**
+ * Verdadero si `anterior` y `actual` difieren solo en la semana seleccionada.
+ * Los componentes lo usan para actualizar la marca de semana con transición
+ * en lugar de recrear la gráfica.
+ */
+export function soloCambiaSemana(
+  anterior: FiltrosAnalisis | null,
+  actual: FiltrosAnalisis,
+): boolean {
+  if (!anterior || anterior.semana === actual.semana) return false;
+  return (
+    JSON.stringify({ ...anterior, semana: 0 }) ===
+    JSON.stringify({ ...actual, semana: 0 })
+  );
+}
+
 export function restablecerFiltrosAnalisis(): FiltrosAnalisis {
   return actualizarFiltrosAnalisis(
     clonarEstado(FILTROS_ANALISIS_PREDETERMINADOS),

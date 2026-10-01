@@ -39,7 +39,7 @@ const urlImagen = new URL(imagen, Astro.site);
 // ninguna esconde a la otra. Arriba queda lo que sirve en consulta
 // (Alertas); las dos herramientas descriptivas se agrupan bajo /analisis en
 // vez de ocupar una entrada cada una. `rutas` marca qué prefijos encienden
-// la entrada -- /dengue y /respiratorio viven bajo Análisis aunque su
+// la entrada -- /dengue, /prediccion y /respiratorio viven bajo Análisis aunque su
 // URL no empiece con /analisis.
 const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
   { href: '/', etiqueta: 'Inicio' },
@@ -51,7 +51,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
   {
     href: '/analisis',
     etiqueta: 'Análisis',
-    rutas: ['/analisis', '/dengue', '/respiratorio'],
+    rutas: ['/analisis', '/dengue', '/prediccion', '/respiratorio'],
   },
   // Documentos propios en docs/biblioteca/ (ADR 0016).
   { href: '/biblioteca', etiqueta: 'Biblioteca' },

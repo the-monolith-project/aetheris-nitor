@@ -24,7 +24,7 @@
  *    /alertas/nueva lo guarda en localStorage solo con la casilla marcada.
  *  - 5.2 predicción: components/nowcast/PanelNowcastDengue.astro (1 a 8
  *    semanas desde la última semana observada, no desde hoy).
- *  - 5.4 clasificador retirado: components/MetricasModelo.astro.
+ *  - 5.4 clasificador retirado: components/MetricasModelo.astro (en /prediccion).
  *  - Sección 6: LICENSE (GPL-3.0) en este repo y en el monorepo; licencias
  *    de datos según docs/biblioteca/04-fuentes-de-datos.md.
  * La predicción es un modelo estadístico, no IA: por eso el descargo habla de
@@ -174,7 +174,7 @@ const HISTORIAL_TERMINOS =
       señala esos límites cuando los conoce.
     </li>
     <li>
-      <strong>La predicción es un cálculo estadístico.</strong> La página de dengue
+      <strong>La predicción es un cálculo estadístico.</strong> La página de predicción
       estima los casos nacionales de las próximas 1 a 8 semanas, con un intervalo
       de incertidumbre. Parte de la última semana con datos, que puede ser de hace
       varios meses; no describe la situación de hoy. Puede equivocarse, y el valor

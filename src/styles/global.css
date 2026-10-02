@@ -77,6 +77,19 @@
   }
 }
 
+/* Altura de la cabecera pegajosa (Layout.astro). En teléfono son dos filas
+   (logo + controles, navegación); desde sm una sola. La leen la barra
+   pegajosa del análisis y los scroll-margin de las anclas, para que nada
+   quede escondido detrás del header al saltar a una sección. */
+:root {
+  --alto-header: 6.5rem;
+}
+@media (min-width: 40rem) {
+  :root {
+    --alto-header: 5.5rem;
+  }
+}
+
 /* Tamaño de texto "grande" (/configuracion, lib/preferencias.ts). Subir el
    tamaño raíz escala todo lo que está en rem, que es casi todo el sitio. Los
    textos con tamaño fijo en píxeles (etiquetas de gráficos y de mapas) se

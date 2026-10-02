@@ -57,6 +57,24 @@ export const FICHAS: MetadatosFicha[] = [
       etiqueta: 'Ver documentación de M3',
     },
   },
+  {
+    slug: 'm4-integridad-vigilancia',
+    titulo: 'Integridad de la vigilancia (M4)',
+    subtitulo:
+      'Qué tan completo, consistente y reciente es el dato con el que se hacen los demás módulos.',
+    etiquetas: [
+      'Módulo M4',
+      'Calidad del dato',
+      'Tres métricas',
+      'Sin índice único',
+    ],
+    descripcion:
+      'Los tres hechos que M4 da por separado: de cuántos departamentos hay fila, si el boletín cuadra con su total nacional y cuántas semanas pasaron desde el último dato de cada serie. Después, el color del mapa y un laboratorio para probarlos.',
+    documentacion: {
+      href: '/biblioteca/03-funciones#m4-integridad-de-la-vigilancia',
+      etiqueta: 'Ver documentación de M4',
+    },
+  },
 ];
 
 export const RUTA_FICHAS = '/biblioteca/fichas';

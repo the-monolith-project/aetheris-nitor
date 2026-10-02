@@ -305,3 +305,41 @@
   line-height: 1.55;
   color: var(--color-ink);
 }
+.lab-par {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.lab-par select {
+  min-height: 44px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: inherit;
+}
+.lab-frase-separada {
+  margin-top: 0.6rem;
+}
+.lab-cifras dd.lab-cifra-texto {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.lab-real table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.lab-real th,
+.lab-real td {
+  padding: 0.3rem 0.4rem 0.3rem 0;
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+.lab-real thead th {
+  border-top: 0;
+  font-weight: 600;
+}

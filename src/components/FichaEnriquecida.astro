@@ -633,6 +633,101 @@ const { titulo, subtitulo, etiquetas, descripcion, documentacion } =
     color: var(--color-ink-muted);
   }
 
+  .ficha-anio {
+    display: grid;
+    grid-template-columns: repeat(26, minmax(0, 1fr));
+    gap: 3px;
+    max-width: 34rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ficha-anio-semana,
+  .ficha-anio-muestra {
+    display: block;
+    height: 1.1rem;
+    border-radius: 2px;
+  }
+  .ficha-anio-muestra {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+  .ficha-anio .completa,
+  .ficha-anio-muestra.completa {
+    background: var(--color-termino);
+  }
+  .ficha-anio .parcial,
+  .ficha-anio-muestra.parcial {
+    background: color-mix(
+      in srgb,
+      var(--color-termino) 40%,
+      var(--color-surface)
+    );
+  }
+  .ficha-anio .hueco,
+  .ficha-anio-muestra.hueco {
+    border: 1px dashed var(--color-ink-muted);
+    background: transparent;
+  }
+  .ficha-tabla {
+    width: 100%;
+    max-width: 36rem;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--color-ink);
+  }
+  .ficha-tabla th,
+  .ficha-tabla td {
+    padding: 0.4rem 0.6rem 0.4rem 0;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+  }
+  .ficha-tabla td {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .ficha-tabla thead th {
+    font-size: 0.75rem;
+    color: var(--color-ink-muted);
+  }
+  .ficha-tabla-corta {
+    max-width: 22rem;
+    margin-top: 1rem;
+  }
+  .ficha-tabla caption.ficha-nota {
+    margin-bottom: 0.3rem;
+    text-align: left;
+  }
+  .linea-eje {
+    stroke: var(--color-ink-muted);
+    stroke-width: 1.2;
+  }
+  .linea-anio {
+    stroke: var(--color-ink-muted);
+  }
+  .linea-tramo {
+    stroke: var(--color-termino);
+    stroke-width: 4;
+  }
+  .linea-ultima {
+    fill: var(--color-surface);
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+  }
+  .linea-guia {
+    stroke: var(--color-ink-muted);
+    stroke-dasharray: 2 2;
+  }
+  .linea-hoy {
+    fill: var(--color-ink);
+  }
+  .linea-distancia,
+  .linea-texto-hoy {
+    fill: var(--color-ink);
+    font-weight: 700;
+  }
+
   @media print {
     .ficha[data-anima] .paso {
       opacity: 1;

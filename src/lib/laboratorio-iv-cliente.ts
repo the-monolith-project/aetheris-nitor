@@ -333,8 +333,16 @@ export function iniciarLaboratorio(raiz: HTMLElement): void {
         encontrado.p25 !== null && encontrado.p75 !== null
           ? ` La banda histórica de esa semana va de ${formatearNumero(encontrado.p25, 2)} a ${formatearNumero(encontrado.p75, 2)}.`
           : '';
+      // Nodos de texto y no innerHTML: el nombre sale de la lista de
+      // departamentos o, si no está, del valor del selector (CodeQL).
+      const cifra = document.createElement('strong');
+      cifra.textContent = formatearNumero(encontrado.iv, 2);
       const texto = document.createElement('p');
-      texto.innerHTML = `Iv medido por el sistema en ${nombre}, SE${encontrado.semana} de ${encontrado.anio}: <strong>${formatearNumero(encontrado.iv, 2)}</strong>.${banda}`;
+      texto.append(
+        `Iv medido por el sistema en ${nombre}, SE${encontrado.semana} de ${encontrado.anio}: `,
+        cifra,
+        `.${banda}`,
+      );
       const nota = document.createElement('small');
       nota.textContent =
         'Sale de la temperatura, la humedad y la lluvia observadas esa semana, con esta misma fórmula.';

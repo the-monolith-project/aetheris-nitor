@@ -34,12 +34,11 @@ const estiloBoton =
 </div>
 
 <script>
-  import { exportarImagen, type FormatoImagen } from '../lib/exportar-acciones';
-
-  const temporizadores = new WeakMap<
-    HTMLElement,
-    ReturnType<typeof setTimeout>
-  >();
+  import {
+    anunciarEstado,
+    exportarImagen,
+    type FormatoImagen,
+  } from '../lib/exportar-acciones';
 
   document.addEventListener('click', async (evento) => {
     const boton = (evento.target as HTMLElement).closest<HTMLButtonElement>(
@@ -57,17 +56,6 @@ const estiloBoton =
       },
       boton.dataset.exportarFormato as FormatoImagen,
     );
-    if (estado) {
-      estado.textContent = mensaje;
-      if (temporizadores.has(estado)) {
-        clearTimeout(temporizadores.get(estado));
-      }
-      if (!mensaje.startsWith('<iframe')) {
-        const timer = setTimeout(() => {
-          if (estado.textContent === mensaje) estado.textContent = '';
-        }, 4000);
-        temporizadores.set(estado, timer);
-      }
-    }
+    if (estado) anunciarEstado(estado, mensaje);
   });
 </script>

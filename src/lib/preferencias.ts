@@ -11,6 +11,7 @@
  *   epi:animaciones 'on' | 'off'       (ausente = sigue al sistema)
  *   epi:texto       'grande'           (ausente = tamaño normal)
  *   epi:atajos      JSON, ver lib/atajos.ts
+ *   epi:toolbar-fija '1'               (ToolbarAnalisis.astro; ausente = se contrae sola)
  *
  * Los scripts en línea de Layout.astro repiten la resolución de tema,
  * animaciones y texto para fijar el atributo antes del primer pintado (no
@@ -36,6 +37,7 @@ export const CLAVES_PREFERENCIAS = [
   CLAVE_TEXTO,
   CLAVE_ATAJOS,
   'epi:departamento',
+  'epi:toolbar-fija',
 ] as const;
 
 export type Tema = 'sistema' | 'light' | 'dark';

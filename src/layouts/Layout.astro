@@ -110,13 +110,17 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
     <title>{title}</title>
     <script is:inline>
       // Tema elegido antes del primer pintado, para no parpadear en claro.
+      // Misma resolución que resolverTema en lib/preferencias.ts: sin
+      // elección guardada, claro.
       try {
         const tema = localStorage.getItem('epi:tema');
         if (tema === 'dark' || tema === 'light') {
           document.documentElement.setAttribute('data-theme', tema);
+        } else if (tema === 'sistema') {
+          document.documentElement.setAttribute('data-theme', 'system');
         }
       } catch {
-        // Sin almacenamiento manda el tema del sistema.
+        // Sin almacenamiento queda el tema claro.
       }
     </script>
     <script is:inline>
@@ -259,7 +263,7 @@ const NAV: { href: string; etiqueta: string; rutas?: string[] }[] = [
 
     <script>
       // Selector de tema: alterna entre claro y oscuro y recuerda la elección
-      // (lib/preferencias.ts). Sin elección guardada manda el sistema. Se
+      // (lib/preferencias.ts). Sin elección guardada, claro. Se
       // repinta también cuando el tema cambia desde otro control: el atajo de
       // teclado o la página /configuracion.
       import {

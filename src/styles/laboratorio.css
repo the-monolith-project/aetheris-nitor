@@ -210,3 +210,98 @@
   box-shadow: 0 0 0 3px
     color-mix(in srgb, var(--color-termino) 28%, transparent);
 }
+
+/* Piezas de los laboratorios de M2 a M4. */
+.lab-caja-titulo {
+  margin-bottom: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.lab-caja figcaption {
+  font-family: var(--font-sans);
+}
+.lab-anios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem 0.6rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.lab-anios legend {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-ink);
+}
+.lab-anio {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-ink-muted);
+}
+.lab-anio input,
+.lab-numero input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.lab-numero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-ink);
+}
+.lab-cifras {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+@media (min-width: 40rem) {
+  .lab-cifras {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.lab-cifras dt {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--color-ink-muted);
+}
+.lab-cifras dd {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.lab-resultado-mapa {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+}
+@media (min-width: 40rem) {
+  .lab-resultado-mapa {
+    grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+  }
+}
+.lab-frase {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--color-ink);
+}

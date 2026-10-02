@@ -1,6 +1,7 @@
 ---
 import FichaEnriquecida from '../../../components/FichaEnriquecida.astro';
 import FichaM1 from '../../../fichas/FichaM1.astro';
+import FichaM2 from '../../../fichas/FichaM2.astro';
 import { FICHAS } from '../../../fichas/registro';
 
 export function getStaticPaths() {
@@ -11,7 +12,10 @@ export function getStaticPaths() {
 }
 
 // Contenido de cada ficha por slug.
-const CONTENIDO = { 'm1-idoneidad-biofisica': FichaM1 } as const;
+const CONTENIDO = {
+  'm1-idoneidad-biofisica': FichaM1,
+  'm2-anomalia-climatica': FichaM2,
+} as const;
 
 const ficha = Astro.props;
 const Contenido = CONTENIDO[ficha.slug as keyof typeof CONTENIDO];

@@ -26,6 +26,24 @@ export const FICHAS: MetadatosFicha[] = [
       etiqueta: 'Ver documentación de M1',
     },
   },
+  {
+    slug: 'm2-anomalia-climatica',
+    titulo: 'Anomalía climática (M2)',
+    subtitulo:
+      'Cuánto se aparta la idoneidad de una semana de lo habitual en ese departamento.',
+    etiquetas: [
+      'Módulo M2',
+      'Variable derivada',
+      'Clima',
+      'Desviaciones estándar',
+    ],
+    descripcion:
+      'Recorrido del Iv de una semana a su anomalía: con qué años se compara, cómo se obtienen lo habitual y la dispersión, la fórmula de σ y el color del mapa. Al final, un laboratorio para mover los valores.',
+    documentacion: {
+      href: '/biblioteca/03-funciones#m2-anomalía-climática-continua',
+      etiqueta: 'Ver documentación de M2',
+    },
+  },
 ];
 
 export const RUTA_FICHAS = '/biblioteca/fichas';

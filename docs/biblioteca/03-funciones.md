@@ -11,6 +11,8 @@ Cada función se describe con lo que mide, los datos que usa y lo que deja fuera
 
 Mide qué tan favorable es el clima de un departamento en una semana para *Aedes aegypti*, en una escala continua de 0 a 1.
 
+Para seguir el cálculo con ejemplos y un laboratorio, ver la [ficha enriquecida de M1](/biblioteca/fichas/m1-idoneidad-biofisica).
+
 Datos: `temp_media` y `humedad_relativa_media` de ERA5-Land y `precipitation_sum` de ERA5, a través de Open-Meteo. Si falta alguna de las tres variables, la semana se omite; no se imputa.
 
 Fórmulas, con las mismas constantes del experimento de anticipación:

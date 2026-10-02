@@ -81,3 +81,19 @@ test('muestrear devuelve pasos + 1 puntos entre los extremos', () => {
   assert.deepEqual(p[0], { x: 0, y: 0 });
   assert.deepEqual(p[5], { x: 10, y: 10 });
 });
+
+test('formatearNumero usa coma decimal', async () => {
+  const { formatearNumero } = await import('../../src/lib/idoneidad.ts');
+  assert.equal(formatearNumero(0.8168, 2), '0,82');
+  assert.equal(formatearNumero(27, 0), '27');
+  assert.equal(formatearNumero(32.5, 1), '32,5');
+});
+
+test('los valores de ejemplo y los presets dan un Iv entre 0 y 1', async () => {
+  const { EJEMPLO_IV, PRESETS_IV } = await import('../../src/lib/idoneidad.ts');
+  for (const e of [EJEMPLO_IV, ...PRESETS_IV.map((p) => p.entradas)]) {
+    const iv = calcularIv(e);
+    assert.ok(iv >= 0 && iv <= 1);
+  }
+  assert.ok(calcularIv(PRESETS_IV[0].entradas) > 0.9);
+});

@@ -67,17 +67,17 @@ export function convertirTerminos(html: string, buscar: BuscarEntrada): string {
   const resguardado = html
     .replace(ENCABEZADO, (m) => {
       protegidos.push(aTexto(m));
-      return `\u0000${protegidos.length - 1}\u0000`;
+      return `\uE000${protegidos.length - 1}\uE000`;
     })
     .replace(BLOQUE_PRE, (m) => {
       protegidos.push(aTexto(m));
-      return `\u0000${protegidos.length - 1}\u0000`;
+      return `\uE000${protegidos.length - 1}\uE000`;
     });
   const convertido = resguardado.replace(ENLACE_TERMINO, (_c, clave, texto) =>
     marcadoTermino(buscar, clave, texto),
   );
   return convertido.replace(
-    /\u0000(\d+)\u0000/g,
+    /\uE000(\d+)\uE000/g,
     (_c, i) => protegidos[Number(i)],
   );
 }

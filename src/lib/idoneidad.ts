@@ -93,3 +93,43 @@ export function muestrear(
   }
   return puntos;
 }
+
+/** Número con coma decimal y los decimales indicados, sin depender de la configuración regional. */
+export function formatearNumero(valor: number, decimales: number): string {
+  return valor.toFixed(decimales).replace('.', ',');
+}
+
+/** Valores de ejemplo de la ficha: coinciden con los de los pasos de lectura. */
+export const EJEMPLO_IV: EntradasIv = {
+  temperatura: 27,
+  lluvia: 40,
+  humedad: 65,
+};
+
+/** Condiciones de partida del laboratorio para probar el índice. */
+export const PRESETS_IV: {
+  clave: string;
+  etiqueta: string;
+  entradas: EntradasIv;
+}[] = [
+  {
+    clave: 'favorable',
+    etiqueta: 'Cálido y lluvioso',
+    entradas: { temperatura: 31, lluvia: 90, humedad: 75 },
+  },
+  {
+    clave: 'fresca',
+    etiqueta: 'Fresco',
+    entradas: { temperatura: 19, lluvia: 40, humedad: 80 },
+  },
+  {
+    clave: 'seca',
+    etiqueta: 'Seco',
+    entradas: { temperatura: 30, lluvia: 2, humedad: 35 },
+  },
+  {
+    clave: 'calor',
+    etiqueta: 'Calor extremo',
+    entradas: { temperatura: 37, lluvia: 60, humedad: 60 },
+  },
+];

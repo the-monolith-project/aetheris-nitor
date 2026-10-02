@@ -6,7 +6,11 @@ import {
   TablaAlternativa,
   type ColumnaTabla,
 } from '../../lib/tabla-alternativa';
-import type { NombreSerie, Visibles } from '../../lib/nowcast-opciones';
+import {
+  SERIE,
+  type NombreSerie,
+  type Visibles,
+} from '../../lib/nowcast-opciones';
 
 /** Ancho del contenedor por debajo del cual las gráficas pasan a la versión móvil. */
 export const ANCHO_MOVIL = 520;
@@ -43,6 +47,20 @@ export interface ItemLeyenda {
   nombre: NombreSerie;
   muestra: MuestraLeyenda;
 }
+
+/**
+ * Texto reducido de cada serie para pantallas estrechas (< sm): en 375 px los
+ * nombres completos obligaban a una fila por botón y la leyenda ocupaba más
+ * alto que la propia gráfica. El nombre completo sigue siendo el accesible.
+ */
+const NOMBRE_CORTO: Record<NombreSerie, string> = {
+  [SERIE.publicado]: 'Publicados',
+  [SERIE.mediana]: 'Mediana',
+  [SERIE.rango50]: 'Rango 50 %',
+  [SERIE.rango95]: 'Rango 95 %',
+  [SERIE.fuera]: 'Fuera del 95 %',
+  [SERIE.diferencia]: 'Diferencia',
+};
 
 function muestra(tipo: MuestraLeyenda): HTMLElement {
   const m = document.createElement('span');
@@ -93,7 +111,7 @@ export function crearLeyenda(
   alResaltar: (nombre: NombreSerie | null) => void,
 ): Leyenda {
   const grupo = document.createElement('div');
-  grupo.className = 'flex flex-wrap gap-1.5';
+  grupo.className = 'flex flex-wrap gap-1 sm:gap-1.5';
   grupo.setAttribute('role', 'group');
   grupo.setAttribute('aria-label', 'Series de la gráfica');
   const botones = new Map<NombreSerie, HTMLButtonElement>();
@@ -108,10 +126,17 @@ export function crearLeyenda(
     const b = document.createElement('button');
     b.type = 'button';
     b.className =
-      'inline-flex min-h-[32px] items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 font-sans text-xs text-ink transition-colors hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent';
+      'inline-flex min-h-[32px] items-center gap-1.5 rounded-full border border-border bg-surface px-2 py-1 font-sans text-xs text-ink sm:gap-2 sm:px-3 transition-colors hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent';
     const texto = document.createElement('span');
     texto.dataset.texto = '';
-    texto.textContent = item.nombre;
+    const corto = document.createElement('span');
+    corto.className = 'sm:hidden';
+    corto.textContent = NOMBRE_CORTO[item.nombre];
+    const largo = document.createElement('span');
+    largo.className = 'max-sm:hidden';
+    largo.textContent = item.nombre;
+    texto.append(corto, largo);
+    b.setAttribute('aria-label', item.nombre);
     b.append(muestra(item.muestra), texto);
     pintar(b, visibles[item.nombre] !== false);
     b.addEventListener('click', () => {

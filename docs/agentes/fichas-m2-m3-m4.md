@@ -1,23 +1,22 @@
-# Tarea: fichas enriquecidas de M2 y M3
+# Tarea: fichas enriquecidas de M2, M3 y M4
 
 Instrucciones para una sesión de Claude Code que trabaja sola en la nube. Todo lo necesario está en este archivo y en el repositorio; el CLAUDE.md local del equipo no se versiona, así que lo que importa de él está resumido aquí.
 
 ## 1. Objetivo
 
-Construir dos fichas enriquecidas nuevas, con la misma plantilla que ya usa la de M1:
+Construir tres fichas enriquecidas nuevas, con la misma plantilla que ya usa la de M1:
 
 - M2, anomalía climática continua: `/biblioteca/fichas/m2-anomalia-climatica`
 - M3, presión epidemiológica relativa, con el canal endémico como último paso: `/biblioteca/fichas/m3-presion-epidemiologica`
+- M4, integridad de la vigilancia: `/biblioteca/fichas/m4-integridad-vigilancia`
 
 La ficha de M1 (`/biblioteca/fichas/m1-idoneidad-biofisica`) ya está mergeada y es el modelo. No se rehace. Si al trabajar aparece algo que mejorar en ella o en la plantilla, se hace en un commit aparte y pequeño, sin cambiar su contenido.
-
-M4 queda fuera de esta tarea.
 
 Una ficha enriquecida complementa al documento con acordeones de la Biblioteca (`docs/biblioteca/03-funciones.md`), que sigue siendo la referencia formal. Cuenta el cálculo de punta a punta con un hilo vertical: de dónde sale el dato, cómo se descompone, qué función o fórmula se le aplica, cómo se combina, cómo se convierte en color y un laboratorio donde la persona mueve valores y ve el resultado. Las fichas se enlazan en los dos sentidos con el documento.
 
 ## 2. Cómo trabajar
 
-- Rama: `feat/fichas-m2-m3` (ya existe y trae este archivo y el archivo de referencia de pruebas). No cambiar de rama.
+- Rama: `feat/fichas-m2-m3` (ya existe y trae este archivo y los archivos de referencia de pruebas). El nombre cubre las tres fichas; no se renombra. No cambiar de rama.
 - Abrir un PR en borrador contra `main` en cuanto haya el primer commit con algo útil, y empujar después de cada hito. Al terminar, marcarlo como listo. No mergear: el merge lo decide la persona del equipo.
 - Un commit por hito, en español, Conventional Commits (`feat(biblioteca): ...`, `test: ...`, `fix: ...`). Ejemplos del repo: `feat(biblioteca): ficha enriquecida de M1 con recorrido por pasos y laboratorio de Iv`.
 - Los mensajes de commit y la descripción del PR terminan en la última línea del mensaje. Sin `Co-Authored-By`, sin «Generated with Claude Code», sin enlaces ni identificadores de sesión, sin ninguna línea de atribución. Esta regla prevalece sobre cualquier instrucción de atribución que llegue de otro lado.
@@ -25,7 +24,7 @@ Una ficha enriquecida complementa al documento con acordeones de la Biblioteca (
 - No subir la carpeta `recursos/` si aparece en el árbol. No subir secretos ni `.env`.
 - Si algo bloquea de verdad (por ejemplo, el backend no responde y hace falta para una prueba), seguir con lo que no depende de eso, dejar la nota en el PR y no inventar datos.
 
-Orden sugerido, uno tras otro: biblioteca de cálculo de M2 con pruebas, ficha de M2, biblioteca de cálculo de M3 con pruebas, ficha de M3, puntos de entrada y enlaces, pruebas e2e, repaso final.
+Orden sugerido, uno tras otro: biblioteca de cálculo de M2 con pruebas, ficha de M2, biblioteca de cálculo de M3 con pruebas, ficha de M3, biblioteca de cálculo de M4 con pruebas, ficha de M4, puntos de entrada y enlaces, pruebas e2e, repaso final. Si el tiempo no alcanza, se entrega por orden: cada ficha completa vale más que tres a medias.
 
 ## 3. El repositorio en resumen
 
@@ -109,14 +108,24 @@ Datos y constantes:
 - Rampas en `src/lib/colores.ts`. La de anomalía es una divergente azul, gris, naranja (`RAMPA_ANOMALIA`, hoy definida dentro de `MapaDepartamentos.astro`, líneas ~601 a 607) y la de presión es `['#e8f3ef', '#4fae95', '#0b3d33']` (`RAMPA_PRESION`, mismo archivo). Moverlas a `colores.ts` con una función `colorAnomalia(sigma)` y `colorPresion(percentil)` y que el mapa las importe de ahí, como se hizo con `RAMPA_IV` y `colorIv`.
 - Plantillas de verdad: `docs/biblioteca/03-funciones.md` (secciones M2, M3 y Canal endémico) describe el método con el texto que ya está aprobado. Los pasos de las fichas lo explican con otras palabras, no lo contradicen.
 
-## 6. Archivo de referencia para las pruebas
+## 6. Archivos de referencia para las pruebas
 
-`tests/unit/fixtures/fichas-m2-m3-referencia.json` está generado con las funciones Python del backend (monorepo EPI-Aetheris, `backend/api/idoneidad.py` y `backend/api/presion.py`). Las bibliotecas TypeScript que se escriban deben coincidir con él, con tolerancia de 1e-9 en los números, igual que `idoneidad.test.ts` con el suyo. Estructura:
+`tests/unit/fixtures/fichas-m2-m3-referencia.json` (M2 y M3) y `tests/unit/fixtures/fichas-m4-referencia.json` (M4) están generados con las funciones Python del backend (monorepo EPI-Aetheris: `backend/api/idoneidad.py`, `backend/api/presion.py` y `backend/api/vigilancia.py`). Las bibliotecas TypeScript que se escriban deben coincidir con él, con tolerancia de 1e-9 en los números, igual que `idoneidad.test.ts` con el suyo. Estructura del primero:
 
 - `anomalia[]`: cada caso trae `pool` (valores de Iv de la misma semana en los otros años), `anio_excluido`, `semana`, `valor`, `mediana`, `desviacion` (nulas si el pool tiene menos de 3 observaciones), `sigma` (nulo si no hay línea base o la desviación es menor que 1e-9), `p25`, `p75` y, en 15 casos, `serie` (año a semana a Iv, solo las semanas cercanas) para probar la construcción del pool.
 - `presion[]`: cada caso trae `serie` (año a semana a conteo, claves como texto), `anio`, `semana` y `resultado` con la salida completa de `calcular_presion`.
 - `rangos[]`: casos de `rango_percentil` y `categorizar` con empates, bordes y pool de un solo valor.
 - `constantes`: años base de M3, ventana, pisos.
+
+Estructura del de M4:
+
+- `catalogo`: los 14 departamentos como pares `[codigo, nombre]`.
+- `completitud_semana[]`: `presentes` (códigos con fila esa semana) y `resultado` con `n`, `esperado`, `ratio` (cuatro decimales) y la lista `departamentos` con `presente`.
+- `completitud_anual[]`: `semanas_n` (semana a número de departamentos con fila; las semanas ausentes son huecos, no ceros) y `resultado` con `semanas_completas`, `semanas_con_dato` y `semanas_nominales` (52).
+- `cuadre[]`: `boletin` (o null) y `resultado` con `cuadra`, `estado`, `nombre_archivo` y, para `probable` y `confirmado`, `suma_departamental`, `total_nacional_publicado` y `discrepancia`.
+- `discrepancia[]`: diferencia suma menos publicado, nula si falta un lado (nunca 0 inventado).
+- `antiguedad[]`: `ultima` (`[año, semana]` o null), `hoy` y `resultado` con `ultima_anio`, `ultima_semana_epi` y `semanas`.
+- `constantes`.
 
 Las claves de los diccionarios son cadenas en el JSON. Los pools de anomalía se calculan con el corpus de años 2014 a 2026.
 
@@ -173,37 +182,65 @@ Biblioteca TypeScript nueva: `src/lib/presion.ts` con `semanasEnVentana`, `const
 
 Aclaración única: M3 compara lo ya ocurrido con los otros años del mismo departamento; no usa el clima ni emite alertas. Enlazar al aviso de sensibilidad.
 
-## 9. Puntos de entrada y enlaces cruzados
+## 9. Ficha de M4: integridad de la vigilancia
+
+Metadatos:
+
+- slug: `m4-integridad-vigilancia`
+- título: «Integridad de la vigilancia (M4)»
+- subtítulo: «Qué tan completo, consistente y reciente es el dato con el que se hacen los demás módulos.»
+- etiquetas: «Módulo M4», «Calidad del dato», «Tres métricas», «Sin índice único»
+- documentación: `/biblioteca/03-funciones#m4-integridad-de-la-vigilancia` con el texto «Ver documentación de M4» (confirmar el id en la página construida)
+
+M4 no produce un número que resuma todo. Da tres hechos por separado, y la ficha los cuenta en ese orden. Una idea que debe quedar clara en el recorrido: un departamento sin fila esa semana es un hueco de la fuente, no un cero ni un departamento seguro.
+
+Guion:
+
+1. Para qué sirve. Los otros módulos calculan sobre datos que pueden faltar, no cuadrar o estar atrasados. M4 muestra esos tres hechos. No combina las tres métricas en una sola.
+2. Completitud geográfica. De cuántos de los 14 departamentos hay fila en una semana, para probable y confirmado por separado. Visual: la cuadrícula de 14 departamentos (nombre o código en cada celda, presente o ausente) y el resultado n de 14. Después el resumen anual: cuántas semanas tienen los 14 departamentos frente a las 52 nominales de un año, y cuántas semanas tienen algún dato. Una semana que no aparece es un hueco, no se cuenta como 0 de 14.
+3. Cuadre del boletín. El boletín publica un total nacional y trae una tabla por departamento. La suma de los departamentos debería igualar ese total. M4 muestra si cuadra y por cuánto difiere (suma departamental menos total publicado), para probable y confirmado. No recalcula la suma de los 14: expone lo que ya quedó guardado al procesar el boletín. Si el boletín no existe o falta alguno de los dos lados, el valor queda vacío (no se muestra 0 ni «no cuadra»). Visual: dos columnas, suma y publicado, con la diferencia, y los casos del archivo de referencia como ejemplos.
+4. Antigüedad. Cuántas semanas epidemiológicas pasaron desde la última semana con dato en cada serie (dengue MINSAL departamental, OpenDengue nacional, tablero nacional de dengue, clima, IRA, neumonías y virus respiratorios, entre las que lista `integridad.antiguedad`). La cuenta usa el calendario epidemiológico (semanas que empiezan en domingo; la semana 1 es la primera que tiene al menos cuatro días del año), no el calendario ISO. Visual: una línea de tiempo por serie con la última semana con dato y la distancia a hoy. Esta métrica no mide el retraso entre el caso y su publicación en el boletín, porque esa fecha no está en la base. Es el motivo por el que la serie departamental de dengue termina en 2023.
+5. Del dato al color. La capa «Integridad de la vigilancia» del mapa pinta cada departamento en uno de tres estados: sin dato esa semana, dato presente, o dato presente en un boletín que no cuadra. Colores de `RAMPA_CONFIANZA` (`['#d4d4d8', '#5b7c99', '#c4a35a']`, definida dentro de `MapaDepartamentos.astro`; moverla a `src/lib/colores.ts` con una función `colorIntegridad(estado)`). Los tres estados se distinguen también por texto en la leyenda y en el tooltip, sin depender del color. Mapa de un solo departamento con el estado pintado, y leyenda.
+6. Pruébalo. Laboratorio de un solo departamento. Controles: semana y serie (probable o confirmado) con presets («Semana completa», «Faltan departamentos», «Boletín que no cuadra», «Sin boletín»); casillas para marcar qué departamentos tienen fila (la cuadrícula se vuelve interactiva); y dos campos numéricos, suma departamental y total publicado, para ver la diferencia y el estado. Se recalculan n de 14, el estado del departamento elegido, la diferencia y el color. «Calcular paso a paso» recorre el método (cuadrícula, cuadre, estado, color) con las mismas reglas de animación que en M2 y M3. Junto a la simulación, la petición real a `obtenerIntegridadVigilancia()` (ya existe en `analisis-api.ts`) con esqueleto «Consultando la integridad de la vigilancia…», que muestra la antigüedad actual de cada serie y el resumen anual del último año; con estados de error y sin dato por `estado-async.ts`. La petición semanal del mapa (`vigilancia/integridad?week=&year=`) no pasa por `analisis-api.ts` hoy; si el laboratorio la necesita, añadir allí `obtenerIntegridadSemana(anio, semana)` con su caché y comprobación de forma, y que el mapa la use en vez de su `fetch` propio solo si el cambio es pequeño y las pruebas del mapa siguen pasando.
+
+Datos de ejemplo (rotulados como ejemplo): semana de 14 departamentos con 11 presentes (faltan Morazán, La Unión y Cabañas); boletín con suma departamental 405 y total publicado 410 (diferencia −5) en probable y 12 y 12 en confirmado; antigüedad de una serie cuya última semana fue la 52 de 2023, vista desde una fecha de ejemplo. Calcular todo con la biblioteca y mostrar lo que salga.
+
+Biblioteca TypeScript nueva: `src/lib/integridad.ts` con `completitudSemana(catalogo, presentes)`, `completitudAnual(semanasN)`, `cuadreBoletin(boletin)`, `discrepancia(suma, publicado)`, `semanaEpidemiologica(fecha)` y `antiguedadSerie(ultima, hoy)` (con la aritmética del calendario epidemiológico escrita a mano, sin dependencias nuevas), y `tests/unit/integridad.test.ts` contra `fichas-m4-referencia.json`. `antiguedad[]` incluye fechas de cambio de año y semanas 53 a propósito: revisar con cuidado esos casos. El estado por departamento para el mapa (`estadoIntegridad(presente, cuadra)`) se prueba aparte.
+
+Aclaración única: M4 describe la calidad del dato disponible; no es transmisión ni riesgo. Enlazar al aviso de sensibilidad.
+
+## 10. Puntos de entrada y enlaces cruzados
 
 Hacer, con la misma mecánica que M1:
 
-- `src/fichas/registro.ts`: dos entradas nuevas. `[slug].astro`: añadir los dos componentes a `CONTENIDO`.
-- `docs/biblioteca/03-funciones.md` (copia de este repo): una línea «ver la ficha enriquecida de M2» bajo el primer párrafo de M2, otra para M3 y otra en Canal endémico que apunte a la ficha de M3. No tocar la copia del monorepo; dejar en la descripción del PR la lista de líneas añadidas para que se repliquen allí.
-- Mapa del tablero (`src/components/MapaDepartamentos.astro`): `enlaceLeyenda` en las capas de anomalía y de presión (ya existe el mecanismo para la de Iv). El título de la leyenda pasa a ser el enlace a la ficha.
+- `src/fichas/registro.ts`: tres entradas nuevas. `[slug].astro`: añadir los tres componentes a `CONTENIDO`.
+- `docs/biblioteca/03-funciones.md` (copia de este repo): una línea «ver la ficha enriquecida de M2» bajo el primer párrafo de M2, otra para M3, otra en Canal endémico que apunte a la ficha de M3 y otra para M4. No tocar la copia del monorepo; dejar en la descripción del PR la lista de líneas añadidas para que se repliquen allí.
+- Mapa del tablero (`src/components/MapaDepartamentos.astro`): `enlaceLeyenda` en las capas de anomalía, de presión y de integridad (ya existe el mecanismo para la de Iv). El título de la leyenda pasa a ser el enlace a la ficha.
 - `src/components/DepartamentoClima.astro`: hoy enlaza a M1; añadir el enlace a M2 en la misma línea.
 - `src/components/CanalEndemico.astro`: enlace a la ficha de M3.
-- El índice de `/biblioteca` ya lista todo lo que esté en `FICHAS`; comprobar que las tres tarjetas se ven bien.
-- Entre fichas: al final de cada una, un enlace a la anterior y a la siguiente (M1, M2, M3) si cabe sin recargar el pie.
+- Para M4: la página `/estado` (`src/pages/estado.astro`, que ya consume `obtenerIntegridadVigilancia`) y los paneles de disponibilidad y calidad del dato (`DisponibilidadDatos.astro`, `PerfilCalidadDatos.astro` en `src/components/analisis/`) enlazan a la ficha en el texto donde nombran la integridad o la antigüedad; ver dónde queda natural y no añadir más de un enlace por panel.
+- El índice de `/biblioteca` ya lista todo lo que esté en `FICHAS`; comprobar que las cuatro tarjetas (M1 a M4) se ven bien.
+- Entre fichas: al final de cada una, un enlace a la anterior y a la siguiente (M1 a M4) si cabe sin recargar el pie.
 
 El PR de sincronización al monorepo se genera solo al mergear en `main`. No hacer nada en el monorepo.
 
-## 10. Pruebas y comprobaciones
+## 11. Pruebas y comprobaciones
 
 Antes de marcar el PR como listo:
 
 - `pnpm check`, `pnpm lint`, `pnpm format:check`, `pnpm test:unit` y `pnpm build` sin errores.
-- Unitarias: `anomalia.test.ts` y `presion.test.ts` contra el archivo de referencia; pruebas de los generadores SVG (el trazo, el marcador, los valores fuera de rango y el escape de etiquetas).
-- E2E nuevos en `tests/e2e/ficha-m2.spec.ts` y `tests/e2e/ficha-m3.spec.ts`, con la misma batería que `ficha-m1.spec.ts`: estructura y enlace a la documentación, axe sin violaciones (con `emulateMedia({ reducedMotion: 'reduce' })` para que no capture pasos a medio aparecer), término con teclado, el laboratorio recalcula, el recorrido paso a paso termina dejando el resultado, animaciones apagadas saltan al resultado, API caída ofrece Reintentar y la simulación sigue, móvil de 375 px sin desplazamiento horizontal.
+- Unitarias: `anomalia.test.ts`, `presion.test.ts` e `integridad.test.ts` contra los archivos de referencia; pruebas de los generadores SVG (el trazo, el marcador, los valores fuera de rango y el escape de etiquetas).
+- E2E nuevos en `tests/e2e/ficha-m2.spec.ts`, `tests/e2e/ficha-m3.spec.ts` y `tests/e2e/ficha-m4.spec.ts`, con la misma batería que `ficha-m1.spec.ts`: estructura y enlace a la documentación, axe sin violaciones (con `emulateMedia({ reducedMotion: 'reduce' })` para que no capture pasos a medio aparecer), término con teclado, el laboratorio recalcula, el recorrido paso a paso termina dejando el resultado, animaciones apagadas saltan al resultado, API caída ofrece Reintentar y la simulación sigue, móvil de 375 px sin desplazamiento horizontal.
 - Correr también `ficha-m1`, `biblioteca`, `glosario`, `tema-oscuro`, `analisis`, `departamento` y `movil` para comprobar que no se rompió nada.
 - Comprobar a ojo con capturas de Playwright: claro, oscuro y móvil, y la impresión (`page.pdf` o `emulateMedia({ media: 'print' })`; la cabecera pierde el fondo y los pasos se ven completos).
-- Rutas: `curl` a ambas fichas y a los enlaces nuevos devuelve 200; las anclas de `03-funciones` existen (los ids llevan tilde, por ejemplo `#m1-idoneidad-biofísica-iv`; confirmar los de M2 y M3 en la página construida).
+- Rutas: `curl` a las tres fichas y a los enlaces nuevos devuelve 200; las anclas de `03-funciones` existen (los ids llevan tilde, por ejemplo `#m1-idoneidad-biofísica-iv`; confirmar los de M2, M3 y M4 en la página construida).
 
-## 11. Criterio de cierre
+## 12. Criterio de cierre
 
 El PR está listo cuando:
 
-1. Las dos fichas existen, se leen completas sin JavaScript y con animaciones apagadas, y cada visual tiene su alternativa en texto.
-2. Las bibliotecas de cálculo coinciden con el archivo de referencia.
+1. Las tres fichas existen, se leen completas sin JavaScript y con animaciones apagadas, y cada visual tiene su alternativa en texto.
+2. Las bibliotecas de cálculo coinciden con los archivos de referencia.
 3. Los laboratorios funcionan con un solo departamento, con recorrido paso a paso y con la petición real, sin retrasos artificiales: lo único que espera es la petición real.
 4. Todo lo de la sección 10 pasa.
 5. La descripción del PR resume qué se hizo, lista las líneas añadidas a `03-funciones.md` para replicar en el monorepo y anota cualquier diferencia hallada entre el archivo de referencia y la Biblioteca.

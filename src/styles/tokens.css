@@ -78,11 +78,12 @@
   --font-display: var(--font-fraunces), Georgia, serif;
 }
 
-/* Tema oscuro: sigue al sistema salvo que la persona haya elegido uno
-   (data-theme en <html>, guardado en localStorage por el selector del
-   encabezado). */
+/* Tema por defecto: claro. El oscuro solo se activa si la persona lo elige
+   (data-theme="dark" en <html>, guardado en localStorage por el selector del
+   encabezado). Quien elige "Sistema" (data-theme="system") sigue el ajuste
+   del dispositivo. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
+  :root[data-theme='system'] {
     --color-bg: #0e1412;
     --color-surface: #161d1b;
     --color-ink: #eceff1;

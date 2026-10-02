@@ -11,7 +11,11 @@ export interface TokensGrafico {
   acento: string;
   secundario: string;
   seleccion: string;
+  /** Azul de las estimaciones y predicciones (--color-estimacion). */
+  estimacion: string;
   fuente: string;
+  /** Familia del texto corrido (tooltips, anotaciones); `fuente` es la mono. */
+  fuenteTexto: string;
 }
 
 /**
@@ -31,7 +35,9 @@ export function leerTokens(): TokensGrafico {
     acento: token('--color-accent', '#183e39'),
     secundario: token('--color-secondary', '#dddbff'),
     seleccion: token('--color-seleccion', '#183e39'),
+    estimacion: token('--color-estimacion', '#1f5fb4'),
     fuente: token('--font-mono', 'ui-monospace, monospace'),
+    fuenteTexto: token('--font-sans', 'system-ui, sans-serif'),
   };
 }
 

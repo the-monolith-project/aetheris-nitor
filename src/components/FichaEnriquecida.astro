@@ -20,10 +20,20 @@ interface Props {
   descripcion: string;
   /** Documento con acordeones al que esta ficha complementa. */
   documentacion: { href: string; etiqueta: string };
+  /** Fichas vecinas en el orden del registro, para pasar de una a otra. */
+  anterior?: { href: string; titulo: string };
+  siguiente?: { href: string; titulo: string };
 }
 
-const { titulo, subtitulo, etiquetas, descripcion, documentacion } =
-  Astro.props;
+const {
+  titulo,
+  subtitulo,
+  etiquetas,
+  descripcion,
+  documentacion,
+  anterior,
+  siguiente,
+} = Astro.props;
 ---
 
 <Layout title={`EPI-Aetheris — ${titulo}`} descripcion={descripcion}>
@@ -67,6 +77,23 @@ const { titulo, subtitulo, etiquetas, descripcion, documentacion } =
           </p>
           <a href={documentacion.href}>{documentacion.etiqueta}</a>
         </aside>
+
+        {
+          (anterior || siguiente) && (
+            <nav class="ficha-vecinas" aria-label="Otras fichas">
+              {anterior && (
+                <a href={anterior.href} rel="prev">
+                  <span aria-hidden="true">←</span> {anterior.titulo}
+                </a>
+              )}
+              {siguiente && (
+                <a href={siguiente.href} rel="next" class="ficha-siguiente">
+                  {siguiente.titulo} <span aria-hidden="true">→</span>
+                </a>
+              )}
+            </nav>
+          )
+        }
       </div>
     </article>
   </main>
@@ -310,6 +337,29 @@ const { titulo, subtitulo, etiquetas, descripcion, documentacion } =
     color: var(--color-accent);
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+
+  .ficha-vecinas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+  .ficha-vecinas a {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .ficha-vecinas .ficha-siguiente {
+    margin-left: auto;
   }
 
   /* Piezas comunes de los pasos: tarjetas, notas, fórmulas, cuentas y

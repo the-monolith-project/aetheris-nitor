@@ -180,6 +180,43 @@ test.describe('ficha enriquecida de M4', () => {
     await expect(real).toContainText('Resumen de 2023');
   });
 
+  test('las fichas se enlazan en orden y /estado lleva a la de M4', async ({
+    page,
+  }) => {
+    await page.goto(RUTA);
+    const vecinas = page.getByRole('navigation', { name: 'Otras fichas' });
+    await expect(
+      vecinas.getByRole('link', { name: /Presión epidemiológica relativa/ }),
+    ).toHaveAttribute('href', '/biblioteca/fichas/m3-presion-epidemiologica');
+    await expect(vecinas.getByRole('link')).toHaveCount(1);
+    await page.goto('/biblioteca/fichas/m2-anomalia-climatica');
+    await expect(
+      page.getByRole('navigation', { name: 'Otras fichas' }).getByRole('link'),
+    ).toHaveCount(2);
+    await page.goto('/estado');
+    await page
+      .locator('[data-frescura]')
+      .getByRole('link', { name: 'integridad de la vigilancia' })
+      .click();
+    await expect(page).toHaveURL(new RegExp(RUTA));
+  });
+
+  test('la Biblioteca lista las cuatro fichas', async ({ page }) => {
+    await page.goto('/biblioteca');
+    for (const nombre of [
+      'Idoneidad biofísica (M1)',
+      'Anomalía climática (M2)',
+      'Presión epidemiológica relativa (M3)',
+      'Integridad de la vigilancia (M4)',
+    ]) {
+      await expect(
+        page.getByRole('link', {
+          name: new RegExp(nombre.replace(/[()]/g, '\\$&')),
+        }),
+      ).toBeVisible();
+    }
+  });
+
   test('en móvil no hay desplazamiento horizontal', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(RUTA);

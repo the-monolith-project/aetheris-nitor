@@ -316,6 +316,9 @@ import { rutaFicha } from '../fichas/registro';
   const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8000';
   const SIN_DATO = '#e4e4e7';
   const RUTA_FICHA_M1 = rutaFicha('m1-idoneidad-biofisica');
+  const RUTA_FICHA_M2 = rutaFicha('m2-anomalia-climatica');
+  const RUTA_FICHA_M3 = rutaFicha('m3-presion-epidemiologica');
+  const RUTA_FICHA_M4 = rutaFicha('m4-integridad-vigilancia');
 
   // El shapeName del geojson (geoBoundaries) es inconsistente: 12 de los 14
   // departamentos traen el prefijo "Departamento de ..." pero La Libertad y
@@ -611,6 +614,7 @@ import { rutaFicha } from '../fichas/registro';
       'departamento y semana. Es condición biofísica (clima), no incidencia ni riesgo; ' +
       'los casos MINSAL y la presión epidemiológica no llegan más allá de 2023.',
     tituloLeyenda: 'Anomalía climática (σ respecto al promedio histórico)',
+    enlaceLeyenda: RUTA_FICHA_M2,
     rampa: RAMPA_ANOMALIA,
     sinDatoColor: SIN_DATO,
     async cargarValores() {
@@ -725,6 +729,7 @@ import { rutaFicha } from '../fichas/registro';
         `Compara los casos ${serie} observados con la historia del mismo departamento y periodo. ` +
         'Un valor alto indica qué tan inusual es lo observado frente a la historia del propio departamento.',
       tituloLeyenda: `Presión relativa (${serie}, frente a P50/P75 de su referencia histórica)`,
+      enlaceLeyenda: RUTA_FICHA_M3,
       rampa: RAMPA_PRESION_CATEGORIA,
       sinDatoColor: SIN_DATO,
       async cargarValores() {
@@ -805,6 +810,7 @@ import { rutaFicha } from '../fichas/registro';
       'El color indica si ese departamento tiene fila esa semana, si falta el dato, o si el ' +
       'boletín no cuadra aritméticamente. No es un nivel de riesgo ni un índice de confianza opaco.',
     tituloLeyenda: 'Calidad del dato (semana seleccionada)',
+    enlaceLeyenda: RUTA_FICHA_M4,
     rampa: RAMPA_CONFIANZA,
     sinDatoColor: SIN_DATO,
     async cargarValores() {

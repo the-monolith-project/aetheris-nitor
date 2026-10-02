@@ -18,6 +18,16 @@ test.describe('ficha enriquecida de M1', () => {
     ).toHaveAttribute('href', /03-funciones#m1-idoneidad-biofísica-iv/);
   });
 
+  test('/biblioteca/fichas redirige al índice de la Biblioteca', async ({
+    page,
+  }) => {
+    await page.goto('/biblioteca/fichas');
+    await expect(page).toHaveURL(/\/biblioteca\/?$/);
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Fichas enriquecidas' }),
+    ).toBeVisible();
+  });
+
   test('no tiene violaciones de accesibilidad', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(RUTA);

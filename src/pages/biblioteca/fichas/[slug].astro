@@ -2,6 +2,7 @@
 import FichaEnriquecida from '../../../components/FichaEnriquecida.astro';
 import FichaM1 from '../../../fichas/FichaM1.astro';
 import FichaM2 from '../../../fichas/FichaM2.astro';
+import FichaM3 from '../../../fichas/FichaM3.astro';
 import { FICHAS } from '../../../fichas/registro';
 
 export function getStaticPaths() {
@@ -15,6 +16,7 @@ export function getStaticPaths() {
 const CONTENIDO = {
   'm1-idoneidad-biofisica': FichaM1,
   'm2-anomalia-climatica': FichaM2,
+  'm3-presion-epidemiologica': FichaM3,
 } as const;
 
 const ficha = Astro.props;

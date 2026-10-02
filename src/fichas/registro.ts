@@ -44,6 +44,19 @@ export const FICHAS: MetadatosFicha[] = [
       etiqueta: 'Ver documentación de M2',
     },
   },
+  {
+    slug: 'm3-presion-epidemiologica',
+    titulo: 'Presión epidemiológica relativa (M3)',
+    subtitulo:
+      'Qué tan alta es la cifra de casos de una semana comparada con la historia del mismo departamento.',
+    etiquetas: ['Módulo M3', 'Variable derivada', 'Casos', 'Percentil'],
+    descripcion:
+      'Recorrido de los casos de una semana a su percentil: qué años y semanas se comparan, cuándo no se calcula, cómo se obtienen el percentil y los cortes, el color del mapa y el canal endémico. Al final, un laboratorio para mover los casos.',
+    documentacion: {
+      href: '/biblioteca/03-funciones#m3-presión-epidemiológica-relativa',
+      etiqueta: 'Ver documentación de M3',
+    },
+  },
 ];
 
 export const RUTA_FICHAS = '/biblioteca/fichas';

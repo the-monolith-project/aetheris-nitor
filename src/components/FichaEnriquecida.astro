@@ -577,6 +577,62 @@ const { titulo, subtitulo, etiquetas, descripcion, documentacion } =
     fill: var(--color-ink);
   }
 
+  .recta-eje {
+    stroke: var(--color-ink-muted);
+    stroke-width: 1.2;
+  }
+  .recta-punto {
+    fill: var(--color-termino);
+    opacity: 0.75;
+  }
+  .recta-corte {
+    stroke: var(--color-ink);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 3;
+  }
+  .recta-observado {
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+  }
+  .recta-texto {
+    fill: var(--color-ink-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+  }
+  .recta-texto-observado {
+    fill: var(--color-ink);
+    font-weight: 700;
+  }
+  .canal-fondo {
+    fill: var(--color-surface);
+    stroke: var(--color-border);
+  }
+  .canal-linea {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .canal-punto {
+    fill: var(--color-ink);
+  }
+  .ficha-nota-separada {
+    margin-top: 1.25rem;
+  }
+  .ficha-color-texto {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+  .ficha-leyenda-fila {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    margin-top: 0.6rem;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--color-ink-muted);
+  }
+
   @media print {
     .ficha[data-anima] .paso {
       opacity: 1;

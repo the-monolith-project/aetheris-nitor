@@ -30,6 +30,8 @@ M1 no clasifica el riesgo de brote ni anticipa una temporada.
 
 Mide qué tan inusual es el `Iv` de un departamento en una semana respecto de su propia historia climática.
 
+Para seguir el cálculo con ejemplos y un laboratorio, ver la [ficha enriquecida de M2](/biblioteca/fichas/m2-anomalia-climatica).
+
 Método: puntuación z de `Iv` por departamento y semana del año, calculada sin el año que se describe (leave-one-out). La línea base va de 2014 al año en curso (ADR 0018), así que cada año nuevo cambia las desviaciones históricas. Se compara la misma semana exacta, sin semanas vecinas. El reanálisis ERA5 llega con unos 5 días de retraso.
 
 Se muestra como serie continua (`anomaly_sigma`). El experimento de anticipación usaba un umbral de Z ≥ 1,5 durante dos semanas seguidas; se retiró porque se cruzaba en todos los años evaluados y no distinguía unos de otros. M2 no emite alertas ni expone `lead_time_weeks`.
@@ -37,6 +39,8 @@ Se muestra como serie continua (`anomaly_sigma`). El experimento de anticipació
 ## M3. Presión epidemiológica relativa
 
 Mide qué tan alta es la cifra de casos ya observados en un departamento en una semana, comparada con su propia historia.
+
+Para seguir el cálculo con ejemplos y un laboratorio, ver la [ficha enriquecida de M3](/biblioteca/fichas/m3-presion-epidemiologica).
 
 | Elemento | Valor |
 |---|---|
@@ -59,6 +63,8 @@ M3 no usa el clima ni emite alertas. Un percentil alto compara lo ya ocurrido co
 
 El panel «Canal endémico» dibuja los mismos cortes de M3 como tres bandas: casos hasta el P50 (`baja`), entre el P50 y el P75 (`media`) y por encima del P75 (`alta`), con los casos observados encima. Usa la línea base de M3, que deja fuera el año descrito, así que la banda cambia de un año a otro. Las semanas sin línea base suficiente quedan en blanco.
 
+El canal endémico es el último paso de la [ficha enriquecida de M3](/biblioteca/fichas/m3-presion-epidemiologica#canal).
+
 ## M4. Integridad de la vigilancia
 
 Da tres datos sobre la calidad de la información, por separado:
@@ -70,6 +76,8 @@ Da tres datos sobre la calidad de la información, por separado:
 Endpoint: `GET /api/v1/vigilancia/integridad`. En el mapa es la capa «Integridad de la vigilancia».
 
 Un departamento sin color en esta capa es un departamento sin dato esa semana.
+
+Para seguir cada métrica con ejemplos y un laboratorio, ver la [ficha enriquecida de M4](/biblioteca/fichas/m4-integridad-vigilancia).
 
 ## Mapa departamental (dengue)
 

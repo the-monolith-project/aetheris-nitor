@@ -26,6 +26,20 @@ export const GLOSARIO: EntradaGlosario[] = [
     enlace: `${FUNCIONES}#m2-anomalía-climática-continua`,
   },
   {
+    clave: 'mediana',
+    termino: 'Mediana',
+    definicion:
+      'Valor del medio de un conjunto ordenado: la mitad de los valores queda por debajo y la otra mitad por encima. En M2 y M3 es lo habitual de una semana en los otros años.',
+    enlace: `${FUNCIONES}#m2-anomalía-climática-continua`,
+  },
+  {
+    clave: 'desviacion-estandar',
+    termino: 'Desviación estándar',
+    definicion:
+      'Cuánto se alejan en promedio los valores de un conjunto de su centro. M2 usa la muestral, que divide entre el número de valores menos uno.',
+    enlace: `${FUNCIONES}#m2-anomalía-climática-continua`,
+  },
+  {
     clave: 'percentil-presion',
     termino: 'Percentil de presión',
     definicion:
@@ -87,6 +101,13 @@ export const GLOSARIO: EntradaGlosario[] = [
     definicion:
       'Proporción de muestras de laboratorio con detección de un virus en una semana.',
     enlace: `${FUNCIONES}#observatorio-respiratorio`,
+  },
+  {
+    clave: 'hueco',
+    termino: 'Hueco de la fuente',
+    definicion:
+      'Semana o departamento sin fila en los datos publicados. Se muestra como falta de dato y nunca se cuenta como cero casos.',
+    enlace: `${FUNCIONES}#m4-integridad-de-la-vigilancia`,
   },
   {
     clave: 'integridad',

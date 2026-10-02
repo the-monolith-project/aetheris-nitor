@@ -272,7 +272,12 @@ import { rutaFicha } from '../fichas/registro';
     type CapaAnalitica,
     type SerieEpidemiologica,
   } from '../lib/tipos-analisis';
-  import { RAMPA_IV } from '../lib/colores';
+  import {
+    RAMPA_ANOMALIA,
+    RAMPA_CONFIANZA,
+    RAMPA_IV,
+    RAMPA_PRESION_CATEGORIA,
+  } from '../lib/colores';
   import { rutaFicha } from '../fichas/registro';
   import { renderErrorFuente } from './estado-async';
   import { escapeHtml } from '../utils/security';
@@ -597,17 +602,6 @@ import { rutaFicha } from '../fichas/registro';
     },
   };
 
-  // Rampa diverging neutra (azul / gris / naranja) -- deliberadamente sin
-  // rojo ni ningún color asociado a alerta/urgencia. La anomalía es un
-  // valor continuo descriptivo, no un cruce de umbral.
-  const RAMPA_ANOMALIA = [
-    '#3a6ea5',
-    '#8fb8d9',
-    '#e5e5e5',
-    '#e8b86d',
-    '#b5651d',
-  ];
-
   const capaAnomalia: DefinicionCapa = {
     id: 'anomalia',
     etiqueta: 'Anomalía climática (continua)',
@@ -718,14 +712,6 @@ import { rutaFicha } from '../fichas/registro';
     media: 1,
     alta: 2,
   };
-  // Presión solo tiene 3 categorías posibles (baja/media/alta) -- los 3 tonos
-  // de teal anteriores eran demasiado parecidos entre sí y con pocos
-  // departamentos en "media"/"alta" el mapa se veía casi de un solo color.
-  // Mismo family de verde de la marca, pero mucho más separado en luminosidad
-  // y saturación para que la diferencia se note incluso con pocos casos en
-  // las categorías altas.
-  const RAMPA_PRESION = ['#e8f3ef', '#4fae95', '#0b3d33'];
-
   let detallesPresion = new Map<string, DatoPresion>();
 
   function definirCapaPresion(
@@ -739,7 +725,7 @@ import { rutaFicha } from '../fichas/registro';
         `Compara los casos ${serie} observados con la historia del mismo departamento y periodo. ` +
         'Un valor alto indica qué tan inusual es lo observado frente a la historia del propio departamento.',
       tituloLeyenda: `Presión relativa (${serie}, frente a P50/P75 de su referencia histórica)`,
-      rampa: RAMPA_PRESION,
+      rampa: RAMPA_PRESION_CATEGORIA,
       sinDatoColor: SIN_DATO,
       async cargarValores() {
         const datos = await obtenerDatosPresion();
@@ -810,7 +796,6 @@ import { rutaFicha } from '../fichas/registro';
   const ESTADO_SIN_DATO = 0;
   const ESTADO_PRESENTE = 1;
   const ESTADO_NO_CUADRA = 2;
-  const RAMPA_CONFIANZA = ['#d4d4d8', '#5b7c99', '#c4a35a'];
 
   const capaConfianza: DefinicionCapa = {
     id: 'confianza',

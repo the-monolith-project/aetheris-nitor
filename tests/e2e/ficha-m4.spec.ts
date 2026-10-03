@@ -211,7 +211,7 @@ test.describe('ficha enriquecida de M4', () => {
     ]) {
       await expect(
         page.getByRole('link', {
-          name: new RegExp(nombre.replace(/[()]/g, '\\$&')),
+          name: new RegExp(nombre.replace(/[\\()]/g, '\\$&')),
         }),
       ).toBeVisible();
     }

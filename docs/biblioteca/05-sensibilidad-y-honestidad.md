@@ -22,8 +22,9 @@ En la misma página se puede elegir otra semana de partida y comparar la predicc
 ### Hasta 2024: serie de OpenDengue
 
 - Se calcula con la serie nacional de OpenDengue, que termina en diciembre de 2024.
-- Se validó con las temporadas de 2019 y de 2021 a 2024, usando en cada prueba solo los datos anteriores al punto de corte. En las cinco temporadas tuvo menos error que repetir el último valor observado. El método, las métricas y una segunda validación hecha desde cero están en la [decisión de arquitectura 0020](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/adr/0020-nowcast-corto-plazo.md).
-- Su ventaja depende de que los datos de entrenamiento, que empiezan en 2014, ya incluyan un brote grande. Entrenado solo con datos desde 2016, en 2019 tuvo más error que repetir el último valor. Ante un brote sin precedente en la serie, la predicción puede quedarse corta.
+- Se validó con las temporadas de 2019 y de 2021 a 2024, usando en cada prueba solo los datos anteriores al punto de corte. A 5 a 8 semanas tuvo menos error que repetir el último valor observado en cuatro de las cinco temporadas, con una ventaja media de entre un 12 % y un 18 %. A 1 a 3 semanas rindió como repetir el último valor. El método, las métricas y una segunda validación hecha desde cero están en la [decisión de arquitectura 0020](https://github.com/the-monolith-project/EPI-Aetheris/blob/main/docs/adr/0020-nowcast-corto-plazo.md).
+- Su ventaja depende de que los datos de entrenamiento, que empiezan en 2014, ya incluyan un brote grande. Entrenado solo con datos desde 2016, en 2019 tuvo más error que repetir el último valor. Ante un brote sin precedente en la serie, la predicción puede quedarse corta: con la historia recortada, en el pico de 2019 y de 2022 la mediana valió el 12 % y el 41 % de lo observado.
+- Los rangos quedan por debajo de su nivel. A 4 y a 8 semanas, el del 95 % contuvo el 88 % de los valores observados y el del 50 % contuvo entre el 55 % y el 57 %.
 - El pico de 2014 y 2015 coincidió con una alerta nacional por arbovirosis y con la búsqueda activa de casos de síndrome febril, que pudieron aumentar el número de casos notificados. El modelo aprende de ese pico.
 
 ### Desde 2025: serie del tablero de MINSAL

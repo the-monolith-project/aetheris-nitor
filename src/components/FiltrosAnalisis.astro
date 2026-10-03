@@ -1,5 +1,6 @@
 ---
 import AyudaTermino from './AyudaTermino.astro';
+import SelectorSemanaEpi from './SelectorSemanaEpi.astro';
 import { aniosClimaPresentacion } from '../lib/tipos-analisis';
 ---
 
@@ -88,13 +89,29 @@ import { aniosClimaPresentacion } from '../lib/tipos-analisis';
               </select>
             </label>
 
-            <label
+            <div
               class="flex flex-col gap-2 rounded-xl border border-border bg-bg p-3 font-sans text-xs font-medium text-ink-muted md:col-span-6"
             >
-              Semana activa: <output
-                id="analisis-semana-valor"
-                class="font-sans tabular-nums text-ink">SE01</output
-              >
+              <div class="flex items-center justify-between gap-2">
+                <span>Semana activa:</span>
+                <output
+                  id="analisis-semana-valor"
+                  class="font-sans tabular-nums text-ink font-semibold"
+                  >SE01</output
+                >
+              </div>
+
+              <!-- Selector en calendario epidemiológico -->
+              <SelectorSemanaEpi
+                id="filtros-selector-semana"
+                sincronizarAnalisis={true}
+                mostrarRangoFechas={true}
+                class="w-full"
+              />
+
+              <label class="sr-only" for="analisis-semana">
+                Deslizador de semana epidemiológica activa
+              </label>
               <input
                 id="analisis-semana"
                 type="range"
@@ -104,7 +121,7 @@ import { aniosClimaPresentacion } from '../lib/tipos-analisis';
                 aria-valuetext="Semana epidemiológica 1"
                 class="w-full accent-accent"
               />
-            </label>
+            </div>
 
             <fieldset
               class="grid grid-cols-2 gap-3 rounded-xl border border-border bg-bg p-3 md:col-span-12"

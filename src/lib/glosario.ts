@@ -85,7 +85,7 @@ export const GLOSARIO: EntradaGlosario[] = [
     clave: 'bandas',
     termino: 'Banda del 50 % y del 95 %',
     definicion:
-      'Rango en el que caería la cifra prevista con esa probabilidad. La banda del 95 % es más ancha que la del 50 %.',
+      'Rango pensado para contener la cifra observada el 50 % o el 95 % de las veces. En las validaciones quedó por debajo: el del 95 % contuvo cerca del 88 % de los valores con OpenDengue y el 79 % en el tablero de 2026. La banda del 95 % es más ancha que la del 50 %.',
     enlace: `${SENSIBILIDAD}#predicción-de-casos-a-corto-plazo`,
   },
   {

@@ -32,6 +32,11 @@
    tiene capa. Bug real: el texto blanco de los botones de acento se volvía
    invisible porque "a { color }" pisaba "text-accent-ink". */
 @layer base {
+  :root {
+    scrollbar-color: var(--color-border) transparent;
+    scrollbar-width: thin;
+  }
+
   body {
     background-color: var(--color-bg);
     color: var(--color-ink);
@@ -45,19 +50,21 @@
     color: var(--color-secondary-ink);
   }
 
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--color-border);
-    border-radius: 999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-ink-muted);
+  @supports not (scrollbar-color: auto) {
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--color-border);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-ink-muted);
+    }
   }
 
   a {
@@ -74,6 +81,35 @@
     outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px rgba(1, 30, 30, 0.55);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  input:user-invalid,
+  select:user-invalid,
+  textarea:user-invalid {
+    border-color: #e53e3e;
+    background-color: rgba(229, 62, 62, 0.05);
+  }
+
+  input:user-valid:not([type='checkbox']):not([type='radio']),
+  select:user-valid {
+    border-color: var(--color-accent);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
   }
 }
 

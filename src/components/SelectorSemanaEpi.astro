@@ -207,6 +207,8 @@ const popoverId = `${id}-popover`;
     <!-- Pestañas de modo: Calendario mensual vs Cuadrícula anual -->
     <div
       class="mt-2.5 flex items-center justify-center gap-1 rounded-xl bg-bg p-1 border border-border/60"
+      role="tablist"
+      aria-label="Modo de visualización"
     >
       <button
         type="button"
@@ -237,7 +239,7 @@ const popoverId = `${id}-popover`;
       <!-- Encabezados de días de la semana (Dom a Sáb) -->
       <div
         class="grid grid-cols-[38px_repeat(7,1fr)] items-center gap-1 text-center font-sans text-[11px] font-semibold text-ink-muted pb-1.5 border-b border-border/40"
-        role="row"
+        aria-hidden="true"
       >
         <span class="text-[10px] text-ink-muted/80">Sem</span>
         {DIAS_SEMANA_CORTOS.map((dia) => <span>{dia}</span>)}
@@ -247,7 +249,7 @@ const popoverId = `${id}-popover`;
       <div
         data-contenedor-filas-mes
         class="mt-1 flex flex-col gap-1"
-        role="grid"
+        role="listbox"
         aria-label="Semanas del mes"
       >
         {
@@ -261,7 +263,7 @@ const popoverId = `${id}-popover`;
               ]}
               data-fila-semana={fila.semana}
               data-fila-anio={fila.anio}
-              role="row"
+              role="option"
               tabindex="0"
               aria-selected={fila.esActiva ? 'true' : 'false'}
               aria-label={`Semana epidemiológica ${fila.semana}, ${fila.etiquetaRango}`}
@@ -380,6 +382,9 @@ const popoverId = `${id}-popover`;
   /* Reglas de visualización del Popover y posicionamiento con fallback */
   .selector-semana-popover {
     box-sizing: border-box;
+    position: fixed;
+    margin: 0;
+    inset: auto;
   }
 
   /* Soporte nativo de Popover API */
@@ -537,9 +542,9 @@ const popoverId = `${id}-popover`;
         }
       } else {
         popover.setAttribute('data-abierto', 'true');
+        disparador.setAttribute('aria-expanded', 'true');
+        if (iconoChevron) iconoChevron.setAttribute('data-abierto', 'true');
       }
-      disparador.setAttribute('aria-expanded', 'true');
-      if (iconoChevron) iconoChevron.setAttribute('data-abierto', 'true');
     }
 
     function cerrarPopover(restaurarFoco = false): void {
@@ -552,9 +557,9 @@ const popoverId = `${id}-popover`;
         }
       } else {
         popover.removeAttribute('data-abierto');
+        disparador.setAttribute('aria-expanded', 'false');
+        if (iconoChevron) iconoChevron.removeAttribute('data-abierto');
       }
-      disparador.setAttribute('aria-expanded', 'false');
-      if (iconoChevron) iconoChevron.removeAttribute('data-abierto');
       if (restaurarFoco) disparador.focus();
     }
 
@@ -589,7 +594,7 @@ const popoverId = `${id}-popover`;
         }`;
         filaEl.dataset.filaSemana = String(fila.semana);
         filaEl.dataset.filaAnio = String(fila.anio);
-        filaEl.setAttribute('role', 'row');
+        filaEl.setAttribute('role', 'option');
         filaEl.setAttribute('tabindex', '0');
         filaEl.setAttribute('aria-selected', fila.esActiva ? 'true' : 'false');
         filaEl.setAttribute(
@@ -690,7 +695,11 @@ const popoverId = `${id}-popover`;
     }
 
     // Aplica la selección de semana
-    function seleccionarSemana(nuevoAnio: number, nuevaSemana: number): void {
+    function seleccionarSemana(
+      nuevoAnio: number,
+      nuevaSemana: number,
+      emitirEvento = true,
+    ): void {
       anioActual = nuevoAnio;
       semanaActual = nuevaSemana;
       mesVisualizado = mesDeSemanaEpi(anioActual, semanaActual);
@@ -720,29 +729,40 @@ const popoverId = `${id}-popover`;
       renderizarMes();
       renderizarCuadricula();
 
-      // Disparar evento personalizado
-      contenedor.dispatchEvent(
-        new CustomEvent('cambio-semana', {
-          bubbles: true,
-          detail: {
+      if (emitirEvento) {
+        // Disparar evento personalizado
+        contenedor.dispatchEvent(
+          new CustomEvent('cambio-semana', {
+            bubbles: true,
+            detail: {
+              anio: anioActual,
+              semana: semanaActual,
+              ...info,
+            },
+          }),
+        );
+
+        // Disparar evento de cambio estándar para formularios
+        contenedor.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Sincronizar con el store analítico si está habilitado
+        if (sincronizar) {
+          actualizarFiltrosAnalisis({
             anio: anioActual,
             semana: semanaActual,
-            ...info,
-          },
-        }),
-      );
-
-      // Disparar evento de cambio estándar para formularios
-      contenedor.dispatchEvent(new Event('change', { bubbles: true }));
-
-      // Sincronizar con el store analítico si está habilitado
-      if (sincronizar) {
-        actualizarFiltrosAnalisis({
-          anio: anioActual,
-          semana: semanaActual,
-        });
+          });
+        }
       }
     }
+
+    // Permitir actualización programática desde componentes externos
+    contenedor.addEventListener('ajustar-semana', ((
+      ev: CustomEvent<{ anio?: number; semana?: number }>,
+    ) => {
+      const anio = ev.detail?.anio ?? anioActual;
+      const semana = ev.detail?.semana ?? semanaActual;
+      seleccionarSemana(anio, semana, false);
+    }) as EventListener);
 
     // Eventos de navegación mensual
     botonPrev?.addEventListener('click', () => {
@@ -814,29 +834,91 @@ const popoverId = `${id}-popover`;
       cerrarPopover(true);
     });
 
-    // Eventos del disparador y teclado
-    disparador.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      alternarPopover();
-    });
+    if (soportePopoverNativo) {
+      popover.addEventListener('beforetoggle', (ev: Event) => {
+        const toggleEv = ev as { newState?: string };
+        const abierto = toggleEv.newState === 'open';
+        disparador.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+        if (iconoChevron) {
+          if (abierto) iconoChevron.setAttribute('data-abierto', 'true');
+          else iconoChevron.removeAttribute('data-abierto');
+        }
+        if (abierto) {
+          posicionarPopover();
+        }
+      });
 
-    // Escape y clic exterior para navegadores sin Popover API
-    document.addEventListener('keydown', (ev) => {
-      if (
-        ev.key === 'Escape' &&
-        disparador.getAttribute('aria-expanded') === 'true'
-      ) {
+      disparador.addEventListener('click', () => {
+        posicionarPopover();
+      });
+    } else {
+      // Eventos del disparador y teclado para navegadores sin Popover API
+      disparador.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        alternarPopover();
+      });
+
+      document.addEventListener('keydown', (ev) => {
+        if (
+          ev.key === 'Escape' &&
+          disparador.getAttribute('aria-expanded') === 'true'
+        ) {
+          cerrarPopover(true);
+        }
+      });
+
+      document.addEventListener('click', (ev) => {
+        if (
+          disparador.getAttribute('aria-expanded') === 'true' &&
+          !contenedor.contains(ev.target as Node) &&
+          !popover.contains(ev.target as Node)
+        ) {
+          cerrarPopover();
+        }
+      });
+    }
+
+    // Delegación de eventos para la cuadrícula anual (52/53 semanas)
+    contenedorTrimestres?.addEventListener('click', (ev) => {
+      const chip = (ev.target as HTMLElement).closest<HTMLElement>(
+        '[data-chip-semana]',
+      );
+      if (!chip) return;
+      const anio = Number(chip.dataset.chipAnio) || anioActual;
+      const sem = Number(chip.dataset.chipSemana);
+      if (sem) {
+        seleccionarSemana(anio, sem);
         cerrarPopover(true);
       }
     });
 
-    document.addEventListener('click', (ev) => {
-      if (
-        disparador.getAttribute('aria-expanded') === 'true' &&
-        !contenedor.contains(ev.target as Node) &&
-        !popover.contains(ev.target as Node)
-      ) {
-        cerrarPopover();
+    // Delegación de eventos para las filas del mes
+    contenedorFilasMes?.addEventListener('click', (ev) => {
+      const fila = (ev.target as HTMLElement).closest<HTMLElement>(
+        '[data-fila-semana]',
+      );
+      if (!fila) return;
+      const anio = Number(fila.dataset.filaAnio) || anioActual;
+      const sem = Number(fila.dataset.filaSemana);
+      if (sem) {
+        seleccionarSemana(anio, sem);
+        cerrarPopover(true);
+      }
+    });
+
+    contenedorFilasMes?.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') {
+        const fila = (ev.target as HTMLElement).closest<HTMLElement>(
+          '[data-fila-semana]',
+        );
+        if (!fila) return;
+        ev.preventDefault();
+        const anio = Number(fila.dataset.filaAnio) || anioActual;
+        const sem = Number(fila.dataset.filaSemana);
+        if (sem) {
+          seleccionarSemana(anio, sem);
+          cerrarPopover(true);
+        }
       }
     });
 

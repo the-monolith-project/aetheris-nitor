@@ -115,13 +115,6 @@ const aniosHistorico = `${Math.min(...ANIOS_ANALISIS_DENGUE)} a ${Math.max(...AN
     margin-inline-start: calc((100% - min(calc(100vw - 2rem), 1840px)) / 2);
   }
 
-  /* Optimización de pintura diferida: evita renderizar paneles fuera de la
-     pantalla hasta que la persona se desplace a ellos. */
-  [data-panel-workspace] {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 420px;
-  }
-
   /* Impresión de /dengue: sin cromo de navegación, paneles a ancho completo
      y sin cortes a mitad de gráfico. */
   @media print {

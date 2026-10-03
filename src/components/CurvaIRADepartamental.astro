@@ -1,6 +1,7 @@
 ---
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
 import CargadorCurva from './CargadorCurva.astro';
+import MenuExportar from './MenuExportar.astro';
 import { ANIOS_RESPIRATORIO } from '../lib/respiratorio-state';
 interface Props {
   evento?: 'ira' | 'neumonias';
@@ -83,15 +84,11 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         >SE1–SE52</span
       >
     </label>
-    <button
-      type="button"
-      data-curva-export
-      aria-label={`Exportar datos de ${etiqueta} a CSV`}
-      disabled
-      class="rounded-lg border border-border bg-bg px-3 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      Exportar CSV
-    </button>
+    <MenuExportar
+      csv={`curva-csv-${evento}`}
+      titulo={`Casos semanales de ${etiqueta} por departamento`}
+      fuente="Boletines epidemiológicos de MINSAL"
+    />
   </div>
 
   <div
@@ -114,6 +111,7 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
     RespuestaIraDepartamental,
   } from '../lib/tipos-analisis';
   import { colorCualitativo } from '../lib/colores';
+  import { habilitarCsv, inhabilitarCsv } from '../lib/exportar-csv';
   import {
     actualizarFiltrosRespiratorio,
     obtenerFiltrosRespiratorio,
@@ -361,9 +359,9 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
     const txtRango = seccion.querySelector(
       '[data-curva-rango]',
     ) as HTMLElement | null;
-    const btnExport = seccion.querySelector(
-      '[data-curva-export]',
-    ) as HTMLButtonElement | null;
+    const opcionCsv = seccion.querySelector<HTMLElement>(
+      '[data-menu-accion="csv"]',
+    );
     if (
       !contenedor ||
       !selector ||
@@ -374,7 +372,6 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
       !txtRango
     )
       return;
-    let ultimoCsv = '';
 
     let departamentos: DepartamentoIRA[];
     try {
@@ -486,8 +483,11 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
             }
           }
         }
-        ultimoCsv = lineas.join('\n');
-        if (btnExport) btnExport.disabled = false;
+        const contenido = lineas.join('\n');
+        habilitarCsv(opcionCsv, () => ({
+          nombre: 'serie-respiratoria.csv',
+          contenido,
+        }));
       } catch (err) {
         const noDisponible =
           err instanceof Error &&
@@ -501,8 +501,7 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         } else {
           renderErrorFuente(contenedor, () => void refrescar());
         }
-        ultimoCsv = '';
-        if (btnExport) btnExport.disabled = true;
+        inhabilitarCsv(opcionCsv);
       } finally {
         contenedor.removeAttribute('aria-busy');
         contenedor.classList.remove('opacity-60');
@@ -532,15 +531,6 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         void refrescar();
       }, false);
     }
-    btnExport?.addEventListener('click', () => {
-      if (!ultimoCsv) return;
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(
-        new Blob([ultimoCsv], { type: 'text/csv;charset=utf-8' }),
-      );
-      a.download = 'serie-respiratoria.csv';
-      a.click();
-    });
     void refrescar();
   }
 

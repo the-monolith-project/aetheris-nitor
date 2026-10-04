@@ -17,7 +17,14 @@ import {
   }
   <script is:inline>
     try {
-      if (new URLSearchParams(location.search).has('demo')) {
+      const params = new URLSearchParams(location.search);
+      if (params.get('t') === 'prediccion') {
+        const destino = new URL('/prediccion', location.origin);
+        if (params.has('demo')) {
+          destino.searchParams.set('demo', params.get('demo') || '');
+        }
+        location.replace(destino);
+      } else if (params.has('demo')) {
         document.documentElement.classList.add('demo-presentacion');
       }
     } catch {
@@ -107,19 +114,6 @@ import {
   const recordado = leerDepartamentoRecordado();
   if (recordado && !new URLSearchParams(location.search).has('dept')) {
     actualizarFiltrosAnalisis({ departamento: recordado });
-  }
-
-  // La predicción vivía en una pestaña de esta página (?t=prediccion). Los
-  // enlaces guardados siguen llegando a su página propia.
-  if (new URLSearchParams(location.search).get('t') === 'prediccion') {
-    const destino = new URL('/prediccion', location.origin);
-    if (new URLSearchParams(location.search).has('demo')) {
-      destino.searchParams.set(
-        'demo',
-        new URLSearchParams(location.search).get('demo') ?? '',
-      );
-    }
-    location.replace(destino);
   }
 </script>
 

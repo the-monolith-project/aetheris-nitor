@@ -12,13 +12,16 @@ import SelectorSemanaEpi from '../SelectorSemanaEpi.astro';
   <section
     id="toolbar-analisis"
     aria-label="Controles del workspace analítico"
-    class="relative overflow-hidden rounded-2xl border border-border bg-surface/95 p-3 shadow-sm backdrop-blur sm:p-4"
+    class="relative rounded-2xl border border-border bg-surface/95 p-3 shadow-sm backdrop-blur sm:p-4"
   >
-    <BarraActividad
-      id="toolbar-actividad-barra"
-      class="absolute inset-x-0 top-0"
-      etiqueta="Actualizando datos del análisis…"
-    />
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 overflow-hidden rounded-t-2xl"
+    >
+      <BarraActividad
+        id="toolbar-actividad-barra"
+        etiqueta="Actualizando datos del análisis…"
+      />
+    </div>
     <div
       class="flex flex-col gap-2.5 2xl:flex-row 2xl:items-center 2xl:justify-between 2xl:gap-4"
     >

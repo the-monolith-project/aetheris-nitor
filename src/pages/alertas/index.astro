@@ -429,10 +429,10 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
               NIVELES_ALERTA.map((clave) => {
                 const badgeClass =
                   clave === 'intensificacion'
-                    ? 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300'
+                    ? 'border-red-600 bg-red-600 text-white'
                     : clave === 'atencion'
-                      ? 'border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300'
-                      : 'border-teal-500/30 bg-teal-500/10 text-teal-800 dark:text-teal-300';
+                      ? 'border-amber-700 bg-amber-700 text-white'
+                      : 'border-teal-700 bg-teal-700 text-white';
                 return (
                   <div
                     data-nivel-leyenda={clave}
@@ -444,7 +444,7 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
                       </span>
                       <span
                         class:list={[
-                          'rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold uppercase',
+                          'rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold uppercase shadow-2xs',
                           badgeClass,
                         ]}
                       >
@@ -620,15 +620,15 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
       if (alertasVisibles.some((a) => a.nivel === 'intensificacion')) {
         kpiPrioridad.textContent = 'Intensificación';
         kpiPrioridad.className =
-          'inline-block rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-0.5 font-mono text-xs font-bold text-red-700 dark:text-red-300';
+          'inline-block rounded-full border border-red-600 bg-red-600 px-2.5 py-0.5 font-mono text-xs font-bold text-white shadow-2xs';
       } else if (alertasVisibles.some((a) => a.nivel === 'atencion')) {
         kpiPrioridad.textContent = 'Atención';
         kpiPrioridad.className =
-          'inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 font-mono text-xs font-bold text-amber-800 dark:text-amber-300';
+          'inline-block rounded-full border border-amber-700 bg-amber-700 px-2.5 py-0.5 font-mono text-xs font-bold text-white shadow-2xs';
       } else if (total > 0) {
         kpiPrioridad.textContent = 'Informativo';
         kpiPrioridad.className =
-          'inline-block rounded-full border border-teal-500/30 bg-teal-500/10 px-2.5 py-0.5 font-mono text-xs font-bold text-teal-800 dark:text-teal-300';
+          'inline-block rounded-full border border-teal-700 bg-teal-700 px-2.5 py-0.5 font-mono text-xs font-bold text-white shadow-2xs';
       } else {
         kpiPrioridad.textContent = 'Sin alertas';
         kpiPrioridad.className =

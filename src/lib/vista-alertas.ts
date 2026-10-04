@@ -293,17 +293,17 @@ function pintarTarjeta(
   // Icono y color para nivel
   const iconoNivel =
     alerta.nivel === 'intensificacion'
-      ? svgIcono('shield-alert', 'h-3.5 w-3.5 text-red-600')
+      ? svgIcono('shield-alert', 'h-3.5 w-3.5 text-white')
       : alerta.nivel === 'atencion'
-        ? svgIcono('alert-triangle', 'h-3.5 w-3.5 text-amber-600')
-        : svgIcono('info-circle', 'h-3.5 w-3.5 text-teal-600');
+        ? svgIcono('alert-triangle', 'h-3.5 w-3.5 text-white')
+        : svgIcono('info-circle', 'h-3.5 w-3.5 text-white');
 
   const clasePillNivel =
     alerta.nivel === 'intensificacion'
-      ? 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/20'
+      ? 'bg-red-600 text-white border-red-600'
       : alerta.nivel === 'atencion'
-        ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20'
-        : 'bg-teal-500/10 text-teal-800 dark:text-teal-300 border-teal-500/20';
+        ? 'bg-amber-700 text-white border-amber-700'
+        : 'bg-teal-700 text-white border-teal-700';
 
   const encabezado = document.createElement('header');
   encabezado.innerHTML = `

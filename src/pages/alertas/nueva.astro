@@ -523,7 +523,7 @@ anunciaría. */
               </span>
               <span
                 id="preview-nivel-pill"
-                class="inline-flex items-center gap-1 rounded-full border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-teal-800 dark:text-teal-300"
+                class="inline-flex items-center gap-1 rounded-full border border-teal-700 bg-teal-700 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-white shadow-2xs"
               >
                 informativo
               </span>
@@ -684,21 +684,21 @@ anunciaría. */
       prevNivel.textContent = nivel;
       if (nivel === 'intensificacion') {
         prevNivel.className =
-          'inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-red-700 dark:text-red-300';
+          'inline-flex items-center gap-1 rounded-full border border-red-600 bg-red-600 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-white shadow-2xs';
         if (prevCard) {
           prevCard.className =
             'card-elevated rounded-2xl border border-border border-l-4 border-l-red-500 bg-surface p-5 sm:p-6 shadow-sm transition-all relative';
         }
       } else if (nivel === 'atencion') {
         prevNivel.className =
-          'inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-amber-800 dark:text-amber-300';
+          'inline-flex items-center gap-1 rounded-full border border-amber-700 bg-amber-700 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-white shadow-2xs';
         if (prevCard) {
           prevCard.className =
             'card-elevated rounded-2xl border border-border border-l-4 border-l-amber-500 bg-surface p-5 sm:p-6 shadow-sm transition-all relative';
         }
       } else {
         prevNivel.className =
-          'inline-flex items-center gap-1 rounded-full border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-teal-800 dark:text-teal-300';
+          'inline-flex items-center gap-1 rounded-full border border-teal-700 bg-teal-700 px-2.5 py-1 font-sans font-semibold uppercase tracking-wider text-white shadow-2xs';
         if (prevCard) {
           prevCard.className =
             'card-elevated rounded-2xl border border-border border-l-4 border-l-accent bg-surface p-5 sm:p-6 shadow-sm transition-all relative';

@@ -72,15 +72,144 @@ import PanelVirus from '../components/PanelVirus.astro';
       </div>
     </header>
 
-    <NavSecciones
-      etiqueta="Serie respiratoria"
-      enlaces={[
-        { href: '#ira', etiqueta: 'IRA' },
-        { href: '#neumonias', etiqueta: 'Neumonías' },
-        { href: '#virus', etiqueta: 'Virus (nacional)' },
-        { href: '#cobertura', etiqueta: 'Cobertura' },
-      ]}
-    />
+    <!-- Resumen Situacional: 3 ejes del observatorio -->
+    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <a
+        href="#ira"
+        class="group relative flex flex-col justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-accent/40 hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <div>
+          <div class="flex items-center justify-between">
+            <span
+              class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-ink"
+            >
+              <Icono nombre="lungs" class="h-5 w-5" />
+            </span>
+            <span class="font-mono text-[11px] font-medium text-ink-muted"
+              >2018–2026</span
+            >
+          </div>
+          <h2
+            class="mt-3 font-display text-base font-semibold text-ink group-hover:text-accent"
+          >
+            Infecciones Respiratorias Agudas
+          </h2>
+          <p class="mt-1 font-sans text-xs leading-relaxed text-ink-muted">
+            Vigilancia clínica sindrómica. Serie nacional del tablero MINSAL y
+            análisis desacumulado por departamento.
+          </p>
+        </div>
+        <div
+          class="mt-3 flex items-center gap-1 font-sans text-xs font-medium text-accent"
+        >
+          <span>Explorar serie y mapa</span>
+          <Icono
+            nombre="arrow-right"
+            class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+          />
+        </div>
+      </a>
+
+      <a
+        href="#neumonias"
+        class="group relative flex flex-col justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-accent/40 hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <div>
+          <div class="flex items-center justify-between">
+            <span
+              class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-ink"
+            >
+              <Icono nombre="lungs" class="h-5 w-5" />
+            </span>
+            <span class="font-mono text-[11px] font-medium text-ink-muted"
+              >14 Deptos × 52 SE</span
+            >
+          </div>
+          <h2
+            class="mt-3 font-display text-base font-semibold text-ink group-hover:text-accent"
+          >
+            Neumonías & Matriz Térmica
+          </h2>
+          <p class="mt-1 font-sans text-xs leading-relaxed text-ink-muted">
+            Seguimiento de gravedad clínica, mapa de distribución acumulada y
+            matriz temporal de 52 semanas.
+          </p>
+        </div>
+        <div
+          class="mt-3 flex items-center gap-1 font-sans text-xs font-medium text-accent"
+        >
+          <span>Explorar neumonías</span>
+          <Icono
+            nombre="arrow-right"
+            class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+          />
+        </div>
+      </a>
+
+      <a
+        href="#virus"
+        class="group relative flex flex-col justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-accent/40 hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <div>
+          <div class="flex items-center justify-between">
+            <span
+              class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-ink"
+            >
+              <Icono nombre="virus" class="h-5 w-5" />
+            </span>
+            <span class="font-mono text-[11px] font-medium text-ink-muted"
+              >Centinela nacional</span
+            >
+          </div>
+          <h2
+            class="mt-3 font-display text-base font-semibold text-ink group-hover:text-accent"
+          >
+            Vigilancia de Virus Respiratorios
+          </h2>
+          <p class="mt-1 font-sans text-xs leading-relaxed text-ink-muted">
+            Laboratorio nacional de referencia: positividad y detecciones de
+            Influenza, VSR, SARS-CoV-2 y otros virus.
+          </p>
+        </div>
+        <div
+          class="mt-3 flex items-center gap-1 font-sans text-xs font-medium text-accent"
+        >
+          <span>Ver circulación viral</span>
+          <Icono
+            nombre="arrow-right"
+            class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+          />
+        </div>
+      </a>
+    </div>
+
+    <!-- Barra sticky de secciones con scrollspy -->
+    <div
+      class="sticky top-[var(--alto-header)] z-30 -mx-4 mb-8 border-y border-border/80 bg-bg/95 px-4 py-2 backdrop-blur-md sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12"
+      data-nav-respiratorio-sticky
+    >
+      <div
+        class="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3"
+      >
+        <NavSecciones
+          etiqueta="Serie respiratoria"
+          enlaces={[
+            { href: '#ira', etiqueta: 'IRA' },
+            { href: '#neumonias', etiqueta: 'Neumonías' },
+            { href: '#virus', etiqueta: 'Virus (nacional)' },
+            { href: '#cobertura', etiqueta: 'Cobertura' },
+          ]}
+        />
+        <div
+          class="hidden items-center gap-2 font-sans text-xs text-ink-muted sm:flex"
+        >
+          <span
+            class="inline-block h-2 w-2 rounded-full bg-accent"
+            aria-hidden="true"></span>
+          <span>Interacción territorial sincronizada</span>
+        </div>
+      </div>
+    </div>
 
     <!-- Sección 1: IRA (Infecciones Respiratorias Agudas) -->
     <section
@@ -189,4 +318,31 @@ import PanelVirus from '../components/PanelVirus.astro';
           'No se pudo copiar el enlace. Cópialo desde la barra de direcciones.';
     }
   });
+
+  // Scrollspy: destacar enlace activo en NavSecciones al desplazarse
+  const secciones = document.querySelectorAll<HTMLElement>('section[id]');
+  const enlacesNav = document.querySelectorAll<HTMLAnchorElement>(
+    '[data-nav-secciones] a',
+  );
+  if ('IntersectionObserver' in window && enlacesNav.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            enlacesNav.forEach((enlace) => {
+              const coincide = enlace.getAttribute('href') === `#${id}`;
+              enlace.classList.toggle('!bg-accent', coincide);
+              enlace.classList.toggle('!text-accent-ink', coincide);
+              enlace.classList.toggle('!border-accent', coincide);
+              if (coincide) enlace.setAttribute('aria-current', 'true');
+              else enlace.removeAttribute('aria-current');
+            });
+          }
+        }
+      },
+      { rootMargin: '-15% 0px -65% 0px' },
+    );
+    secciones.forEach((s) => observer.observe(s));
+  }
 </script>

@@ -1,3 +1,4 @@
+import { DEPARTAMENTOS_POR_CODIGO } from './departamentos.ts';
 import {
   aniosClimaPresentacion,
   type CapaAnalitica,
@@ -54,11 +55,15 @@ export function normalizarEstado(
   candidato.semanaHasta = Math.max(semanaDesde, semanaHasta);
   candidato.serie =
     candidato.serie === 'confirmado' ? 'confirmado' : 'probable';
-  candidato.departamento = candidato.departamento?.trim() || null;
-  candidato.comparar = [...new Set(candidato.comparar.filter(Boolean))].slice(
-    0,
-    4,
-  );
+  // La URL es entrada del visitante y estos valores terminan en rótulos y en
+  // llamadas a la API: solo pasan los códigos de los 14 departamentos.
+  const departamento = candidato.departamento?.trim() ?? '';
+  candidato.departamento = DEPARTAMENTOS_POR_CODIGO[departamento]
+    ? departamento
+    : null;
+  candidato.comparar = [
+    ...new Set(candidato.comparar.filter((c) => DEPARTAMENTOS_POR_CODIGO[c])),
+  ].slice(0, 4);
   candidato.modoMinsal = ['semana', 'ytd', 'historico'].includes(
     candidato.modoMinsal,
   )

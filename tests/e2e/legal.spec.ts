@@ -106,13 +106,8 @@ test('la política y los términos no dejan marcadores pendientes a la vista', a
   page,
 }) => {
   // Los marcadores «PENDIENTE_…» señalan datos que solo el responsable puede
-  // dar. Es una puerta de publicación: se corre con
-  // EXIGIR_TEXTO_LEGAL_COMPLETO=1 antes de abrir las cuentas, y falla
-  // mientras quede un marcador.
-  test.skip(
-    !process.env.EXIGIR_TEXTO_LEGAL_COMPLETO,
-    'Puerta de publicación: solo con EXIGIR_TEXTO_LEGAL_COMPLETO=1',
-  );
+  // dar. Con el plazo de las copias ya decidido no queda ninguno: si vuelve a
+  // aparecer uno, este test falla antes de publicar.
   for (const ruta of ['/legal/privacidad', '/legal/terminos']) {
     await page.goto(ruta);
     await expect(page.locator('.doc-texto')).not.toContainText('PENDIENTE_');

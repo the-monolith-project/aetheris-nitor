@@ -132,6 +132,34 @@ import {
             > (versión <span data-version></span>).
           </span>
         </label>
+        <label class="flex items-start gap-2 font-sans text-sm text-ink">
+          <input
+            type="checkbox"
+            name="firma"
+            required
+            class="mt-0.5 h-4 w-4 accent-[var(--color-accent)]"
+          />
+          <span>
+            Acepto que lo que publique lleve mi nombre y mi institución a la
+            vista de cualquier persona, y que esa firma se conserve aunque
+            después me dé de baja.
+          </span>
+        </label>
+        <label class="flex items-start gap-2 font-sans text-sm text-ink">
+          <input
+            type="checkbox"
+            name="transferencia"
+            required
+            class="mt-0.5 h-4 w-4 accent-[var(--color-accent)]"
+          />
+          <span>
+            Acepto que mis datos de cuenta se traten en servidores y servicios
+            de correo ubicados en Estados Unidos, como describe la <a
+              href="/legal/privacidad"
+              class={CLASE_ENLACE}>política de privacidad</a
+            >.
+          </span>
+        </label>
         <div data-aviso tabindex="-1" hidden></div>
         <div>
           <button type="submit" class={CLASE_BOTON_PRINCIPAL}
@@ -222,6 +250,11 @@ import {
     );
     const repetir = pedirElemento<HTMLInputElement>(form, '[name="repetir"]');
     const terminos = pedirElemento<HTMLInputElement>(form, '[name="terminos"]');
+    const firma = pedirElemento<HTMLInputElement>(form, '[name="firma"]');
+    const transferencia = pedirElemento<HTMLInputElement>(
+      form,
+      '[name="transferencia"]',
+    );
     const aviso = pedirElemento<HTMLElement>(form, '[data-aviso]');
     const datos = () => ({ nombre: nombre.value, correo: invitacion.correo });
 
@@ -245,8 +278,12 @@ import {
           : contrasena.value !== repetir.value
             ? 'Las contraseñas no coinciden.'
             : !terminos.checked
-              ? 'Para continuar hay que aceptar los términos de uso.'
-              : null;
+              ? 'Para continuar hay que aceptar los términos de uso y la política de privacidad.'
+              : !firma.checked
+                ? 'Para continuar hay que aceptar la firma pública de lo que publiques.'
+                : !transferencia.checked
+                  ? 'Para continuar hay que aceptar el tratamiento de tus datos en Estados Unidos.'
+                  : null;
       if (faltante) {
         mostrarAviso(aviso, 'error', faltante);
         return;

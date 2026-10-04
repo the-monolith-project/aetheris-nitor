@@ -138,10 +138,24 @@ test.describe('cuentas: aceptar invitación y alta', () => {
       .getByRole('button', { name: 'Crear cuenta y continuar' })
       .click();
     await expect(page.getByRole('alert')).toHaveText(
-      'Para continuar hay que aceptar los términos de uso.',
+      'Para continuar hay que aceptar los términos de uso y la política de privacidad.',
     );
 
     await page.getByLabel(/Acepto los términos de uso/).check();
+    await page
+      .getByRole('button', { name: 'Crear cuenta y continuar' })
+      .click();
+    await expect(page.getByRole('alert')).toHaveText(
+      'Para continuar hay que aceptar la firma pública de lo que publiques.',
+    );
+    await page.getByLabel(/Acepto que lo que publique lleve mi nombre/).check();
+    await page
+      .getByRole('button', { name: 'Crear cuenta y continuar' })
+      .click();
+    await expect(page.getByRole('alert')).toHaveText(
+      'Para continuar hay que aceptar el tratamiento de tus datos en Estados Unidos.',
+    );
+    await page.getByLabel(/Acepto que mis datos de cuenta se traten/).check();
     const navegacion = page.waitForRequest(/\/cuenta\/alta$/);
     await page
       .getByRole('button', { name: 'Crear cuenta y continuar' })

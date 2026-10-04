@@ -51,8 +51,8 @@
  * implementar esas tareas o ajustar este texto antes de invitar a más
  * personas.
  *
- * Marcador pendiente: «PENDIENTE_PLAZO_COPIAS» (conservación de las copias
- * cifradas que hace el proyecto). Debe quedar resuelto antes de publicar:
+ * Plazo de las copias cifradas del proyecto: 90 días (decidido el
+ * 2026-10-04). Antes de publicar, que no quede ningún marcador pendiente:
  *
  *   grep -rnE "«PENDIENTE_[A-Z_]+»" dist/
  *
@@ -446,9 +446,9 @@ import { navegacionLegal } from '../../lib/navegacion-documentos';
         <td>Copias de seguridad</td>
         <td>
           Render conserva copias de recuperación de la base durante 3 días. Las
-          copias cifradas que hace el proyecto se conservan
-          «PENDIENTE_PLAZO_COPIAS». En ambos casos, un dato borrado desaparece
-          de las copias al vencer ese plazo
+          copias cifradas que hace el proyecto se conservan 90 días y después se
+          borran. En ambos casos, un dato borrado desaparece de las copias al
+          vencer ese plazo
         </td>
       </tr>
     </tbody>

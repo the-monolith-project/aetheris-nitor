@@ -2,6 +2,7 @@
 import PanelWorkspace from './analisis/PanelWorkspace.astro';
 import CargadorCurva from './CargadorCurva.astro';
 import MenuExportar from './MenuExportar.astro';
+import SelectorSemanaEpi from './SelectorSemanaEpi.astro';
 import { ANIOS_RESPIRATORIO } from '../lib/respiratorio-state';
 interface Props {
   evento?: 'ira' | 'neumonias';
@@ -15,6 +16,7 @@ const evento = Astro.props.evento ?? 'ira';
 const departamentoFijo = Astro.props.departamento;
 const etiqueta = evento === 'neumonias' ? 'Neumonías' : 'IRA';
 const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
+const idPrefijo = `curva-${evento}${departamentoFijo ? `-${departamentoFijo}` : ''}`;
 ---
 
 <PanelWorkspace
@@ -60,8 +62,16 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         <option value="">(ningún otro departamento)</option>
       </select>
     </label>
-    <label class="flex flex-wrap items-center gap-2"
-      >SE
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-xs font-medium text-ink-muted">Desde:</span>
+      <SelectorSemanaEpi
+        id={`${idPrefijo}-selector-desde`}
+        semana={1}
+        compacto={true}
+        mostrarRangoFechas={false}
+        etiqueta={`Semana epidemiológica inicial ${etiqueta}`}
+        class="curva-selector-desde"
+      />
       <input
         data-curva-desde
         type="range"
@@ -70,6 +80,16 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         value="1"
         aria-label="Semana epidemiológica inicial"
         aria-valuetext="Semana epidemiológica 1"
+        class="w-20 sm:w-28 accent-accent"
+      />
+      <span class="text-xs font-medium text-ink-muted">Hasta:</span>
+      <SelectorSemanaEpi
+        id={`${idPrefijo}-selector-hasta`}
+        semana={52}
+        compacto={true}
+        mostrarRangoFechas={false}
+        etiqueta={`Semana epidemiológica final ${etiqueta}`}
+        class="curva-selector-hasta"
       />
       <input
         data-curva-hasta
@@ -79,11 +99,12 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         value="52"
         aria-label="Semana epidemiológica final"
         aria-valuetext="Semana epidemiológica 52"
+        class="w-20 sm:w-28 accent-accent"
       />
       <span data-curva-rango class="font-sans tabular-nums text-xs"
         >SE1–SE52</span
       >
-    </label>
+    </div>
     <MenuExportar
       csv={`curva-csv-${evento}`}
       titulo={`Casos semanales de ${etiqueta} por departamento`}
@@ -362,6 +383,12 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
     const opcionCsv = seccion.querySelector<HTMLElement>(
       '[data-menu-accion="csv"]',
     );
+    const selectorDesde = seccion.querySelector<HTMLElement>(
+      '.curva-selector-desde',
+    );
+    const selectorHasta = seccion.querySelector<HTMLElement>(
+      '.curva-selector-hasta',
+    );
     if (
       !contenedor ||
       !selector ||
@@ -408,6 +435,17 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
       txtRango.textContent = `SE${desde}–SE${hasta}`;
       inpDesde.setAttribute('aria-valuetext', `Semana epidemiológica ${desde}`);
       inpHasta.setAttribute('aria-valuetext', `Semana epidemiológica ${hasta}`);
+      const anioNum = selAnio.value === 'todos' ? 2024 : Number(selAnio.value);
+      selectorDesde?.dispatchEvent(
+        new CustomEvent('ajustar-semana', {
+          detail: { anio: anioNum, semana: desde },
+        }),
+      );
+      selectorHasta?.dispatchEvent(
+        new CustomEvent('ajustar-semana', {
+          detail: { anio: anioNum, semana: hasta },
+        }),
+      );
       return { desde, hasta };
     };
 
@@ -432,6 +470,17 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
         inpDesde.value = String(f.semanaDesde);
         inpHasta.value = String(f.semanaHasta);
       }
+      const anioNum = f.anio === 'todos' ? 2024 : f.anio;
+      selectorDesde?.dispatchEvent(
+        new CustomEvent('ajustar-semana', {
+          detail: { anio: anioNum, semana: f.semanaDesde },
+        }),
+      );
+      selectorHasta?.dispatchEvent(
+        new CustomEvent('ajustar-semana', {
+          detail: { anio: anioNum, semana: f.semanaHasta },
+        }),
+      );
     };
     sincronizarControles(
       fijo
@@ -525,6 +574,18 @@ const apiBase = evento === 'neumonias' ? '/api/neumonias' : '/api/ira';
     selCompare.addEventListener('change', alCambiar);
     inpDesde.addEventListener('input', alCambiar);
     inpHasta.addEventListener('input', alCambiar);
+    selectorDesde?.addEventListener('cambio-semana', ((
+      ev: CustomEvent<{ semana: number }>,
+    ) => {
+      inpDesde.value = String(ev.detail.semana);
+      alCambiar();
+    }) as EventListener);
+    selectorHasta?.addEventListener('cambio-semana', ((
+      ev: CustomEvent<{ semana: number }>,
+    ) => {
+      inpHasta.value = String(ev.detail.semana);
+      alCambiar();
+    }) as EventListener);
     if (!fijo) {
       suscribirFiltrosRespiratorio((f) => {
         sincronizarControles(f);

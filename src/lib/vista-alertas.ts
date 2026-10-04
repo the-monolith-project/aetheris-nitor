@@ -231,6 +231,7 @@ function pintarTarjeta(
   alerta: AlertaPublica,
   esNueva = false,
   indice = 0,
+  animar = true,
 ): HTMLElement {
   const articulo = document.createElement('article');
 
@@ -243,9 +244,11 @@ function pintarTarjeta(
         : 'border-l-4 border-l-accent bg-surface';
 
   articulo.className = `card-elevated rounded-2xl border border-border ${estiloNivel} p-5 sm:p-7 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 relative`;
-  articulo.style.animation =
-    'panel-entra 380ms cubic-bezier(0.16, 1, 0.3, 1) both';
-  articulo.style.animationDelay = `${indice * 60}ms`;
+  if (animar) {
+    articulo.style.animation =
+      'panel-entra 380ms cubic-bezier(0.16, 1, 0.3, 1) both';
+    articulo.style.animationDelay = `${indice * 60}ms`;
+  }
 
   articulo.setAttribute('data-alerta', '');
   articulo.setAttribute('data-tipo', alerta.tipo);
@@ -576,6 +579,7 @@ export function aplicarVistaAlertas(
   payload: PayloadAlertas,
   nuevas: Set<number> = new Set(),
   textoVacio?: string,
+  animar = true,
 ): void {
   const carga = root.querySelector<HTMLElement>('[data-alertas-carga]');
   const error = root.querySelector<HTMLElement>('[data-alertas-error]');
@@ -611,7 +615,9 @@ export function aplicarVistaAlertas(
   if (lista) {
     lista.hidden = false;
     lista.replaceChildren(
-      ...vista.alertas.map((a, i) => pintarTarjeta(a, nuevas.has(a.id), i)),
+      ...vista.alertas.map((a, i) =>
+        pintarTarjeta(a, nuevas.has(a.id), i, animar),
+      ),
     );
   }
   root.setAttribute('data-cargado', '1');

@@ -19,6 +19,8 @@ const src = new URL(ruta, sitio).href;
     data-src={src}
     data-titulo={titulo}
     data-alto={alto}
+    aria-label={`Incrustar: ${titulo}`}
+    title={`Copiar código iframe para incrustar: ${titulo}`}
     class="min-h-[44px] rounded-lg border border-border bg-bg px-3 py-1.5 font-sans text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
   >
     Incrustar

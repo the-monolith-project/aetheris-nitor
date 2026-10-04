@@ -16,98 +16,160 @@ import PanelVirus from '../components/PanelVirus.astro';
     id="contenido-principal"
     class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8 sm:py-10 lg:px-12"
   >
-    <header class="mb-8 max-w-3xl">
-      <p
-        class="font-sans text-xs font-semibold uppercase tracking-wider text-accent"
-      >
-        Observatorio respiratorio · MINSAL
-      </p>
-      <h1
-        class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]"
-      >
-        Observatorio respiratorio (MINSAL)
-      </h1>
-      <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-        IRA y neumonías son conteos clínicos notificados: nacionales desde 2025,
-        del tablero de MINSAL, y por departamento de 2018 a 2023, de los
-        boletines. Influenza, VSR y SARS-CoV-2 son vigilancia laboratorial
-        nacional (muestras, detecciones, positividad). Cada serie conserva su
-        unidad.
-        <AyudaTermino clave="conteo-notificado" />
-        <AyudaTermino clave="positividad" />
-      </p>
-      <p class="mt-4 font-sans text-sm">
-        <a
-          href="/alertas?tipo=respiratorio"
-          data-enlace-alertas="respiratorio"
-          class="font-medium text-accent underline underline-offset-2"
-          >¿Alerta activa? →</a
+    <header
+      class="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between"
+    >
+      <div class="max-w-3xl">
+        <p
+          class="font-sans text-xs font-semibold uppercase tracking-wider text-accent"
         >
-      </p>
-    </header>
+          Observatorio respiratorio · MINSAL
+        </p>
+        <h1
+          class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]"
+        >
+          Observatorio respiratorio (MINSAL)
+        </h1>
+        <p class="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+          IRA y neumonías son conteos clínicos notificados: nacionales desde
+          2025, del tablero de MINSAL, y por departamento de 2018 a 2023, de los
+          boletines. Influenza, VSR y SARS-CoV-2 son vigilancia laboratorial
+          nacional (muestras, detecciones, positividad). Cada serie conserva su
+          unidad.
+          <AyudaTermino clave="conteo-notificado" />
+          <AyudaTermino clave="positividad" />
+        </p>
+        <p class="mt-4 font-sans text-sm">
+          <a
+            href="/alertas?tipo=respiratorio"
+            data-enlace-alertas="respiratorio"
+            class="font-medium text-accent underline underline-offset-2"
+            >¿Alerta activa? →</a
+          >
+        </p>
+      </div>
 
-    <div class="mb-4 flex flex-wrap items-center gap-3 font-sans text-xs">
-      <button
-        type="button"
-        data-copiar-enlace
-        class="flex min-h-[44px] items-center rounded-lg border border-border bg-bg px-3 py-2 font-semibold text-ink transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      <div
+        class="flex flex-col items-start gap-2 font-sans text-xs sm:flex-row sm:items-center lg:flex-col lg:items-end"
       >
-        Copiar enlace a esta vista
-      </button>
-      <p data-copiar-estado role="status" class="min-h-4 text-ink-muted"></p>
-    </div>
+        <button
+          type="button"
+          data-copiar-enlace
+          aria-describedby="copiar-estado-respiratorio"
+          class="flex min-h-[44px] items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 font-semibold text-ink shadow-sm transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          <Icono nombre="clipboard-list" class="h-4 w-4 text-ink-muted" />
+          <span>Copiar enlace a esta vista</span>
+        </button>
+        <p
+          id="copiar-estado-respiratorio"
+          data-copiar-estado
+          role="status"
+          aria-live="polite"
+          class="min-h-4 text-xs text-ink-muted"
+        >
+        </p>
+      </div>
+    </header>
 
     <NavSecciones
       etiqueta="Serie respiratoria"
       enlaces={[
-        { href: '#cobertura', etiqueta: 'Cobertura' },
         { href: '#ira', etiqueta: 'IRA' },
         { href: '#neumonias', etiqueta: 'Neumonías' },
         { href: '#virus', etiqueta: 'Virus (nacional)' },
+        { href: '#cobertura', etiqueta: 'Cobertura' },
       ]}
     />
 
-    <section id="cobertura" class="mb-10">
-      <PanelCobertura />
-    </section>
-
-    <section id="ira" class="mb-10 grid grid-cols-1 gap-6">
-      <h2
-        class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+    <!-- Sección 1: IRA (Infecciones Respiratorias Agudas) -->
+    <section
+      id="ira"
+      class="mb-14 scroll-mt-[calc(var(--alto-header)+1.5rem)] space-y-6"
+    >
+      <header
+        class="flex items-center justify-between border-b border-border/80 pb-3"
       >
-        <Icono nombre="lungs" class="h-6 w-6 text-accent" />
-        IRA — conteo notificado
-      </h2>
+        <h2
+          class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+        >
+          <Icono nombre="lungs" class="h-6 w-6 text-accent" />
+          IRA — conteo notificado
+        </h2>
+      </header>
+
       <CurvaRespiratoriaNacional evento="ira" />
-      <div class="rounded-[28px] bg-deep p-2 sm:p-3">
-        <MapaIRA evento="ira" />
+
+      <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <div
+          class="lg:col-span-5 lg:sticky lg:top-[calc(var(--alto-header)+1rem)]"
+        >
+          <MapaIRA evento="ira" />
+        </div>
+        <div class="lg:col-span-7">
+          <CurvaIRADepartamental evento="ira" />
+        </div>
       </div>
-      <CurvaIRADepartamental evento="ira" />
     </section>
 
-    <section id="neumonias" class="mb-10 grid grid-cols-1 gap-6">
-      <h2
-        class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+    <!-- Sección 2: Neumonías -->
+    <section
+      id="neumonias"
+      class="mb-14 scroll-mt-[calc(var(--alto-header)+1.5rem)] space-y-6"
+    >
+      <header
+        class="flex items-center justify-between border-b border-border/80 pb-3"
       >
-        <Icono nombre="lungs" class="h-6 w-6 text-accent" />
-        Neumonías — conteo notificado
-      </h2>
+        <h2
+          class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+        >
+          <Icono nombre="lungs" class="h-6 w-6 text-accent" />
+          Neumonías — conteo notificado
+        </h2>
+      </header>
+
       <CurvaRespiratoriaNacional evento="neumonias" />
-      <div class="rounded-[28px] bg-deep p-2 sm:p-3">
-        <MapaIRA evento="neumonias" />
+
+      <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <div
+          class="lg:col-span-5 lg:sticky lg:top-[calc(var(--alto-header)+1rem)]"
+        >
+          <MapaIRA evento="neumonias" />
+        </div>
+        <div class="lg:col-span-7">
+          <CurvaIRADepartamental evento="neumonias" />
+        </div>
       </div>
-      <CurvaIRADepartamental evento="neumonias" />
-      <HeatmapNeumonias />
+
+      <div class="w-full">
+        <HeatmapNeumonias />
+      </div>
     </section>
 
-    <section id="virus" class="mb-10 grid grid-cols-1 gap-6">
-      <h2
-        class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+    <!-- Sección 3: Virus (laboratorio nacional) -->
+    <section
+      id="virus"
+      class="mb-14 scroll-mt-[calc(var(--alto-header)+1.5rem)] space-y-6"
+    >
+      <header
+        class="flex items-center justify-between border-b border-border/80 pb-3"
       >
-        <Icono nombre="virus" class="h-6 w-6 text-accent" />
-        Influenza, VSR y SARS-CoV-2 — laboratorio nacional
-      </h2>
+        <h2
+          class="flex items-center gap-2.5 font-display text-xl font-semibold text-ink"
+        >
+          <Icono nombre="virus" class="h-6 w-6 text-accent" />
+          Influenza, VSR y SARS-CoV-2 — laboratorio nacional
+        </h2>
+      </header>
       <PanelVirus />
+    </section>
+
+    <!-- Sección 4: Cobertura técnica y procedencia de datos -->
+    <section
+      id="cobertura"
+      class="mb-14 scroll-mt-[calc(var(--alto-header)+1.5rem)] space-y-6"
+    >
+      <PanelCobertura />
     </section>
   </main>
 </Layout>

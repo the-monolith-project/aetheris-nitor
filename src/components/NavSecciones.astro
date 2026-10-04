@@ -11,6 +11,7 @@ interface Props {
 }
 
 const { etiqueta, enlaces, class: clasePersonalizada = 'mb-6' } = Astro.props;
+const rutaActual = Astro.url.pathname.replace(/\/+$/, '') || '/';
 ---
 
 <nav
@@ -19,13 +20,26 @@ const { etiqueta, enlaces, class: clasePersonalizada = 'mb-6' } = Astro.props;
   data-nav-secciones
 >
   {
-    enlaces.map((enlace) => (
-      <a
-        href={enlace.href}
-        class="inline-flex min-h-[44px] items-center rounded-full border border-border bg-surface px-3 py-1.5 transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-      >
-        {enlace.etiqueta}
-      </a>
-    ))
+    enlaces.map((enlace) => {
+      const hrefLimpio = enlace.href.replace(/\/+$/, '') || '/';
+      const esActivo =
+        !enlace.href.startsWith('#') &&
+        (hrefLimpio === rutaActual ||
+          (hrefLimpio !== '/' && rutaActual.startsWith(hrefLimpio)));
+      return (
+        <a
+          href={enlace.href}
+          aria-current={esActivo ? 'page' : undefined}
+          class:list={[
+            'inline-flex min-h-[44px] items-center rounded-full border px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+            esActivo
+              ? 'border-accent bg-accent/10 font-semibold text-accent'
+              : 'border-border bg-surface hover:border-accent/50 hover:text-accent',
+          ]}
+        >
+          {enlace.etiqueta}
+        </a>
+      );
+    })
   }
 </nav>

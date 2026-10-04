@@ -112,6 +112,8 @@ let timerSincronizarUrl: ReturnType<typeof setTimeout> | null = null;
 
 function sincronizarUrl(filtros: FiltrosAnalisis, diferir = false): void {
   if (typeof window === 'undefined') return;
+  const ruta = window.location.pathname;
+  if (!ruta.startsWith('/dengue') && !ruta.startsWith('/analisis')) return;
   const ejecutar = () => {
     try {
       const url = new URL(window.location.href);

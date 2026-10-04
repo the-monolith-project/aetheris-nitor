@@ -236,7 +236,7 @@ import SelectorSemanaEpi from '../SelectorSemanaEpi.astro';
     modelo: ModeloContraste,
   ) {
     const selAnio = sec.querySelector<HTMLSelectElement>('[data-anio]')!;
-    const rango = sec.querySelector<HTMLInputElement>('[data-semana]')!;
+    const rango = sec.querySelector<HTMLInputElement>('input[data-semana]')!;
     const salida = sec.querySelector<HTMLElement>('[data-semana-valor]')!;
     const btnAnt = sec.querySelector<HTMLButtonElement>('[data-anterior]')!;
     const btnSig = sec.querySelector<HTMLButtonElement>('[data-siguiente]')!;

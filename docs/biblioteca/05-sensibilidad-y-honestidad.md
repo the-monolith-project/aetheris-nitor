@@ -50,10 +50,10 @@ Su código sigue en el repositorio para que se puedan repetir las evaluaciones.
 
 ## Datos personales
 
-El sistema trabaja con conteos por departamento y semana y con datos de clima. No guarda nombres, documentos, historias clínicas ni ubicaciones de personas.
+El sistema trabaja con conteos por departamento y semana y con datos de clima. No guarda nombres, documentos, historias clínicas ni ubicaciones de pacientes.
 
-- No hay cuentas de usuario. La API de lectura no pide registro.
-- Publicar o editar una alerta exige una clave que solo tiene el equipo. Las alertas no se borran: se desactivan y pasan al archivo.
+- La API de lectura no pide registro y quien lee el sitio no tiene cuenta. Las cuentas existen solo para las personas del equipo que publican o revisan contenido, se crean por invitación y guardan nombre, correo, institución y las credenciales de acceso. El nombre, el cargo si se indica y la institución de quien firma son públicos. La [política de privacidad](/legal/privacidad) detalla qué se guarda y por cuánto tiempo.
+- Publicar o editar una alerta exige una cuenta o, mientras convivan, una clave que solo tiene el equipo. Las alertas no se borran: se desactivan y pasan al archivo.
 - Las sugerencias se reciben en GitHub, no en un formulario propio.
 - No hay datos por municipio, y la serie departamental de dengue llega hasta 2023. Por eso el sitio no ofrece vistas por municipio ni «de hoy».
 

@@ -1,0 +1,3 @@
+## 2025-05-10 - Focus Visible Styles on Secondary Toolbar Action Buttons
+**Learning:** Secondary control buttons (like zoom controls or detail triggers) can easily be overlooked for keyboard accessibility focus rings when styled with custom border and background utilities. Explicitly including `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent` ensures consistent keyboard navigation affordance across all interactive controls.
+**Action:** Always inspect secondary and icon/text-only action buttons in UI components for focus visible utility classes during accessibility audits.

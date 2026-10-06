@@ -115,7 +115,7 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
             </span>
             <select
               name="tipo"
-              class="rounded-xl border border-border bg-bg px-3.5 py-2 font-sans text-xs sm:text-sm text-ink focus:border-accent focus:outline-hidden"
+              class="rounded-xl border border-border bg-bg px-3.5 py-2 font-sans text-xs sm:text-sm text-ink focus:border-accent focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
             >
               <option value="" selected={!tipoPedido}>Todos los tipos</option>
               <option value="dengue" selected={filtroDengue}>Dengue</option>
@@ -138,7 +138,7 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
               name="desde"
               data-archivo-desde
               value={desdePedido}
-              class="rounded-xl border border-border bg-bg px-3.5 py-2 font-sans text-xs sm:text-sm text-ink focus:border-accent focus:outline-hidden"
+              class="rounded-xl border border-border bg-bg px-3.5 py-2 font-sans text-xs sm:text-sm text-ink focus:border-accent focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
             />
           </label>
 
@@ -155,7 +155,7 @@ const filtroRespiratorio = tipoPedido === 'respiratorio';
               name="hasta"
               data-archivo-hasta
               value={hastaPedido}
-              class="rounded-xl border border-border bg-bg px-3.5 py-2 font-sans text-xs sm:text-sm text-ink focus:border-accent focus:outline-hidden"
+              class="rounded-xl border border-border bg-bg px-3.5 py-2 font-sans text-xs sm:text-sm text-ink focus:border-accent focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent"
             />
           </label>
         </div>

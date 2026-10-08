@@ -122,11 +122,18 @@ const COLUMNAS: { id: string; titulo: string; enlaces: Enlace[] }[] = [
                 <li>
                   <a
                     href={enlace.href}
+                    target={enlace.externo ? '_blank' : undefined}
                     class="enlace-filete py-1 text-deep-ink transition-colors hover:text-white"
                     rel={enlace.externo ? 'noopener noreferrer' : undefined}
                     data-enlace-cuenta={enlace.cuenta ? '' : undefined}
                   >
                     {enlace.etiqueta}
+                    {enlace.externo && (
+                      <span class="sr-only">
+                        {' '}
+                        (se abre en una nueva pestaña)
+                      </span>
+                    )}
                   </a>
                 </li>
               ))}

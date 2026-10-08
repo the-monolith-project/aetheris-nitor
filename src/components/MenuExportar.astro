@@ -144,11 +144,12 @@ const itemBase =
           data-menu-accion="enlace"
           href={enlace.href}
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
           class={itemBase}
         >
           <Icono nombre="braces" class="h-[18px] w-[18px] text-ink-muted" />
           <span>{enlace.texto}</span>
+          <span class="sr-only"> (se abre en una nueva pestaña)</span>
         </a>
       ))
     }

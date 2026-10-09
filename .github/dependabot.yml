@@ -1,0 +1,28 @@
+# Actualizaciones de dependencias de aetheris-nitor.
+# El monorepo no vigila web/ porque es una copia sincronizada de este repo: un
+# PR allí se perdería con la siguiente sincronización. Lo que se actualice aquí
+# llega al monorepo por el flujo de sincronización.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+    # Un solo PR por semana para las subidas menores y de parche, en vez de uno
+    # por paquete. Las mayores llegan por separado para poder revisarlas.
+    groups:
+      menores-y-parches:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'chore(ci)'
+    groups:
+      acciones:
+        patterns: ['*']

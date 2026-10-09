@@ -19,6 +19,8 @@ const id = `ayuda-${clave}-${Math.random().toString(36).slice(2, 8)}`;
     type="button"
     class="ayuda-termino-boton"
     popovertarget={id}
+    aria-haspopup="dialog"
+    aria-controls={id}
     aria-label={`¿Qué es ${entrada.termino}?`}
   >
     <span aria-hidden="true">?</span>
